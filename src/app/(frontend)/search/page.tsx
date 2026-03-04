@@ -89,6 +89,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await createTranslator(locale)
 
   return {
-    title: t('shared.search.metatitle', 'Payload Website Template Search'),
+    title: t('shared.search.metatitle', 'HostLink Search'),
   }
 }

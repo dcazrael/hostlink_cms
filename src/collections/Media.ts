@@ -13,6 +13,8 @@ import { authenticated } from '../access/authenticated'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const isVercelRuntime = process.env.VERCEL === '1' || Boolean(process.env.VERCEL_ENV)
+const mediaStaticDir = isVercelRuntime ? '/tmp/media' : path.resolve(dirname, '../../public/media')
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -43,8 +45,9 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, '../../public/media'),
+    // Vercel serverless runtime cannot write inside /var/task/public.
+    // Use /tmp there; keep local/public path for development.
+    staticDir: mediaStaticDir,
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     imageSizes: [

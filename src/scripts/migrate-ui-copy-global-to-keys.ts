@@ -172,7 +172,7 @@ const buildSeeds = (uiCopy?: unknown): KeySeed[] => {
       key: 'shared.search.metatitle',
       group: 'shared.search',
       usedIn: ['SearchPage'],
-      defaultValue: 'Payload Website Template Search',
+      defaultValue: 'HostLink Search',
     },
   ]
 }
