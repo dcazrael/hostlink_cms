@@ -1,0 +1,622 @@
+{
+  "generatedAt": "2026-03-02T19:29:03.849Z",
+  "filesScanned": 98,
+  "sourceLocale": "en",
+  "defaultLocale": "ja",
+  "totalEntries": 77,
+  "totals": {
+    "dynamicSkips": 52,
+    "ignoredPattern": 2,
+    "literals": 23
+  },
+  "entries": [
+    {
+      "column": 41,
+      "file": "src/app/(frontend)/not-found.tsx",
+      "line": 15,
+      "literal": "404",
+      "reason": "ignored-pattern"
+    },
+    {
+      "column": 15,
+      "file": "src/app/(frontend)/posts/page.tsx",
+      "group": "shared.page",
+      "line": 35,
+      "literal": "Posts",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.page.67fef3",
+      "usedIn": "page"
+    },
+    {
+      "column": 15,
+      "file": "src/app/(frontend)/posts/page/[pageNumber]/page.tsx",
+      "group": "shared.page",
+      "line": 41,
+      "literal": "Posts",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.page.b59ec8",
+      "usedIn": "page"
+    },
+    {
+      "column": 30,
+      "file": "src/blocks/Code/Component.client.tsx",
+      "line": 23,
+      "literal": "key",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 13,
+      "file": "src/blocks/Code/CopyButton.tsx",
+      "line": 28,
+      "literal": "text",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 37,
+      "file": "src/components/AdminBar/index.tsx",
+      "group": "shared.index",
+      "line": 32,
+      "literal": "Dashboard",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.a7a703",
+      "usedIn": "index"
+    },
+    {
+      "column": 7,
+      "file": "src/components/BeforeDashboard/SeedButton/index.tsx",
+      "group": "shared.index",
+      "line": 12,
+      "literal": "visit your website",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.cc61b3",
+      "usedIn": "index"
+    },
+    {
+      "column": 47,
+      "file": "src/components/BeforeDashboard/SeedButton/index.tsx",
+      "line": 82,
+      "literal": "handleClick",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 9,
+      "file": "src/components/BeforeDashboard/SeedButton/index.tsx",
+      "group": "shared.index",
+      "line": 83,
+      "literal": "Seed your database",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.b11bd0",
+      "usedIn": "index"
+    },
+    {
+      "column": 13,
+      "file": "src/components/BeforeDashboard/index.tsx",
+      "group": "shared.index",
+      "line": 13,
+      "literal": "Welcome to your dashboard!",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.72e508",
+      "usedIn": "index"
+    },
+    {
+      "column": 13,
+      "file": "src/components/BeforeDashboard/index.tsx",
+      "group": "shared.index",
+      "line": 21,
+      "literal": "visit your website",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.061d3c",
+      "usedIn": "index"
+    },
+    {
+      "column": 13,
+      "file": "src/components/BeforeDashboard/index.tsx",
+      "group": "shared.index",
+      "line": 32,
+      "literal": "collections",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.70f198",
+      "usedIn": "index"
+    },
+    {
+      "column": 13,
+      "file": "src/components/BeforeDashboard/index.tsx",
+      "group": "shared.index",
+      "line": 40,
+      "literal": "fields",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.9c8134",
+      "usedIn": "index"
+    },
+    {
+      "column": 13,
+      "file": "src/components/BeforeDashboard/index.tsx",
+      "group": "shared.index",
+      "line": 48,
+      "literal": "Getting Started",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.ddd88f",
+      "usedIn": "index"
+    },
+    {
+      "column": 11,
+      "file": "src/components/BeforeDashboard/index.tsx",
+      "group": "shared.index",
+      "line": 53,
+      "literal": "Commit and push your changes to the repository to trigger a redeployment of your project.",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.79edaa",
+      "usedIn": "index"
+    },
+    {
+      "column": 9,
+      "file": "src/components/BeforeDashboard/index.tsx",
+      "group": "shared.index",
+      "line": 62,
+      "literal": "custom component",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.0c32af",
+      "usedIn": "index"
+    },
+    {
+      "column": 67,
+      "file": "src/components/Card/index.tsx",
+      "line": 80,
+      "literal": "sanitizedDescription",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 32,
+      "file": "src/components/Link/index.tsx",
+      "line": 59,
+      "literal": "className",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 49,
+      "file": "src/components/Link/index.tsx",
+      "line": 59,
+      "literal": "size",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 64,
+      "file": "src/components/Link/index.tsx",
+      "line": 59,
+      "literal": "appearance",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 11,
+      "file": "src/components/Logo/Logo.tsx",
+      "group": "shared.logo",
+      "line": 18,
+      "literal": "Hostlink Logo",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.logo.2925c6",
+      "usedIn": "Logo"
+    },
+    {
+      "column": 21,
+      "file": "src/components/Media/ImageMedia/index.tsx",
+      "group": "shared.index",
+      "line": 94,
+      "literal": "blur",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.index.5eedc2",
+      "usedIn": "index"
+    },
+    {
+      "column": 19,
+      "file": "src/components/homepage/ChatMock.tsx",
+      "group": "homepage.chatmock",
+      "line": 25,
+      "literal": "Guest Avatar",
+      "reason": "literal",
+      "suggestedKey": "auto.homepage.chatmock.0f37b3",
+      "usedIn": "ChatMock"
+    },
+    {
+      "column": 19,
+      "file": "src/components/homepage/ChatMock.tsx",
+      "group": "homepage.chatmock",
+      "line": 42,
+      "literal": "HostLink Operator Avatar",
+      "reason": "literal",
+      "suggestedKey": "auto.homepage.chatmock.ad5fa7",
+      "usedIn": "ChatMock"
+    },
+    {
+      "column": 19,
+      "file": "src/components/homepage/ChatMock.tsx",
+      "group": "homepage.chatmock",
+      "line": 62,
+      "literal": "Guest Avatar",
+      "reason": "literal",
+      "suggestedKey": "auto.homepage.chatmock.0f37b3",
+      "usedIn": "ChatMock"
+    },
+    {
+      "column": 14,
+      "file": "src/components/homepage/HeroSection.tsx",
+      "line": 21,
+      "literal": "block.tagline",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 61,
+      "file": "src/components/homepage/HeroSection.tsx",
+      "line": 24,
+      "literal": "block.title",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 73,
+      "file": "src/components/homepage/HeroSection.tsx",
+      "line": 25,
+      "literal": "block.sub",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 26,
+      "file": "src/components/homepage/HeroSection.tsx",
+      "line": 33,
+      "literal": "item.text",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 40,
+      "file": "src/components/homepage/HomepageLinkButton.tsx",
+      "line": 33,
+      "literal": "variant",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 21,
+      "file": "src/components/homepage/IconText.tsx",
+      "line": 21,
+      "literal": "textClassName",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 37,
+      "file": "src/components/homepage/IconText.tsx",
+      "line": 21,
+      "literal": "iconText.text",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 26,
+      "file": "src/components/homepage/RenderHomepageLayout.tsx",
+      "line": 55,
+      "literal": "item.anchor",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 24,
+      "file": "src/components/homepage/RenderHomepageLayout.tsx",
+      "line": 61,
+      "literal": "item.dotIndex",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 28,
+      "file": "src/components/homepage/RenderHomepageLayout.tsx",
+      "line": 63,
+      "literal": "item.label",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 12,
+      "file": "src/components/homepage/SectionWrapper.tsx",
+      "line": 37,
+      "literal": "uiCopy.section.sectionLabel",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 42,
+      "file": "src/components/homepage/SectionWrapper.tsx",
+      "line": 37,
+      "literal": "sectionIndex",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 12,
+      "file": "src/components/homepage/SectionWrapper.tsx",
+      "line": 38,
+      "literal": "dotIndex ? ` · ${uiCopy.section.dotLabel} ${dotIndex}` : ''",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 59,
+      "file": "src/components/homepage/SectionWrapper.tsx",
+      "line": 42,
+      "literal": "block.heading",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 83,
+      "file": "src/components/homepage/SectionWrapper.tsx",
+      "line": 43,
+      "literal": "block.subheading",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 68,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 15,
+      "literal": "block.companyName",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 65,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 16,
+      "literal": "uiCopy.company.ceoLabel",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 89,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 16,
+      "literal": ":",
+      "reason": "ignored-pattern"
+    },
+    {
+      "column": 92,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 16,
+      "literal": "block.ceo",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 69,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 17,
+      "literal": "block.address",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 69,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 18,
+      "literal": "block.contact",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 47,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 21,
+      "literal": "uiCopy.company.servicesHeading",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 51,
+      "file": "src/components/homepage/sections/CompanySection.tsx",
+      "line": 24,
+      "literal": "service.text",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 62,
+      "file": "src/components/homepage/sections/FaqSection.tsx",
+      "line": 13,
+      "literal": "item.question",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 56,
+      "file": "src/components/homepage/sections/FaqSection.tsx",
+      "line": 14,
+      "literal": "item.answer",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 54,
+      "file": "src/components/homepage/sections/FlowSection.tsx",
+      "line": 19,
+      "literal": "step.title",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 58,
+      "file": "src/components/homepage/sections/FlowSection.tsx",
+      "line": 20,
+      "literal": "step.description",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 67,
+      "file": "src/components/homepage/sections/PricingSection.tsx",
+      "line": 20,
+      "literal": "block.planName",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 65,
+      "file": "src/components/homepage/sections/PricingSection.tsx",
+      "line": 21,
+      "literal": "block.planSub",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 14,
+      "file": "src/components/homepage/sections/PricingSection.tsx",
+      "line": 25,
+      "literal": "uiCopy.pricing.recommendedLabel",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 14,
+      "file": "src/components/homepage/sections/PricingSection.tsx",
+      "line": 33,
+      "literal": "formattedPrice",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 54,
+      "file": "src/components/homepage/sections/PricingSection.tsx",
+      "line": 34,
+      "literal": "uiCopy.pricing.perPeriodLabel",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 74,
+      "file": "src/components/homepage/sections/PricingSection.tsx",
+      "line": 39,
+      "literal": "block.priceDisclaimer",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 24,
+      "file": "src/components/homepage/sections/PricingSection.tsx",
+      "line": 47,
+      "literal": "item.text",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 16,
+      "file": "src/components/homepage/sections/ProblemsSection.tsx",
+      "line": 20,
+      "literal": "iconName ? <LucideIcon className=\"size-6 text-primary\" name={iconName} /> : null",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 16,
+      "file": "src/components/homepage/sections/ProblemsSection.tsx",
+      "line": 21,
+      "literal": "item.title",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 76,
+      "file": "src/components/homepage/sections/ProblemsSection.tsx",
+      "line": 23,
+      "literal": "item.sub",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 56,
+      "file": "src/components/homepage/sections/ProblemsSection.tsx",
+      "line": 24,
+      "literal": "item.description",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 16,
+      "file": "src/components/homepage/sections/ServicesSection.tsx",
+      "line": 20,
+      "literal": "iconName ? <LucideIcon className=\"size-6 text-primary\" name={iconName} /> : null",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 16,
+      "file": "src/components/homepage/sections/ServicesSection.tsx",
+      "line": 21,
+      "literal": "item.title",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 56,
+      "file": "src/components/homepage/sections/ServicesSection.tsx",
+      "line": 23,
+      "literal": "item.description",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 59,
+      "file": "src/components/homepage/sections/TestimonialsSection.tsx",
+      "line": 14,
+      "literal": "item.description",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 45,
+      "file": "src/components/homepage/sections/TestimonialsSection.tsx",
+      "line": 23,
+      "literal": "item.name",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 77,
+      "file": "src/components/homepage/sections/TestimonialsSection.tsx",
+      "line": 24,
+      "literal": "item.place",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 16,
+      "file": "src/components/ui/pagination.tsx",
+      "group": "shared.pagination",
+      "line": 10,
+      "literal": "pagination",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.pagination.d1fa6c",
+      "usedIn": "pagination"
+    },
+    {
+      "column": 78,
+      "file": "src/components/ui/pagination.tsx",
+      "line": 25,
+      "literal": "ref",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 19,
+      "file": "src/components/ui/pagination.tsx",
+      "line": 34,
+      "literal": "isActive ? 'page' : undefined",
+      "reason": "dynamic-cms-expression"
+    },
+    {
+      "column": 16,
+      "file": "src/components/ui/pagination.tsx",
+      "group": "shared.pagination",
+      "line": 51,
+      "literal": "Go to previous page",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.pagination.d8fcdd",
+      "usedIn": "pagination"
+    },
+    {
+      "column": 11,
+      "file": "src/components/ui/pagination.tsx",
+      "group": "shared.pagination",
+      "line": 57,
+      "literal": "Previous",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.pagination.c66f3d",
+      "usedIn": "pagination"
+    },
+    {
+      "column": 16,
+      "file": "src/components/ui/pagination.tsx",
+      "group": "shared.pagination",
+      "line": 63,
+      "literal": "Go to next page",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.pagination.6b3290",
+      "usedIn": "pagination"
+    },
+    {
+      "column": 11,
+      "file": "src/components/ui/pagination.tsx",
+      "group": "shared.pagination",
+      "line": 68,
+      "literal": "Next",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.pagination.c1b0b9",
+      "usedIn": "pagination"
+    },
+    {
+      "column": 31,
+      "file": "src/components/ui/pagination.tsx",
+      "group": "shared.pagination",
+      "line": 80,
+      "literal": "More pages",
+      "reason": "literal",
+      "suggestedKey": "auto.shared.pagination.5f19e2",
+      "usedIn": "pagination"
+    }
+  ]
+}

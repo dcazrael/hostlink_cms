@@ -1,0 +1,40 @@
+services:
+  payload:
+    image: node:24-alpine
+    stdin_open: true
+    tty: true
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+      - pnpm_store:/pnpm/store
+    working_dir: /home/node/app/
+    command: >
+      sh -lc "
+        npm i -g pnpm@10.30.3 &&
+        pnpm config set store-dir /pnpm/store &&
+        pnpm install --frozen-lockfile --prefer-offline &&
+        pnpm dev
+      "
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+  postgres:
+    restart: always
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hostlink
+      POSTGRES_USER: hostlink
+      POSTGRES_PASSWORD: hostlink.jp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+volumes:
+  pgdata:
+  node_modules:
+  pnpm_store:
