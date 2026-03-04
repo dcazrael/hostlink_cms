@@ -499,6 +499,10 @@ export interface Page {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
+     */
+    imageURL?: string | null;
     description?: string | null;
   };
   publishedAt?: string | null;
@@ -542,6 +546,10 @@ export interface Post {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
+     */
+    imageURL?: string | null;
     description?: string | null;
   };
   publishedAt?: string | null;
@@ -812,6 +820,10 @@ export interface LandingPage {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
+     */
+    imageURL?: string | null;
     description?: string | null;
   };
   /**
@@ -1964,6 +1976,7 @@ export interface LandingPagesSelect<T extends boolean = true> {
     | {
         title?: T;
         image?: T;
+        imageURL?: T;
         description?: T;
       };
   generateSlug?: T;
@@ -2016,6 +2029,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         title?: T;
         image?: T;
+        imageURL?: T;
         description?: T;
       };
   publishedAt?: T;
@@ -2124,6 +2138,7 @@ export interface PostsSelect<T extends boolean = true> {
     | {
         title?: T;
         image?: T;
+        imageURL?: T;
         description?: T;
       };
   publishedAt?: T;

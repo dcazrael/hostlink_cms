@@ -23,6 +23,7 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { seoImageURLField } from '@/fields/seoImageURL'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -100,6 +101,7 @@ export const Pages: CollectionConfig<'pages'> = {
             MetaImageField({
               relationTo: 'media',
             }),
+            seoImageURLField,
 
             MetaDescriptionField({}),
             PreviewField({

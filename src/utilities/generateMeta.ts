@@ -5,8 +5,30 @@ import type { Config, LandingPage, Media, Page, Post } from '../payload-types'
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 
-const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
+const getAbsoluteMetaImageURL = (imageURL: unknown, serverURL: string): string | null => {
+  if (typeof imageURL !== 'string') return null
+
+  const trimmed = imageURL.trim()
+  if (!trimmed) return null
+
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+
+  if (trimmed.startsWith('/')) return `${serverURL}${trimmed}`
+
+  return null
+}
+
+const getImageURL = ({
+  image,
+  imageURL,
+}: {
+  image?: Media | Config['db']['defaultIDType'] | null
+  imageURL?: unknown
+}) => {
   const serverUrl = getServerSideURL()
+  const explicitImageURL = getAbsoluteMetaImageURL(imageURL, serverUrl)
+
+  if (explicitImageURL) return explicitImageURL
 
   let url = serverUrl + '/website-template-OG.webp'
 
@@ -24,7 +46,10 @@ export const generateMeta = async (args: {
 }): Promise<Metadata> => {
   const { doc } = args
 
-  const ogImage = getImageURL(doc?.meta?.image)
+  const ogImage = getImageURL({
+    image: doc?.meta?.image,
+    imageURL: doc?.meta?.imageURL,
+  })
 
   const title = doc?.meta?.title
     ? doc?.meta?.title + ' | Payload Website Template'

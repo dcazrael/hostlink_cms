@@ -11,6 +11,7 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { seoImageURLField } from '@/fields/seoImageURL'
 import { ensureLandingPageMetaDefaults } from './hooks/ensureLandingPageMetaDefaults'
 import { ensureLandingPageSlugUniqueAcrossPages } from './hooks/ensureLandingPageSlugUniqueAcrossPages'
 import { revalidateLandingPage, revalidateLandingPageDelete } from './hooks/revalidateLandingPage'
@@ -101,6 +102,7 @@ export const LandingPages: CollectionConfig<'landing-pages'> = {
         MetaImageField({
           relationTo: 'media',
         }),
+        seoImageURLField,
 
         MetaDescriptionField({}),
         PreviewField({
