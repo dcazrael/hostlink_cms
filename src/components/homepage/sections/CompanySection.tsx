@@ -14,13 +14,13 @@ export const CompanySection: React.FC<{
     // Section max width is design-owned in component (not CMS).
     <div className={SECTION_MAX_WIDTH_CLASS}>
       <article className="rounded-xl border border-border bg-background ">
-        <div className="grid grid-cols-[12em_1fr] rounded-2xl w-full">
+        <div className="grid grid-cols[0.5fr_1fr] md:grid-cols-[12em_1fr] rounded-2xl w-full text-sm md:text-base">
           {block.companyName ? (
             <>
-              <div className="rounded-tl-xl p-5 flex items-center">
+              <div className="rounded-tl-xl p-3.5 md:p-5 flex items-center">
                 {t('homepage.company.label.companyname', 'Company Name')}
               </div>
-              <div className="bg-card rounded-tr-xl text-muted-foreground p-5">
+              <div className="bg-card rounded-tr-xl text-muted-foreground p-3.5 md:p-5">
                 {block.companyName}
               </div>
               <hr className="col-span-2" />
@@ -28,39 +28,39 @@ export const CompanySection: React.FC<{
           ) : null}
           {block.ceo ? (
             <>
-              <div className="rounded-xl p-5 flex items-center">
+              <div className="rounded-xl p-3.5 md:p-5 flex items-center">
                 {t('homepage.company.label.ceo', 'CEO')}
               </div>
-              <div className="bg-card text-muted-foreground p-5">{block.ceo}</div>
+              <div className="bg-card text-muted-foreground p-3.5 md:p-5">{block.ceo}</div>
               <hr className="col-span-2" />
             </>
           ) : null}
           {block.address ? (
             <>
-              <div className="rounded-xl p-5 flex items-center">
+              <div className="rounded-xl p-3.5 md:p-5 flex items-center">
                 {t('homepage.company.label.address', 'Address')}
               </div>
-              <div className="bg-card text-muted-foreground p-5">{block.address}</div>
+              <div className="bg-card text-muted-foreground p-3.5 md:p-5">{block.address}</div>
               <hr className="col-span-2" />
             </>
           ) : null}
           {block.contact ? (
             <>
-              <div className="rounded-xl p-5 flex items-center">
+              <div className="rounded-xl p-3.5 md:p-5 flex items-center">
                 {t('homepage.company.label.contact', 'Contact')}
               </div>
-              <div className="bg-card text-muted-foreground p-5">{block.contact}</div>
+              <div className="bg-card text-muted-foreground p-3.5 md:p-5">{block.contact}</div>
               <hr className="col-span-2" />
             </>
           ) : null}
           {block.services ? (
             <>
-              <div className="rounded-bl-xl p-5 flex items-center">
+              <div className="rounded-bl-xl p-3.5 md:p-5 flex items-center">
                 {t('homepage.company.label.services', 'Services')}
               </div>
               {(block.services || []).length > 0 ? (
                 <>
-                  <div className="bg-card rounded-br-xl text-muted-foreground p-5">
+                  <div className="bg-card rounded-br-xl text-muted-foreground p-3.5 md:p-5">
                     {(block.services || []).map((service, index) => {
                       return <span key={service.id || index}>{service.text}</span>
                     })}

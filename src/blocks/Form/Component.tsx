@@ -266,7 +266,7 @@ export const FormBlock: React.FC<
           )}
           {!hasSubmitted && (
             <form className="relative" id={formID} onSubmit={handleSubmit(onSubmit)}>
-              <div aria-hidden className="absolute left-2500 top-auto h-px w-px overflow-hidden">
+              <div aria-hidden className="absolute -left-2500 top-auto h-px w-px overflow-hidden">
                 <label htmlFor={`${formID || 'form'}-website`}>Website</label>
                 <input
                   autoComplete="off"

@@ -56,82 +56,94 @@ const run = async () => {
   const adapter = payload.db as DrizzleLikeAdapter
   const autoAcceptWarnings = process.argv.includes('--yes')
 
-  if (!adapter?.requireDrizzleKit || !adapter?.drizzle || !adapter?.schema) {
-    throw new Error('Active DB adapter does not support Drizzle schema push.')
-  }
-
-  const { pushSchema } = adapter.requireDrizzleKit()
-  const extensionsFilter = adapter.extensions?.postgis ? ['postgis'] : undefined
-  const filterSchema = adapter.schemaName ? [adapter.schemaName] : undefined
-
-  logInfo(
-    adapter,
-    autoAcceptWarnings
-      ? '[apply-schema] Starting non-interactive schema push (--yes)...'
-      : '[apply-schema] Starting schema push (safe mode)...',
-  )
-
-  const { apply, hasDataLoss, warnings } = await pushSchema(
-    adapter.schema,
-    adapter.drizzle,
-    filterSchema,
-    adapter.tablesFilter,
-    extensionsFilter,
-  )
-
-  if (warnings.length > 0) {
-    const joinedWarnings = warnings.map((warning) => `- ${warning}`).join('\n')
-    logWarn(adapter, `[apply-schema] Drizzle warnings:\n${joinedWarnings}`)
-
-    if (!autoAcceptWarnings) {
-      throw new Error(
-        '[apply-schema] Warnings detected. Re-run with --yes to apply schema changes non-interactively.',
-      )
+  try {
+    if (!adapter?.requireDrizzleKit || !adapter?.drizzle || !adapter?.schema) {
+      throw new Error('Active DB adapter does not support Drizzle schema push.')
     }
 
-    if (hasDataLoss) {
-      logWarn(
-        adapter,
-        '[apply-schema] DATA LOSS WARNING detected. Applying anyway (non-interactive mode).',
-      )
-    }
-  }
+    const { pushSchema } = adapter.requireDrizzleKit()
+    const extensionsFilter = adapter.extensions?.postgis ? ['postgis'] : undefined
+    const filterSchema = adapter.schemaName ? [adapter.schemaName] : undefined
 
-  await apply()
+    logInfo(
+      adapter,
+      autoAcceptWarnings
+        ? '[apply-schema] Starting non-interactive schema push (--yes)...'
+        : '[apply-schema] Starting schema push (safe mode)...',
+    )
 
-  // Keep parity with pushDevSchema bookkeeping for batch=-1 marker.
-  const migrationsTable = adapter.schemaName
-    ? `"${adapter.schemaName}"."payload_migrations"`
-    : '"payload_migrations"'
+    const { apply, hasDataLoss, warnings } = await pushSchema(
+      adapter.schema,
+      adapter.drizzle,
+      filterSchema,
+      adapter.tablesFilter,
+      extensionsFilter,
+    )
 
-  if (adapter.execute && adapter.tables?.payload_migrations && typeof adapter.drizzle === 'object') {
-    const result = await adapter.execute({
-      drizzle: adapter.drizzle,
-      raw: `SELECT * FROM ${migrationsTable} WHERE batch = '-1'`,
-    })
+    if (warnings.length > 0) {
+      const joinedWarnings = warnings.map((warning) => `- ${warning}`).join('\n')
+      logWarn(adapter, `[apply-schema] Drizzle warnings:\n${joinedWarnings}`)
 
-    const hasDevPushMarker = Array.isArray(result.rows) && result.rows.length > 0
-
-    if (!hasDevPushMarker) {
-      const drizzle = adapter.drizzle as {
-        insert?: (table: unknown) => { values?: (value: Record<string, unknown>) => Promise<unknown> }
+      if (!autoAcceptWarnings) {
+        throw new Error(
+          '[apply-schema] Warnings detected. Re-run with --yes to apply schema changes non-interactively.',
+        )
       }
-      await drizzle.insert?.(adapter.tables.payload_migrations)?.values?.({
-        name: 'dev',
-        batch: -1,
-      })
-    } else {
-      await adapter.execute({
+
+      if (hasDataLoss) {
+        logWarn(
+          adapter,
+          '[apply-schema] DATA LOSS WARNING detected. Applying anyway (non-interactive mode).',
+        )
+      }
+    }
+
+    await apply()
+
+    // Keep parity with pushDevSchema bookkeeping for batch=-1 marker.
+    const migrationsTable = adapter.schemaName
+      ? `"${adapter.schemaName}"."payload_migrations"`
+      : '"payload_migrations"'
+
+    if (adapter.execute && adapter.tables?.payload_migrations && typeof adapter.drizzle === 'object') {
+      const result = await adapter.execute({
         drizzle: adapter.drizzle,
-        raw: `UPDATE ${migrationsTable} SET updated_at = CURRENT_TIMESTAMP WHERE batch = '-1'`,
+        raw: `SELECT * FROM ${migrationsTable} WHERE batch = '-1'`,
       })
+
+      const hasDevPushMarker = Array.isArray(result.rows) && result.rows.length > 0
+
+      if (!hasDevPushMarker) {
+        const drizzle = adapter.drizzle as {
+          insert?: (table: unknown) => { values?: (value: Record<string, unknown>) => Promise<unknown> }
+        }
+        await drizzle.insert?.(adapter.tables.payload_migrations)?.values?.({
+          name: 'dev',
+          batch: -1,
+        })
+      } else {
+        await adapter.execute({
+          drizzle: adapter.drizzle,
+          raw: `UPDATE ${migrationsTable} SET updated_at = CURRENT_TIMESTAMP WHERE batch = '-1'`,
+        })
+      }
+    }
+
+    logInfo(adapter, '[apply-schema] Schema push complete.')
+  } finally {
+    try {
+      await payload.destroy()
+    } catch (destroyError) {
+      console.warn('[apply-schema] Failed to close Payload cleanly:', destroyError)
     }
   }
-
-  logInfo(adapter, '[apply-schema] Schema push complete.')
 }
 
-run().catch((error) => {
-  console.error(error)
-  process.exit(1)
-})
+run()
+  .then(() => {
+    process.exit(0)
+  })
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })

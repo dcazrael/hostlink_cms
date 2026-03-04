@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
-import { LocalizedLink } from '@/components/LocalizedLink'
 import { CMSLink } from '@/components/Link'
+import { LocalizedLink } from '@/components/LocalizedLink'
 import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
 
@@ -53,7 +53,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
               <CMSLink {...data.loginCTA} appearance="outline" className="rounded-full px-6" />
             ) : null}
             {showConsultationCTA ? (
-              <CMSLink {...data.consultationCTA} appearance="default" className="rounded-full px-6" />
+              <CMSLink
+                {...data.consultationCTA}
+                appearance="default"
+                className="rounded-full px-6"
+              />
             ) : null}
           </div>
         ) : null}

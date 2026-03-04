@@ -67,13 +67,15 @@ export const ChatMock: React.FC<{ t: TranslateFn }> = ({ t }) => {
           className="rounded-full w-full border border-border bg-card px-3 py-2 text-sm text-foreground"
           placeholder={t('homepage.hero.chat.inputplaceholder')}
         />
-        <div className="flex items-center gap-3 absolute -right-16 -bottom-16 bg-card px-8 py-6 rounded-2xl border-border border shadow-lg text-foreground cursor-pointer">
+        <div className="flex items-center gap-3 absolute right-2 md:-right-4 2xl:-right-16 -bottom-16 bg-card px-4 py-3 md:px-6 md:py-4.5 xl:px-8 xl:py-6 rounded-2xl border-border border shadow-lg text-foreground cursor-pointer">
           <Moon className="size-6" />
           <div className="flex flex-col">
-            <div className="font-bold text-lg tracking-widest">
+            <div className="font-bold text-base md:text-lg tracking-widest">
               {t('homepage.hero.chat.overlay.headline')}
             </div>
-            <div className="text-muted-foreground">{t('homepage.hero.chat.overlay.text')}</div>
+            <div className="text-sm md:text-base text-muted-foreground">
+              {t('homepage.hero.chat.overlay.text')}
+            </div>
           </div>
         </div>
       </div>

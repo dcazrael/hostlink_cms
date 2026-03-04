@@ -21,7 +21,7 @@ export const Logo = (props: Props) => {
       loading={loading}
       fetchPriority={priority}
       decoding="async"
-      className={clsx('h-auto w-full max-w-75', className)}
+      className={clsx('h-auto w-full max-w-40 md:max-w-60', className)}
       src="/logo.svg"
     />
   )

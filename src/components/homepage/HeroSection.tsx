@@ -12,21 +12,23 @@ export const HeroSection: React.FC<{ block: HeroLayoutBlock; t: TranslateFn }> =
   return (
     <SectionShell
       background="subtle"
-      className="py-20 pb-32"
+      className="pt-8 md:pt-12 xl:pt-20 pb-20 md:pb-24 xl:pb-32"
       innerClassName="grid gap-12 md:grid-cols-1 lg:grid-cols-2 xl:items-stretch xl:grid-cols-[1.3fr_1fr] xl:gap-32"
     >
-      <div className="flex h-full flex-col justify-center gap-8">
+      <div className="flex h-full flex-col justify-center gap-4 xl:gap-8">
         <div>
           {block.tagline ? (
             <p className="mb-3 inline-flex rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs uppercase tracking-wide text-accent">
               {block.tagline}
             </p>
           ) : null}
-          <h1 className="text-4xl font-semibold md:text-5xl leading-18">{block.title}</h1>
+          <h1 className="text-3xl font-semibold md:text-4xl xl:text-5xl leading-10 md:leading-12 xl:leading-18">
+            {block.title}
+          </h1>
         </div>
-        <p className="mt-5 max-w-[60ch] text-lg text-muted-foreground">{block.sub}</p>
+        <p className="mt-2 xl:mt-5 max-w-[60ch] text-lg text-muted-foreground">{block.sub}</p>
 
-        <div className="mt-8 flex flex-wrap gap-4">
+        <div className="mt-4 xl:mt-8 flex flex-wrap gap-4">
           <HomepageLinkButton link={block.primaryCTA} />
           <HomepageLinkButton link={block.secondaryCTA} />
         </div>
