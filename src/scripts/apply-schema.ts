@@ -1,5 +1,4 @@
 import config from '@payload-config'
-import { pushDevSchema } from '@payloadcms/drizzle'
 import { getPayload } from 'payload'
 
 type DrizzleLikeAdapter = {
@@ -61,18 +60,16 @@ const run = async () => {
     throw new Error('Active DB adapter does not support Drizzle schema push.')
   }
 
-  if (!autoAcceptWarnings) {
-    logInfo(adapter, '[apply-schema] Starting interactive schema push...')
-    await pushDevSchema(adapter as never)
-    logInfo(adapter, '[apply-schema] Schema push complete.')
-    return
-  }
-
   const { pushSchema } = adapter.requireDrizzleKit()
   const extensionsFilter = adapter.extensions?.postgis ? ['postgis'] : undefined
   const filterSchema = adapter.schemaName ? [adapter.schemaName] : undefined
 
-  logInfo(adapter, '[apply-schema] Starting non-interactive schema push (--yes)...')
+  logInfo(
+    adapter,
+    autoAcceptWarnings
+      ? '[apply-schema] Starting non-interactive schema push (--yes)...'
+      : '[apply-schema] Starting schema push (safe mode)...',
+  )
 
   const { apply, hasDataLoss, warnings } = await pushSchema(
     adapter.schema,
@@ -86,8 +83,17 @@ const run = async () => {
     const joinedWarnings = warnings.map((warning) => `- ${warning}`).join('\n')
     logWarn(adapter, `[apply-schema] Drizzle warnings:\n${joinedWarnings}`)
 
+    if (!autoAcceptWarnings) {
+      throw new Error(
+        '[apply-schema] Warnings detected. Re-run with --yes to apply schema changes non-interactively.',
+      )
+    }
+
     if (hasDataLoss) {
-      logWarn(adapter, '[apply-schema] DATA LOSS WARNING detected. Applying anyway (non-interactive mode).')
+      logWarn(
+        adapter,
+        '[apply-schema] DATA LOSS WARNING detected. Applying anyway (non-interactive mode).',
+      )
     }
   }
 
