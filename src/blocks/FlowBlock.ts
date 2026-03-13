@@ -27,7 +27,7 @@ export const FlowBlock: Block = {
         },
         {
           name: 'title',
-          type: 'text',
+          type: 'textarea',
           required: true,
         },
         {

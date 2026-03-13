@@ -73,9 +73,6 @@ export const LandingPages: CollectionConfig<'landing-pages'> = {
       admin: {
         description: 'Drag and drop to reorder rendered section order.',
         initCollapsed: false,
-        components: {
-          RowLabel: '@/collections/LandingPages/SectionItemRowLabel#SectionItemRowLabel',
-        },
       },
       fields: [
         {
@@ -122,7 +119,7 @@ export const LandingPages: CollectionConfig<'landing-pages'> = {
   versions: {
     drafts: {
       autosave: {
-        interval: 100,
+        interval: 800,
       },
       schedulePublish: true,
     },

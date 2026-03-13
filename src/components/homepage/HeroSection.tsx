@@ -22,11 +22,13 @@ export const HeroSection: React.FC<{ block: HeroLayoutBlock; t: TranslateFn }> =
               {block.tagline}
             </p>
           ) : null}
-          <h1 className="text-3xl font-semibold md:text-4xl xl:text-5xl leading-10 md:leading-12 xl:leading-18">
+          <h1 className="whitespace-pre-line text-3xl font-semibold leading-10 md:leading-12 md:text-4xl xl:leading-18 xl:text-5xl">
             {block.title}
           </h1>
         </div>
-        <p className="mt-2 xl:mt-5 max-w-[60ch] text-lg text-muted-foreground">{block.sub}</p>
+        <p className="mt-2 max-w-[60ch] whitespace-pre-line text-lg text-muted-foreground xl:mt-5">
+          {block.sub}
+        </p>
 
         <div className="mt-4 xl:mt-8 flex flex-wrap gap-4">
           <HomepageLinkButton link={block.primaryCTA} />

@@ -30,7 +30,7 @@ export const ServicesBlock: Block = {
         },
         {
           name: 'title',
-          type: 'text',
+          type: 'textarea',
           required: true,
         },
         {

@@ -38,9 +38,11 @@ export const SectionWrapper: React.FC<{
         </span>
       </div> */}
 
-      <h2 className="text-2xl font-semibold md:text-4xl">{block.heading}</h2>
+      <h2 className="whitespace-pre-line text-2xl font-semibold md:text-4xl">{block.heading}</h2>
       {block.subheading ? (
-        <p className="mt-3 max-w-[70ch] text-muted-foreground">{block.subheading}</p>
+        <p className="mt-3 max-w-[70ch] whitespace-pre-line text-muted-foreground">
+          {block.subheading}
+        </p>
       ) : null}
 
       <div className="mt-8 w-full">

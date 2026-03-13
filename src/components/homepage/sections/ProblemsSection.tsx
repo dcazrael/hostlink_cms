@@ -24,9 +24,11 @@ export const ProblemsSection: React.FC<{ block: ProblemsBlock }> = ({ block }) =
             >
               <h3 className="inline-flex items-center gap-4 text-lg font-semibold">
                 {iconName ? <LucideIcon className="size-6 text-primary" name={iconName} /> : null}
-                {item.title}
+                <span className="whitespace-pre-line">{item.title}</span>
               </h3>
-              {item.sub ? <p className="mt-1 text-sm text-muted-foreground">{item.sub}</p> : null}
+              {item.sub ? (
+                <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{item.sub}</p>
+              ) : null}
               <p className="mt-2 text-muted-foreground">{item.description}</p>
             </article>
           )

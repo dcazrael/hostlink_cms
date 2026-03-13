@@ -22,9 +22,6 @@ export const PricingBlock: Block = {
       maxRows: 4,
       admin: {
         initCollapsed: true,
-        components: {
-          RowLabel: '@/blocks/Pricing/PlanRowLabel#PlanRowLabel',
-        },
       },
       labels: {
         singular: 'Plan',
@@ -42,7 +39,7 @@ export const PricingBlock: Block = {
                   fields: [
                     {
                       name: 'planName',
-                      type: 'text',
+                      type: 'textarea',
                       required: true,
                       admin: {
                         width: '70%',
@@ -63,7 +60,7 @@ export const PricingBlock: Block = {
                 },
                 {
                   name: 'planSub',
-                  type: 'text',
+                  type: 'textarea',
                 },
                 {
                   type: 'row',
@@ -107,9 +104,6 @@ export const PricingBlock: Block = {
                   maxRows: 12,
                   admin: {
                     initCollapsed: true,
-                    components: {
-                      RowLabel: '@/blocks/Pricing/IncludedItemRowLabel#IncludedItemRowLabel',
-                    },
                   },
                   labels: {
                     singular: 'Included item',

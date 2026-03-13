@@ -321,11 +321,11 @@
   }
 
   .pricing-card__title {
-    @apply break-keep line-clamp-2 text-xl text-(--pricing-surface-foreground) xl:text-3xl text-center;
+    @apply whitespace-pre-line break-keep text-center text-xl text-(--pricing-surface-foreground) xl:text-3xl;
   }
 
   .pricing-card__plan-sub {
-    @apply mt-auto text-sm text-(--pricing-soft-foreground) col-span-2 line-clamp-2 text-center;
+    @apply col-span-2 mt-auto whitespace-pre-line text-center text-sm text-(--pricing-soft-foreground);
   }
 
   /* reserve one line when no subtitle so all cards align */

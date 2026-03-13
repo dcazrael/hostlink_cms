@@ -1,9 +1,6 @@
 import { default as default_8f0035a419346eaf69c15cc333a1d099 } from '@/components/admin/frontend-copy/FrontendCopyWorkbench'
 import { FrontendCopyGroupNavigator as FrontendCopyGroupNavigator_27542506559c23e5bebf8dfc6b764ea8 } from '@/components/admin/frontend-copy/FrontendCopyGroupNavigator'
 import { CurrentPageAnchorSelect as CurrentPageAnchorSelect_a19d01866b33e9d80667429fa98876fd } from '@/fields/components/CurrentPageAnchorSelect'
-import { IncludedItemRowLabel as IncludedItemRowLabel_e54f0e57a77920ad5c9a23b5d1823f72 } from '@/blocks/Pricing/IncludedItemRowLabel'
-import { PlanRowLabel as PlanRowLabel_0a816c39f59c71cc2b4dd19088dd86e4 } from '@/blocks/Pricing/PlanRowLabel'
-import { SectionItemRowLabel as SectionItemRowLabel_48f2e4db9ef080e72b4e33dc4c999432 } from '@/collections/LandingPages/SectionItemRowLabel'
 import { OverviewComponent as OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
@@ -29,8 +26,6 @@ import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloa
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { HomepageAnchorSelect as HomepageAnchorSelect_fcdc7b09f0435494746ac9a51d2a12b6 } from '@/fields/components/HomepageAnchorSelect'
-import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
-import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -39,9 +34,6 @@ export const importMap = {
   "@/components/admin/frontend-copy/FrontendCopyWorkbench#default": default_8f0035a419346eaf69c15cc333a1d099,
   "@/components/admin/frontend-copy/FrontendCopyGroupNavigator#FrontendCopyGroupNavigator": FrontendCopyGroupNavigator_27542506559c23e5bebf8dfc6b764ea8,
   "@/fields/components/CurrentPageAnchorSelect#CurrentPageAnchorSelect": CurrentPageAnchorSelect_a19d01866b33e9d80667429fa98876fd,
-  "@/blocks/Pricing/IncludedItemRowLabel#IncludedItemRowLabel": IncludedItemRowLabel_e54f0e57a77920ad5c9a23b5d1823f72,
-  "@/blocks/Pricing/PlanRowLabel#PlanRowLabel": PlanRowLabel_0a816c39f59c71cc2b4dd19088dd86e4,
-  "@/collections/LandingPages/SectionItemRowLabel#SectionItemRowLabel": SectionItemRowLabel_48f2e4db9ef080e72b4e33dc4c999432,
   "@payloadcms/plugin-seo/client#OverviewComponent": OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaTitleComponent": MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
@@ -67,8 +59,6 @@ export const importMap = {
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/fields/components/HomepageAnchorSelect#HomepageAnchorSelect": HomepageAnchorSelect_fcdc7b09f0435494746ac9a51d2a12b6,
-  "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
-  "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1

@@ -147,7 +147,9 @@ export const PricingSection: React.FC<{ block: PricingBlock; t: TranslateFn }> =
                 <div className="pricing-card__header">
                   <div className="pricing-card__heading">
                     <h3 className="pricing-card__title">{plan.planName}</h3>
-                    {plan.planSub ? <p className="pricing-card__plan-sub">{plan.planSub}</p> : null}
+                    {plan.planSub ? (
+                      <p className="pricing-card__plan-sub">{plan.planSub}</p>
+                    ) : null}
                   </div>
                   {plan.recommended ? (
                     <span className="pricing-card__chip">

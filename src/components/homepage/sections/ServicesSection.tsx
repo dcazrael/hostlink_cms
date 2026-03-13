@@ -24,7 +24,7 @@ export const ServicesSection: React.FC<{ block: ServicesBlock }> = ({ block }) =
             >
               <h3 className="inline-flex items-center gap-4 text-lg font-semibold">
                 {iconName ? <LucideIcon className="size-6 text-primary" name={iconName} /> : null}
-                {item.title}
+                <span className="whitespace-pre-line">{item.title}</span>
               </h3>
               <p className="mt-2 text-muted-foreground">{item.description}</p>
             </article>

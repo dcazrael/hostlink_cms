@@ -30,12 +30,12 @@ export const ProblemsBlock: Block = {
         },
         {
           name: 'title',
-          type: 'text',
+          type: 'textarea',
           required: true,
         },
         {
           name: 'sub',
-          type: 'text',
+          type: 'textarea',
         },
         {
           name: 'description',

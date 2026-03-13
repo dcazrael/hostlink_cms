@@ -16,7 +16,7 @@ export const HeroBlock: Block = {
     },
     {
       name: 'title',
-      type: 'text',
+      type: 'textarea',
       required: true,
     },
     {

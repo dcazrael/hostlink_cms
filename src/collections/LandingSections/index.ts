@@ -50,7 +50,7 @@ export const LandingSections: CollectionConfig<'landing-sections'> = {
   versions: {
     drafts: {
       autosave: {
-        interval: 100,
+        interval: 800,
       },
       schedulePublish: true,
     },

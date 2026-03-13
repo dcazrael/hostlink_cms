@@ -15,12 +15,12 @@ export const SectionBlock: Block = {
   fields: [
     {
       name: 'heading',
-      type: 'text',
+      type: 'textarea',
       required: true,
     },
     {
       name: 'subheading',
-      type: 'text',
+      type: 'textarea',
     },
     {
       name: 'background',

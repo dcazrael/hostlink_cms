@@ -46,8 +46,12 @@ export const FlowSection: React.FC<{ block: FlowBlock }> = ({ block }) => {
                   ) : null}
                 </div>
                 <div className="pt-0.5">
-                  <h3 className="text-lg font-semibold text-foreground">{step.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
+                  <h3 className="whitespace-pre-line text-lg font-semibold text-foreground">
+                    {step.title}
+                  </h3>
+                  <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">
+                    {step.description}
+                  </p>
                 </div>
               </li>
             )
