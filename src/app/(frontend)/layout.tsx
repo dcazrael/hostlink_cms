@@ -10,10 +10,12 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { defaultTheme } from '@/providers/Theme/shared'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { Analytics } from '@vercel/analytics/next'
 import { draftMode } from 'next/headers'
 
-import './globals.css'
+import { Providers } from '@/providers'
 import { getServerSideURL } from '@/utilities/getURL'
+import './globals.css'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
@@ -34,16 +36,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="apple-mobile-web-app-title" content="HostLink" />
       </head>
       <body>
-        {isEnabled ? (
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
-        ) : null}
-        <Header />
-        <main id="main-content">{children}</main>
-        <Footer />
+        <Providers>
+          {isEnabled ? (
+            <AdminBar
+              adminBarProps={{
+                preview: isEnabled,
+              }}
+            />
+          ) : null}
+          <Header />
+          <main id="main-content">{children}</main>
+          <Footer />
+        </Providers>
+        <Analytics />
       </body>
     </html>
   )
