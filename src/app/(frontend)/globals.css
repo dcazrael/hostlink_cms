@@ -87,6 +87,12 @@
 }
 
 :root {
+  --lime: oklch(0.7492 0.1353 131.08);
+  --sora: oklch(0.7492 0.1353 257.62);
+  --rose: oklch(0.7492 0.1353 24);
+  --amber-shade: oklch(0.7492 0.1353 82);
+  --purple: oklch(0.7492 0.1353 306);
+
   /* --- Core surfaces + text (light theme) --- */
   --background: oklch(0.9612 0 0); /* offwhite */
   --foreground: oklch(0.2568 0.0195 207.12); /* dark_teal (general text) */
@@ -98,7 +104,7 @@
   --popover-foreground: oklch(0.2568 0.0195 207.12);
 
   /* --- Brand actions --- */
-  --primary: oklch(0.7492 0.1353 131.08); /* lime (PRIMARY CTA) */
+  --primary: var(--lime); /* lime (PRIMARY CTA) */
   --primary-foreground: oklch(0.9612 0 0); /* offwhite text on primary */
 
   /* secondary (you decided: dark blue) */
@@ -110,11 +116,11 @@
   --accent-foreground: oklch(0.2733 0.0242 253.69); /* blueish gray */
 
   /* --- Muted / subtext system --- */
-  --muted: oklch(0.6652 0.0249 128.88); /* light-grey */
-  --muted-foreground: oklch(0.4847 0.0183 127.1); /* muted-green-gray (FAQ answers, step desc) */
+  --muted: var(--muted); /* light-grey */
+  --muted-foreground: var(--muted-foreground); /* muted-green-gray (FAQ answers, step desc) */
 
   /* --- Status colors (keep consistent with your palette) --- */
-  --success: oklch(0.7492 0.1353 131.08); /* lime */
+  --success: var(--lime); /* lime */
   --warning: oklch(0.89 0.1 75); /* keep shadcn default for now */
   --error: oklch(0.75 0.15 25); /* keep shadcn default for now */
 
@@ -125,14 +131,14 @@
   /* --- Borders / inputs / focus --- */
   --border: oklch(0.9199 0.0013 106.42); /* grey (inputs/borders) */
   --input: oklch(0.9699 0.0013 106.42);
-  --ring: oklch(0.7633 0.0596 175.22); /* mint ring (calm focus) */
+  --ring: var(--accent); /* mint ring (calm focus) */
 
   /* --- Charts (map to your accents instead of random defaults) --- */
-  --chart-1: oklch(0.7492 0.1353 131.08); /* lime */
-  --chart-2: oklch(0.7633 0.0596 175.22); /* mint */
-  --chart-3: oklch(0.3421 0.0574 257.62); /* dark blue */
-  --chart-4: oklch(0.4847 0.0183 127.1); /* muted-green-gray */
-  --chart-5: oklch(0.2733 0.0242 253.69); /* blueish gray */
+  --chart-1: var(--lime); /* lime */
+  --chart-2: var(--accent); /* mint */
+  --chart-3: var(--secondary); /* dark blue */
+  --chart-4: var(--muted); /* muted-green-gray */
+  --chart-5: var(--heading); /* blueish gray */
 
   --radius: 0.625rem;
 
@@ -140,12 +146,11 @@
   --sidebar: oklch(0.9612 0 0); /* offwhite */
   --sidebar-foreground: oklch(0.2568 0.0195 207.12); /* dark_teal */
 
-  --sidebar-primary: oklch(0.7492 0.1353 131.08); /* lime */
-  --sidebar-primary-foreground: oklch(0.9612 0 0); /* offwhite */
+  --sidebar-primary: var(--lime); /* lime */
+  --sidebar-primary-foreground: var(--background); /* offwhite */
 
-  --sidebar-accent: oklch(0.7633 0.0596 175.22); /* mint */
-  --sidebar-accent-foreground: oklch(0.2733 0.0242 253.69);
-
+  --sidebar-accent: var(--accent); /* mint */
+  --sidebar-accent-foreground: var(--heading);
   --sidebar-border: oklch(0.9699 0.0013 106.42); /* grey */
   --sidebar-ring: oklch(0.7633 0.0596 175.22); /* mint */
 
@@ -195,6 +200,235 @@
   --warning: oklch(35% 0.08 70deg);
   --error: oklch(45% 0.1 25deg);
   --even-background: oklch(17% 0 0deg);
+}
+
+@layer components {
+  .pricing-section {
+    @apply mx-auto w-full max-w-7xl;
+  }
+
+  .pricing-section__grid {
+    @apply w-full items-stretch gap-6;
+  }
+
+  .pricing-section__grid--single {
+    @apply mx-auto max-w-lg;
+  }
+
+  .pricing-section__grid--multi {
+    @apply grid md:grid-cols-2 2xl:grid-cols-3;
+  }
+
+  .pricing-card {
+    --pricing-hue: 131.08;
+    --pricing-accent-l: 0.7492;
+    --pricing-accent-c: 0.1353;
+    --pricing-cta-foreground-l: 0.985;
+    --pricing-cta-foreground-c: 0;
+    --pricing-surface-l: 0.975;
+    --pricing-surface-c: 0.01;
+    --pricing-surface-foreground-l: 0.23;
+    --pricing-c: 0.03;
+    --pricing-border-l: 0.89;
+    --pricing-soft-l: 0.94;
+    --pricing-soft-foreground-l: 0.46;
+    --pricing-chip-bg-l: 0.87;
+    --pricing-chip-bg-c: 0.08;
+    --pricing-chip-foreground-l: 0.31;
+    --pricing-chip-foreground-c: 0.06;
+    --pricing-check-l: 0.7;
+    --pricing-check-c: 0.15;
+    --pricing-tooltip-bg-l: 0.99;
+    --pricing-tooltip-bg-c: 0.005;
+    --pricing-tooltip-foreground-l: 0.3;
+    --pricing-accent: oklch(var(--pricing-accent-l) var(--pricing-accent-c) var(--pricing-hue));
+    --pricing-accent-foreground: oklch(
+      var(--pricing-cta-foreground-l) var(--pricing-cta-foreground-c) var(--pricing-hue)
+    );
+    --pricing-surface: oklch(var(--pricing-surface-l) var(--pricing-surface-c) var(--pricing-hue));
+    --pricing-surface-foreground: oklch(
+      var(--pricing-surface-foreground-l) var(--pricing-c) var(--pricing-hue)
+    );
+    --pricing-border: oklch(var(--pricing-border-l) var(--pricing-c) var(--pricing-hue));
+    --pricing-soft: oklch(var(--pricing-soft-l) var(--pricing-c) var(--pricing-hue));
+    --pricing-soft-foreground: oklch(
+      var(--pricing-soft-foreground-l) var(--pricing-c) var(--pricing-hue)
+    );
+    --pricing-chip-bg: oklch(var(--pricing-chip-bg-l) var(--pricing-chip-bg-c) var(--pricing-hue));
+    --pricing-chip-foreground: oklch(
+      var(--pricing-chip-foreground-l) var(--pricing-chip-foreground-c) var(--pricing-hue)
+    );
+    --pricing-cta-bg: var(--pricing-accent);
+    --pricing-cta-foreground: var(--pricing-accent-foreground);
+    --pricing-check: oklch(var(--pricing-check-l) var(--pricing-check-c) var(--pricing-hue));
+    --pricing-tooltip-bg: oklch(
+      var(--pricing-tooltip-bg-l) var(--pricing-tooltip-bg-c) var(--pricing-hue)
+    );
+    --pricing-tooltip-foreground: oklch(
+      var(--pricing-tooltip-foreground-l) var(--pricing-c) var(--pricing-hue)
+    );
+    @apply flex h-full w-full flex-col overflow-hidden rounded-3xl bg-(--pricing-cta-bg) shadow-sm transition-colors duration-300;
+  }
+
+  .pricing-card:has(.pricing-card__cta:hover),
+  .pricing-card:has(.pricing-card__cta:focus-visible) {
+    @apply bg-(--pricing-cta-bg)/80 bg-linear-to-r from-0% to-100% from-(--pricing-cta-bg) to-(--pricing-accent) via-card;
+  }
+
+  .pricing-card--style1 {
+    --pricing-hue: 131.08;
+  }
+
+  .pricing-card--style2 {
+    --pricing-hue: 257.62;
+  }
+
+  .pricing-card--style3 {
+    --pricing-hue: 82;
+    --pricing-accent-c: 0.12;
+    --pricing-chip-bg-c: 0.06;
+    --pricing-cta-foreground-l: 0.19;
+    --pricing-cta-foreground-c: 0.03;
+    --pricing-surface-foreground-l: 0.25;
+    --pricing-c: 0.035;
+  }
+
+  .pricing-card--style4 {
+    --pricing-hue: 306;
+  }
+
+  .pricing-card--style5 {
+    --pricing-hue: 24;
+    --pricing-accent-c: 0.125;
+    --pricing-chip-bg-c: 0.075;
+    --pricing-check-c: 0.145;
+  }
+
+  .pricing-card--featured {
+    @apply border-dashed;
+  }
+
+  .pricing-card__surface {
+    @apply flex flex-1 flex-col rounded-3xl border p-6 md:p-10 border-(--pricing-border) bg-linear-to-tr from-50% to-100% from-card to-(--pricing-surface) drop-shadow-lg;
+  }
+
+  .pricing-card__header {
+    @apply grid grid-cols-[1fr_auto] items-start gap-x-3 gap-y-1 min-h-24;
+  }
+
+  .pricing-card__heading {
+    @apply min-w-0 flex flex-col justify-between h-full;
+  }
+
+  .pricing-card__title {
+    @apply break-keep line-clamp-2 text-xl text-(--pricing-surface-foreground) xl:text-3xl text-center;
+  }
+
+  .pricing-card__plan-sub {
+    @apply mt-auto text-sm text-(--pricing-soft-foreground) col-span-2 line-clamp-2 text-center;
+  }
+
+  /* reserve one line when no subtitle so all cards align */
+  .pricing-card__plan-sub:empty::before {
+    content: '\00a0';
+  }
+
+  .pricing-card__chip {
+    @apply inline-flex min-w-fit items-center md:gap-2 rounded-full md:border-2 border-(--pricing-chip-bg) bg-card py-0 pr-2 text-xs font-semibold tracking-wide text-(--pricing-chip-foreground) uppercase absolute top-2 right-2 gap-0.5 border;
+  }
+
+  .pricing-card__chip-icon-wrap {
+    @apply flex aspect-square md:size-7 size-5 items-center justify-center rounded-full bg-(--pricing-chip-bg) p-1;
+  }
+
+  .pricing-card__chip-icon {
+    @apply size-3 md:size-4 fill-card;
+  }
+
+  .pricing-card__divider {
+    @apply my-6 h-px w-full bg-(--pricing-border);
+  }
+
+  .pricing-card__includes-label {
+    @apply text-sm font-semibold uppercase tracking-wide text-(--pricing-soft-foreground);
+  }
+
+  .pricing-card__list {
+    @apply mt-4 space-y-3 text-(--pricing-soft-foreground);
+  }
+
+  .pricing-card__item {
+    @apply flex items-start justify-between gap-3 text-sm;
+  }
+
+  .pricing-card__item-main {
+    @apply flex items-start gap-2;
+  }
+
+  .pricing-card__check {
+    @apply mt-0.5 size-5 shrink-0 text-(--pricing-check) fill-(--pricing-check)/10 stroke-(--pricing-check);
+  }
+
+  .pricing-card__tooltip-wrap {
+    @apply relative;
+  }
+
+  .pricing-card__tooltip-trigger {
+    @apply inline-flex size-5 items-center justify-center rounded-full transition-opacity hover:opacity-80 text-(--pricing-soft-foreground);
+  }
+
+  .pricing-card__tooltip-icon {
+    @apply size-4;
+  }
+
+  .pricing-card__tooltip {
+    @apply pointer-events-none invisible absolute top-6 right-0 z-20 w-64 rounded-xl border p-3 text-left text-sm opacity-0 shadow-xl transition-all duration-200 bg-(--pricing-tooltip-bg) border-(--pricing-border) text-(--pricing-tooltip-foreground);
+  }
+
+  .pricing-card__tooltip-wrap:hover .pricing-card__tooltip,
+  .pricing-card__tooltip-wrap:focus-within .pricing-card__tooltip {
+    @apply visible opacity-100;
+  }
+
+  .pricing-card__price-wrap {
+    @apply mx-auto mt-auto pt-8 text-(--pricing-soft-foreground);
+  }
+
+  .pricing-card__price {
+    @apply text-4xl font-semibold text-(--pricing-accent);
+  }
+
+  .pricing-card__price-period {
+    @apply text-xl;
+  }
+
+  .pricing-card__price-disclaimer {
+    @apply mt-2 text-sm;
+  }
+
+  .pricing-card__cta {
+    @apply flex items-center justify-center gap-2 px-6 py-4 text-base font-semibold transition duration-300  pointer-events-auto text-(--pricing-cta-foreground) hover:text-foreground/80;
+  }
+
+  .pricing-card__cta-icon {
+    @apply size-4;
+  }
+
+  .pricing-card__cta--secondary {
+    @apply opacity-90;
+  }
+
+  .pricing-card__cta--secondary:hover {
+    @apply opacity-100;
+  }
+
+  .pricing-card__cta--outline {
+    @apply border-t-2 border-(--pricing-accent) bg-transparent text-(--pricing-accent);
+  }
+
+  .pricing-card__cta--ghost {
+    @apply bg-(--pricing-soft) text-(--pricing-soft-foreground);
+  }
 }
 
 @theme inline {
