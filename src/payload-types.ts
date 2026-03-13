@@ -318,33 +318,38 @@ export interface LandingSection {
                   blockType: 'flow';
                 }
               | {
-                  planName: string;
-                  planSub?: string | null;
-                  recommended?: boolean | null;
-                  price: number;
-                  priceDisclaimer?: string | null;
-                  contents: {
-                    text: string;
+                  plans: {
+                    planName: string;
+                    recommended?: boolean | null;
+                    planSub?: string | null;
+                    price: number;
+                    priceDisclaimer?: string | null;
+                    stylePreset?: ('style1' | 'style2' | 'style3' | 'style4' | 'style5') | null;
+                    contents: {
+                      text: string;
+                      tooltip?: string | null;
+                      id?: string | null;
+                    }[];
+                    cta?: {
+                      label?: string | null;
+                      variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+                      withIcon?: boolean | null;
+                      icon?: ('arrowRight' | 'mail' | 'phone') | null;
+                      type?: ('anchor' | 'internal' | 'external') | null;
+                      anchor?: string | null;
+                      page?:
+                        | ({
+                            relationTo: 'pages';
+                            value: number | Page;
+                          } | null)
+                        | ({
+                            relationTo: 'landing-pages';
+                            value: number | LandingPage;
+                          } | null);
+                      url?: string | null;
+                    };
                     id?: string | null;
                   }[];
-                  cta?: {
-                    label?: string | null;
-                    variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-                    withIcon?: boolean | null;
-                    icon?: ('arrowRight' | 'mail' | 'phone') | null;
-                    type?: ('anchor' | 'internal' | 'external') | null;
-                    anchor?: string | null;
-                    page?:
-                      | ({
-                          relationTo: 'pages';
-                          value: number | Page;
-                        } | null)
-                      | ({
-                          relationTo: 'landing-pages';
-                          value: number | LandingPage;
-                        } | null);
-                    url?: string | null;
-                  };
                   id?: string | null;
                   blockName?: string | null;
                   blockType: 'pricing';
@@ -916,33 +921,38 @@ export interface FlowComponentBlock {
  * via the `definition` "PricingComponentBlock".
  */
 export interface PricingComponentBlock {
-  planName: string;
-  planSub?: string | null;
-  recommended?: boolean | null;
-  price: number;
-  priceDisclaimer?: string | null;
-  contents: {
-    text: string;
+  plans: {
+    planName: string;
+    recommended?: boolean | null;
+    planSub?: string | null;
+    price: number;
+    priceDisclaimer?: string | null;
+    stylePreset?: ('style1' | 'style2' | 'style3' | 'style4' | 'style5') | null;
+    contents: {
+      text: string;
+      tooltip?: string | null;
+      id?: string | null;
+    }[];
+    cta?: {
+      label?: string | null;
+      variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+      withIcon?: boolean | null;
+      icon?: ('arrowRight' | 'mail' | 'phone') | null;
+      type?: ('anchor' | 'internal' | 'external') | null;
+      anchor?: string | null;
+      page?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'landing-pages';
+            value: number | LandingPage;
+          } | null);
+      url?: string | null;
+    };
     id?: string | null;
   }[];
-  cta?: {
-    label?: string | null;
-    variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-    withIcon?: boolean | null;
-    icon?: ('arrowRight' | 'mail' | 'phone') | null;
-    type?: ('anchor' | 'internal' | 'external') | null;
-    anchor?: string | null;
-    page?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'landing-pages';
-          value: number | LandingPage;
-        } | null);
-    url?: string | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'pricing';
@@ -1853,28 +1863,35 @@ export interface FlowComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "PricingComponentBlock_select".
  */
 export interface PricingComponentBlockSelect<T extends boolean = true> {
-  planName?: T;
-  planSub?: T;
-  recommended?: T;
-  price?: T;
-  priceDisclaimer?: T;
-  contents?:
+  plans?:
     | T
     | {
-        text?: T;
+        planName?: T;
+        recommended?: T;
+        planSub?: T;
+        price?: T;
+        priceDisclaimer?: T;
+        stylePreset?: T;
+        contents?:
+          | T
+          | {
+              text?: T;
+              tooltip?: T;
+              id?: T;
+            };
+        cta?:
+          | T
+          | {
+              label?: T;
+              variant?: T;
+              withIcon?: T;
+              icon?: T;
+              type?: T;
+              anchor?: T;
+              page?: T;
+              url?: T;
+            };
         id?: T;
-      };
-  cta?:
-    | T
-    | {
-        label?: T;
-        variant?: T;
-        withIcon?: T;
-        icon?: T;
-        type?: T;
-        anchor?: T;
-        page?: T;
-        url?: T;
       };
   id?: T;
   blockName?: T;

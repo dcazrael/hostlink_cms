@@ -89,7 +89,13 @@ export const ContactSection: React.FC<{ block: ContactBlock }> = ({ block }) => 
     <div
       className={`${SECTION_MAX_WIDTH_CLASS} space-y-6 rounded-2xl border border-border bg-card p-6 md:p-8`}
     >
-      {form ? <EmbeddedFormBlock enableIntro={false} form={form as unknown as PluginForm} /> : null}
+      {form ? (
+        <EmbeddedFormBlock
+          enableIntro={false}
+          form={form as unknown as PluginForm}
+          includePlanFromQueryParam
+        />
+      ) : null}
 
       {hasFooterContent ? (
         <div className="flex flex-col items-center space-y-4 border-t border-border pt-5">

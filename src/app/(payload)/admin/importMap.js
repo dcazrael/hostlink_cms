@@ -1,6 +1,8 @@
 import { default as default_8f0035a419346eaf69c15cc333a1d099 } from '@/components/admin/frontend-copy/FrontendCopyWorkbench'
 import { FrontendCopyGroupNavigator as FrontendCopyGroupNavigator_27542506559c23e5bebf8dfc6b764ea8 } from '@/components/admin/frontend-copy/FrontendCopyGroupNavigator'
 import { CurrentPageAnchorSelect as CurrentPageAnchorSelect_a19d01866b33e9d80667429fa98876fd } from '@/fields/components/CurrentPageAnchorSelect'
+import { IncludedItemRowLabel as IncludedItemRowLabel_e54f0e57a77920ad5c9a23b5d1823f72 } from '@/blocks/Pricing/IncludedItemRowLabel'
+import { PlanRowLabel as PlanRowLabel_0a816c39f59c71cc2b4dd19088dd86e4 } from '@/blocks/Pricing/PlanRowLabel'
 import { SectionItemRowLabel as SectionItemRowLabel_48f2e4db9ef080e72b4e33dc4c999432 } from '@/collections/LandingPages/SectionItemRowLabel'
 import { OverviewComponent as OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
@@ -37,6 +39,8 @@ export const importMap = {
   "@/components/admin/frontend-copy/FrontendCopyWorkbench#default": default_8f0035a419346eaf69c15cc333a1d099,
   "@/components/admin/frontend-copy/FrontendCopyGroupNavigator#FrontendCopyGroupNavigator": FrontendCopyGroupNavigator_27542506559c23e5bebf8dfc6b764ea8,
   "@/fields/components/CurrentPageAnchorSelect#CurrentPageAnchorSelect": CurrentPageAnchorSelect_a19d01866b33e9d80667429fa98876fd,
+  "@/blocks/Pricing/IncludedItemRowLabel#IncludedItemRowLabel": IncludedItemRowLabel_e54f0e57a77920ad5c9a23b5d1823f72,
+  "@/blocks/Pricing/PlanRowLabel#PlanRowLabel": PlanRowLabel_0a816c39f59c71cc2b4dd19088dd86e4,
   "@/collections/LandingPages/SectionItemRowLabel#SectionItemRowLabel": SectionItemRowLabel_48f2e4db9ef080e72b4e33dc4c999432,
   "@payloadcms/plugin-seo/client#OverviewComponent": OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaTitleComponent": MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860,

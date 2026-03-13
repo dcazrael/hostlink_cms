@@ -85,6 +85,38 @@ export const resolveHomepageLinkHref = (link?: HomepageLinkLike | null) => {
   return undefined
 }
 
+type HomepageHrefQueryValue = number | string | null | undefined
+
+const externalLinkPattern = /^(?:[a-z]+:)?\/\//i
+
+const isExternalLikeHref = (href: string): boolean =>
+  externalLinkPattern.test(href) || href.startsWith('mailto:') || href.startsWith('tel:')
+
+export const appendQueryParamsToHomepageHref = (
+  href: string,
+  queryParams: Record<string, HomepageHrefQueryValue>,
+): string => {
+  if (!href || isExternalLikeHref(href)) return href
+
+  const hashIndex = href.indexOf('#')
+  const hash = hashIndex >= 0 ? href.slice(hashIndex) : ''
+  const pathWithQuery = hashIndex >= 0 ? href.slice(0, hashIndex) : href
+
+  const [pathPart, queryPart = ''] = pathWithQuery.split('?', 2)
+  const normalizedPath = pathPart || '/'
+  const mergedQuery = new URLSearchParams(queryPart)
+
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (value === null || value === undefined) continue
+    const normalizedValue = String(value).trim()
+    if (!normalizedValue) continue
+    mergedQuery.set(key, normalizedValue)
+  }
+
+  const queryString = mergedQuery.toString()
+  return queryString ? `${normalizedPath}?${queryString}${hash}` : `${normalizedPath}${hash}`
+}
+
 export const decorateBlocks = (blocks: LayoutBlock[]): DecoratedBlock[] => {
   const decoratedBlocks: DecoratedBlock[] = []
 

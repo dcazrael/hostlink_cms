@@ -8,8 +8,7 @@ import React from 'react'
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
-import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
+import { defaultTheme } from '@/providers/Theme/shared'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
@@ -20,9 +19,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+    <html
+      className={cn(GeistSans.variable, GeistMono.variable)}
+      data-theme={defaultTheme}
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
-        <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/icon1.png" rel="icon" type="image/png" />
         <link href="/icon0.svg" rel="icon" type="image/svg+xml" />
@@ -31,18 +34,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="apple-mobile-web-app-title" content="HostLink" />
       </head>
       <body>
-        <Providers>
-          {isEnabled ? (
-            <AdminBar
-              adminBarProps={{
-                preview: isEnabled,
-              }}
-            />
-          ) : null}
-          <Header />
-          <main id="main-content">{children}</main>
-          <Footer />
-        </Providers>
+        {isEnabled ? (
+          <AdminBar
+            adminBarProps={{
+              preview: isEnabled,
+            }}
+          />
+        ) : null}
+        <Header />
+        <main id="main-content">{children}</main>
+        <Footer />
       </body>
     </html>
   )

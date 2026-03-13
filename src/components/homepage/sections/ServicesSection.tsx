@@ -18,7 +18,10 @@ export const ServicesSection: React.FC<{ block: ServicesBlock }> = ({ block }) =
           const iconName = resolveLucideName(item.icon)
 
           return (
-            <article className="rounded-xl border border-border bg-card p-5" key={item.id || index}>
+            <article
+              className="rounded-xl border border-border from-bg-card to-primary/10 bg-linear-to-br from-50% to-150% hover:from-0% hover:to-100% p-5 transition-colors duration-300"
+              key={item.id || index}
+            >
               <h3 className="inline-flex items-center gap-4 text-lg font-semibold">
                 {iconName ? <LucideIcon className="size-6 text-primary" name={iconName} /> : null}
                 {item.title}

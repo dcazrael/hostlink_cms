@@ -16,7 +16,6 @@ import { createTranslator } from '@/i18n/createTranslator'
 import { DEFAULT_LOCALE, type AppLocale } from '@/i18n/config'
 import { getActiveLocale } from '@/i18n/getActiveLocale'
 import { generateMeta } from '@/utilities/generateMeta'
-import PageClient from './page.client'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -103,7 +102,6 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   return (
     <article className="">
-      <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

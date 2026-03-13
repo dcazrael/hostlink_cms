@@ -18,7 +18,6 @@ export const SCANNER_INCLUDE_ROOTS = [
   'src/components/PayloadRedirects',
   'src/components/RichText',
   'src/Header/Component.tsx',
-  'src/Header/Component.client.tsx',
   'src/Header/Nav',
   'src/Footer/Component.tsx',
 ]

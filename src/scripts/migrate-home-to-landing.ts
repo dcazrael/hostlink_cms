@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { buildLandingSectionTitle } from '@/collections/LandingSections/hooks/buildLandingSectionTitle'
 import type { LandingSection } from '@/payload-types'
 import config from '@payload-config'

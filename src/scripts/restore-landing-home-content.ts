@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { buildLandingSectionTitle } from '@/collections/LandingSections/hooks/buildLandingSectionTitle'
 import { DEFAULT_LOCALE } from '@/i18n/config'
 import type { LandingPage, LandingSection, Page } from '@/payload-types'

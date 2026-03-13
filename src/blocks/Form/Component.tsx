@@ -3,11 +3,11 @@ import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-b
 
 import { TurnstileChallenge } from '@/components/form/TurnstileChallenge'
 import { resolveLucideName } from '@/components/homepage/utils'
-import { LucideIcon } from '@/components/LucideIcon'
+import { LucideIconClient } from '@/components/LucideIcon/client'
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
@@ -66,6 +66,7 @@ export type FormBlockType = {
   blockType?: 'formBlock'
   enableIntro: boolean
   form: FormType
+  includePlanFromQueryParam?: boolean
   introContent?: DefaultTypedEditorState
 }
 
@@ -78,6 +79,7 @@ export const FormBlock: React.FC<
     enableIntro,
     form: formFromProps,
     form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
+    includePlanFromQueryParam = false,
     introContent,
   } = props
   const submitButtonIcon = (formFromProps as FormType & { submitButtonIcon?: unknown })
@@ -103,6 +105,7 @@ export const FormBlock: React.FC<
   const startedAtRef = useRef<number>(Date.now())
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
   const router = useRouter()
+  const searchParams = useSearchParams()
   const isCaptchaError = Boolean(error?.message && /captcha/i.test(error.message))
 
   const handleTurnstileError = useCallback(() => {
@@ -136,6 +139,17 @@ export const FormBlock: React.FC<
           field: name,
           value,
         }))
+        const planValue =
+          includePlanFromQueryParam && searchParams
+            ? (searchParams.get('plan') || '').trim().slice(0, 120)
+            : ''
+
+        if (planValue) {
+          dataToSend.push({
+            field: 'plan',
+            value: planValue,
+          })
+        }
 
         dataToSend.push(
           {
@@ -247,11 +261,21 @@ export const FormBlock: React.FC<
 
       void submitForm()
     },
-    [router, formID, redirect, confirmationType, honeypotValue, isCaptchaVisible, turnstileToken],
+    [
+      router,
+      formID,
+      redirect,
+      confirmationType,
+      honeypotValue,
+      isCaptchaVisible,
+      turnstileToken,
+      includePlanFromQueryParam,
+      searchParams,
+    ],
   )
 
   return (
-    <div className="container lg:max-w-3xl">
+    <div className="container lg:max-w-3xl px-0! md:px-4!">
       {enableIntro && introContent && !hasSubmitted && (
         <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
       )}
@@ -339,7 +363,7 @@ export const FormBlock: React.FC<
                 className="w-full"
               >
                 {submitButtonIconName ? (
-                  <LucideIcon className="size-4" name={submitButtonIconName} />
+                  <LucideIconClient className="size-4" name={submitButtonIconName} />
                 ) : null}
                 {submitButtonLabel}
               </Button>

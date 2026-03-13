@@ -11,6 +11,7 @@
     "db:schema:apply:yes": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/apply-schema.ts --yes",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "perf:lighthouse:prod-home": "./scripts/lighthouse-production-home.sh",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "i18n:scan-hardcoded": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/scan-hardcoded-ui-copy.ts",
