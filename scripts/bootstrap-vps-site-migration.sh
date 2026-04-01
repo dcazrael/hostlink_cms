@@ -85,6 +85,7 @@ readonly DUMP_FILE_PATH="/tmp/hostlink-neon-$(date +%Y%m%d-%H%M%S).dump"
 readonly BOOTSTRAP_CADDYFILE_PATH="/etc/caddy/Caddyfile"
 readonly TLS_READY_CADDYFILE_PATH="/etc/caddy/Caddyfile.production"
 readonly RUN_AS_USER="${SUDO_USER:-root}"
+readonly CADDY_KEYRING_PATH="/usr/share/keyrings/caddy-stable-archive-keyring.gpg"
 
 section() {
   printf '\n[%s] %s\n' "$(date +%H:%M:%S)" "$1"
@@ -146,10 +147,10 @@ install_os_packages() {
   apt-get update
   apt-get install -y ca-certificates curl gnupg postgresql-client apt-transport-https debian-keyring debian-archive-keyring openssh-client
 
-  install -m 0755 -d /etc/apt/keyrings
+  install -m 0755 -d /usr/share/keyrings
 
-  if [[ ! -f /etc/apt/keyrings/caddy-stable-archive-keyring.gpg ]]; then
-    curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/gpg.key | gpg --dearmor -o /etc/apt/keyrings/caddy-stable-archive-keyring.gpg
+  if [[ ! -f "$CADDY_KEYRING_PATH" ]]; then
+    curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/gpg.key | gpg --dearmor -o "$CADDY_KEYRING_PATH"
   fi
 
   curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt -o /etc/apt/sources.list.d/caddy-stable.list
