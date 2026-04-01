@@ -8,7 +8,7 @@ Usage: ./scripts/deploy-vps.sh [--branch <branch>] [--env-file <path>] [--compos
 EOF
 }
 
-branch_name="prod"
+branch_name="main"
 env_file=".env.production"
 compose_file="docker-compose.vps.yml"
 skip_db_migrate="false"

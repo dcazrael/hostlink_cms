@@ -8,7 +8,7 @@ Usage: ./scripts/vps-db-migrate.sh [--branch <branch>] [--env-file <path>] [--co
 EOF
 }
 
-branch_name="prod"
+branch_name="main"
 env_file=".env.production"
 compose_file="docker-compose.vps.yml"
 skip_git_sync="false"

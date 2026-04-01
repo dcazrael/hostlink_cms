@@ -3,24 +3,24 @@ name: Deploy Website VPS
 on:
   push:
     branches:
-      - prod
+      - main
   workflow_dispatch:
     inputs:
       ref:
         description: Branch to deploy to production manually after any required migration step
         required: true
-        default: prod
+        default: main
 
 permissions:
   contents: read
 
 jobs:
-  deploy-prod:
-    if: github.event_name == 'push' && github.ref_name == 'prod'
+  deploy-production:
+    if: github.event_name == 'push' && github.ref_name == 'main'
     runs-on: ubuntu-latest
     environment: production
     concurrency:
-      group: deploy-website-prod
+      group: deploy-website-main
       cancel-in-progress: true
     steps:
       - name: Check out repository
@@ -72,14 +72,14 @@ jobs:
           set -euo pipefail
           SSH_PORT="${DEPLOY_SSH_PORT:-22}"
           ssh -p "$SSH_PORT" "$DEPLOY_SSH_USER@$DEPLOY_SSH_HOST" \
-            "cd '$DEPLOY_APP_DIR' && ./scripts/deploy-vps.sh --branch prod"
+            "cd '$DEPLOY_APP_DIR' && ./scripts/deploy-vps.sh --branch main"
 
-  deploy-prod-manual:
+  deploy-production-manual:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: production
     concurrency:
-      group: deploy-website-prod-manual
+      group: deploy-website-main-manual
       cancel-in-progress: false
     steps:
       - name: Configure SSH

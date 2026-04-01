@@ -17,28 +17,54 @@ Later, the same VPS can also host:
 
 - `docker-compose.vps.yml`: VPS runtime for website + postgres
 - `.env.vps.example`: production env template for the VPS
+- `scripts/bootstrap-vps-site-migration.sh`: one-time full VPS bootstrap and Neon -> local Postgres migration
 - `scripts/vps-db-migrate.sh`: non-interactive migration runner
 - `scripts/deploy-vps.sh`: production deploy helper
 - `.github/workflows/deploy.yml`: production GitHub Actions deploy workflow
 - `infra/caddy/Caddyfile.example`: Caddy config for `hostlink.jp`
 
+## One-Time Migration
+
+For the first move off Vercel and off Neon, use the one-shot bootstrap script on the VPS:
+
+```bash
+sudo bash ./scripts/bootstrap-vps-site-migration.sh
+```
+
+It will:
+
+- install Caddy and migration dependencies on Debian
+- clone the website repo to `/srv/hostlink/site`
+- generate `.env.production`
+- dump Neon and restore into local Docker Postgres
+- build and start the website container
+- install an HTTP-only Caddy config for pre-cutover validation
+- print the Cloudflare changes to make
+
+Because Cloudflare still points at Vercel during bootstrap, the script writes `/etc/caddy/Caddyfile.production` as the TLS-ready config. After DNS points to the VPS, activate it with:
+
+```bash
+sudo cp /etc/caddy/Caddyfile.production /etc/caddy/Caddyfile
+sudo systemctl reload caddy
+```
+
 ## Recommended VPS Layout
 
 - `/etc/caddy/Caddyfile`
-- `/srv/hostlink-site/prod`
+- `/srv/hostlink/site`
 
 The website should run on localhost only, behind Caddy.
 
 ## First-Time Setup
 
 1. Install Docker Engine, Docker Compose plugin, Git, and Caddy on the VPS.
-2. Clone this repo to `/srv/hostlink-site/prod`.
+2. Clone this repo to `/srv/hostlink/site`.
 3. Copy `.env.vps.example` to `.env.production`.
 4. Replace the placeholder secrets and database credentials.
 5. Set:
 
 ```env
-COMPOSE_PROJECT_NAME=hostlink-site-prod
+COMPOSE_PROJECT_NAME=hostlink-site
 APP_PORT=3300
 APP_HEALTHCHECK_PATH=/
 NEXT_PUBLIC_SERVER_URL=https://hostlink.jp
@@ -49,8 +75,8 @@ DATABASE_URL=postgres://hostlink:strong-password@postgres:5432/hostlink_site
 7. Run the first deploy:
 
 ```bash
-cd /srv/hostlink-site/prod
-./scripts/deploy-vps.sh --branch prod
+cd /srv/hostlink/site
+./scripts/deploy-vps.sh --branch main
 ```
 
 ## DNS
@@ -90,13 +116,13 @@ Create a GitHub `production` environment with:
 
 Use:
 
-- `DEPLOY_APP_DIR=/srv/hostlink-site/prod`
+- `DEPLOY_APP_DIR=/srv/hostlink/site`
 
-Pushes to `prod` auto-deploy only when no schema-sensitive files changed.
+Pushes to `main` auto-deploy only when no schema-sensitive files changed.
 Schema-sensitive production pushes fail intentionally and require:
 
 ```bash
-cd /srv/hostlink-site/prod
-./scripts/vps-db-migrate.sh --branch prod
-./scripts/deploy-vps.sh --branch prod
+cd /srv/hostlink/site
+./scripts/vps-db-migrate.sh --branch main
+./scripts/deploy-vps.sh --branch main
 ```
