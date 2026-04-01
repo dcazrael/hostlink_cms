@@ -1,4 +1,19 @@
 services:
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    image: ${COMPOSE_PROJECT_NAME:-hostlink-site}-migrator:latest
+    env_file:
+      - ${APP_ENV_FILE:-.env.production}
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: '1'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   website:
     build:
       context: .

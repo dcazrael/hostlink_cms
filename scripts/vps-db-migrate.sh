@@ -90,14 +90,14 @@ docker compose \
   --project-name "$project_name" \
   --env-file "$env_file" \
   -f "$compose_file" \
-  build website
+  build migrator
 
 for attempt in $(seq 1 10); do
   if docker compose \
     --project-name "$project_name" \
     --env-file "$env_file" \
     -f "$compose_file" \
-    run --rm website pnpm db:migrate; then
+    run --rm migrator pnpm db:migrate; then
     exit 0
   fi
 
