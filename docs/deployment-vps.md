@@ -68,7 +68,9 @@ COMPOSE_PROJECT_NAME=hostlink-site
 APP_PORT=3300
 APP_HEALTHCHECK_PATH=/
 NEXT_PUBLIC_SERVER_URL=https://hostlink.jp
+POSTGRES_EXPOSE_PORT=5432
 DATABASE_URL=postgres://hostlink:strong-password@postgres:5432/hostlink_site
+BUILD_DATABASE_URL=postgres://hostlink:strong-password@host.docker.internal:5432/hostlink_site
 ```
 
 6. Install the Caddy config from `infra/caddy/Caddyfile.example`.

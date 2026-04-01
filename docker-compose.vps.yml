@@ -3,6 +3,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        DATABASE_URL: ${BUILD_DATABASE_URL:?BUILD_DATABASE_URL is required for image build}
+      extra_hosts:
+        - host.docker.internal:host-gateway
     image: ${COMPOSE_PROJECT_NAME:-hostlink-site}-app:latest
     restart: unless-stopped
     env_file:
@@ -38,6 +42,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:${POSTGRES_EXPOSE_PORT:-5432}:5432
     healthcheck:
       test:
         [
