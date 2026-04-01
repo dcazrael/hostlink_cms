@@ -1,5 +1,5 @@
 'use client'
-import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-builder/types'
+import type { FormFieldBlock } from '@payloadcms/plugin-form-builder/types'
 
 import { TurnstileChallenge } from '@/components/form/TurnstileChallenge'
 import { resolveLucideName } from '@/components/homepage/utils'
@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
+import type { Form as FormType } from '@/payload-types'
 import { getClientSideURL } from '@/utilities/getURL'
 import { fields } from './fields'
 
@@ -85,9 +86,11 @@ export const FormBlock: React.FC<
   const submitButtonIcon = (formFromProps as FormType & { submitButtonIcon?: unknown })
     .submitButtonIcon
   const submitButtonIconName = resolveLucideName(submitButtonIcon)
+  const formHtmlId = typeof formID === 'number' || typeof formID === 'string' ? String(formID) : undefined
 
-  const formMethods = useForm({
-    defaultValues: formFromProps.fields,
+  const formMethods = useForm<Record<string, unknown>>({
+    defaultValues:
+      (formFromProps.fields ?? undefined) as unknown as Record<string, unknown> | undefined,
   })
   const {
     control,
@@ -120,7 +123,7 @@ export const FormBlock: React.FC<
   }, [])
 
   const onSubmit = useCallback(
-    (data: FormFieldBlock[]) => {
+    (data: Record<string, unknown>) => {
       let loadingTimerID: ReturnType<typeof setTimeout>
       const submitForm = async () => {
         setError(undefined)
@@ -134,8 +137,7 @@ export const FormBlock: React.FC<
           return
         }
 
-        const formValues = data as unknown as Record<string, unknown>
-        const dataToSend = Object.entries(formValues).map(([name, value]) => ({
+        const dataToSend = Object.entries(data).map(([name, value]) => ({
           field: name,
           value,
         }))
@@ -281,7 +283,7 @@ export const FormBlock: React.FC<
       )}
       <div className="">
         <FormProvider {...formMethods}>
-          {!isLoading && hasSubmitted && confirmationType === 'message' && (
+          {!isLoading && hasSubmitted && confirmationType === 'message' && confirmationMessage && (
             <RichText data={confirmationMessage} className="text-center" />
           )}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
@@ -289,13 +291,13 @@ export const FormBlock: React.FC<
             <div>{`${error.status || '500'}: ${error.message || ''}`}</div>
           )}
           {!hasSubmitted && (
-            <form className="relative" id={formID} onSubmit={handleSubmit(onSubmit)}>
+            <form className="relative" id={formHtmlId} onSubmit={handleSubmit(onSubmit)}>
               <div aria-hidden className="absolute -left-2500 top-auto h-px w-px overflow-hidden">
-                <label htmlFor={`${formID || 'form'}-website`}>Website</label>
+                <label htmlFor={`${formHtmlId || 'form'}-website`}>Website</label>
                 <input
                   autoComplete="off"
-                  id={`${formID || 'form'}-website`}
-                  name={`${formID || 'form'}-website`}
+                  id={`${formHtmlId || 'form'}-website`}
+                  name={`${formHtmlId || 'form'}-website`}
                   onChange={(event) => setHoneypotValue(event.target.value)}
                   tabIndex={-1}
                   type="text"
@@ -357,7 +359,7 @@ export const FormBlock: React.FC<
 
               <Button
                 disabled={isLoading || (isCaptchaVisible && (!turnstileSiteKey || !turnstileToken))}
-                form={formID}
+                form={formHtmlId}
                 type="submit"
                 variant="default"
                 className="w-full"

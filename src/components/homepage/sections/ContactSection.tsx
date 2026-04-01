@@ -1,4 +1,3 @@
-import type { Form as PluginForm } from '@payloadcms/plugin-form-builder/types'
 import React from 'react'
 
 import { FormBlock as EmbeddedFormBlock } from '@/blocks/Form/Component'
@@ -92,7 +91,7 @@ export const ContactSection: React.FC<{ block: ContactBlock }> = ({ block }) => 
       {form ? (
         <EmbeddedFormBlock
           enableIntro={false}
-          form={form as unknown as PluginForm}
+          form={form}
           includePlanFromQueryParam
         />
       ) : null}
