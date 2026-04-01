@@ -13,7 +13,7 @@ services:
       - ${APP_ENV_FILE:-.env.production}
     environment:
       NODE_ENV: production
-      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_TELEMETRY_DISABLED: '1'
       PORT: ${APP_PORT:?APP_PORT is required}
     ports:
       - 127.0.0.1:${APP_PORT:?APP_PORT is required}:${APP_PORT:?APP_PORT is required}
@@ -23,8 +23,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "wget -q -O /dev/null http://127.0.0.1:${APP_PORT}${APP_HEALTHCHECK_PATH:-/} || exit 1",
+          'CMD-SHELL',
+          'wget -q -O /dev/null http://127.0.0.1:${APP_PORT}${APP_HEALTHCHECK_PATH:-/} || exit 1',
         ]
       interval: 15s
       timeout: 5s
@@ -43,13 +43,9 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - 127.0.0.1:${POSTGRES_EXPOSE_PORT:-5432}:5432
+      - ${POSTGRES_EXPOSE_PORT:-5432}:5432
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\"",
-        ]
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
       interval: 10s
       timeout: 5s
       retries: 10
