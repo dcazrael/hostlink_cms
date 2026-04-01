@@ -1,0 +1,15 @@
+node_modules
+.pnpm-store
+.git
+.next
+coverage
+tmp
+temp
+.cache
+backups
+*.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

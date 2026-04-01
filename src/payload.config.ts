@@ -1,9 +1,11 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
+import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { defaultLexical } from '@/fields/defaultLexical'
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config'
 import { Categories } from './collections/Categories'
 import { FormRateLimits } from './collections/FormRateLimits'
 import { Icons } from './collections/Icons'
@@ -17,14 +19,13 @@ import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
-import { defaultLexical } from '@/fields/defaultLexical'
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config'
 import { getEmailAdapter } from './utilities/getEmailAdapter'
 import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 const emailAdapter = await getEmailAdapter()
+const databaseURL = process.env.DATABASE_URL || ''
 
 export default buildConfig({
   admin: {
@@ -67,7 +68,8 @@ export default buildConfig({
   editor: defaultLexical,
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString: databaseURL,
+      options: '-c search_path=public',
     },
   }),
   localization: {

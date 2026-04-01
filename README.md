@@ -242,6 +242,11 @@ To run Payload in production, you need to build and start the Admin panel. To do
 1. Finally run `pnpm start` or `npm run start` to run Node in production and serve Payload from the `.build` directory.
 1. When you're ready to go live, see Deployment below for more details.
 
+## VPS Deployment
+
+- VPS deployment guide: `docs/deployment-vps.md`
+- This repo now includes VPS-specific Docker Compose, deploy helpers, a migration runner, and a GitHub Actions production deploy workflow for `hostlink.jp`.
+
 ### Deploying to Vercel
 
 This template can also be deployed to Vercel for free. You can get started by choosing the Vercel DB adapter during the setup of the template or by manually installing and configuring it:

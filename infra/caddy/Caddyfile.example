@@ -1,0 +1,16 @@
+hostlink.jp {
+  reverse_proxy 127.0.0.1:3300
+}
+
+www.hostlink.jp {
+  redir https://hostlink.jp{uri} permanent
+}
+
+# Later, when ops is ready on the same VPS:
+# ops.hostlink.jp {
+#   reverse_proxy 127.0.0.1:3200
+# }
+#
+# staging.ops.hostlink.jp {
+#   reverse_proxy 127.0.0.1:3100
+# }
