@@ -218,221 +218,66 @@ export interface LandingSection {
   /**
    * Localized field. If EN appears empty, switch admin locale to JA or enable fallback.
    */
-  content: (
-    | {
-        tagline?: string | null;
-        title: string;
-        sub: string;
-        highlights?:
-          | {
-              text: string;
-              id?: string | null;
-            }[]
-          | null;
-        primaryCTA: {
-          label: string;
-          variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-          withIcon?: boolean | null;
-          icon?: ('arrowRight' | 'mail' | 'phone') | null;
-          type: 'anchor' | 'internal' | 'external';
-          anchor?: string | null;
-          page?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'landing-pages';
-                value: number | LandingPage;
-              } | null);
-          url?: string | null;
-        };
-        secondaryCTA?: {
-          label?: string | null;
-          variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-          withIcon?: boolean | null;
-          icon?: ('arrowRight' | 'mail' | 'phone') | null;
-          type?: ('anchor' | 'internal' | 'external') | null;
-          anchor?: string | null;
-          page?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'landing-pages';
-                value: number | LandingPage;
-              } | null);
-          url?: string | null;
-        };
-        rightVisual?: ('chat' | 'image') | null;
-        image?: (number | null) | Media;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'hero';
-      }
-    | {
-        heading: string;
-        subheading?: string | null;
-        background?: ('default' | 'subtle') | null;
-        disclaimer?: {
-          icon?: (number | null) | Icon;
-          text?: string | null;
-        };
-        showInProgress?: boolean | null;
-        progressLabel?: string | null;
-        component?:
-          | (
-              | {
-                  items: {
-                    icon?: (number | null) | Icon;
-                    title: string;
-                    sub?: string | null;
-                    description: string;
-                    id?: string | null;
-                  }[];
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'problems';
-                }
-              | {
-                  items: {
-                    icon?: (number | null) | Icon;
-                    title: string;
-                    description: string;
-                    id?: string | null;
-                  }[];
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'services';
-                }
-              | {
-                  steps: {
-                    step: number;
-                    title: string;
-                    description: string;
-                    id?: string | null;
-                  }[];
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'flow';
-                }
-              | {
-                  plans: {
-                    planName: string;
-                    recommended?: boolean | null;
-                    planSub?: string | null;
-                    price: number;
-                    priceDisclaimer?: string | null;
-                    stylePreset?: ('style1' | 'style2' | 'style3' | 'style4' | 'style5') | null;
-                    contents: {
-                      text: string;
-                      tooltip?: string | null;
-                      id?: string | null;
-                    }[];
-                    cta?: {
-                      label?: string | null;
-                      variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-                      withIcon?: boolean | null;
-                      icon?: ('arrowRight' | 'mail' | 'phone') | null;
-                      type?: ('anchor' | 'internal' | 'external') | null;
-                      anchor?: string | null;
-                      page?:
-                        | ({
-                            relationTo: 'pages';
-                            value: number | Page;
-                          } | null)
-                        | ({
-                            relationTo: 'landing-pages';
-                            value: number | LandingPage;
-                          } | null);
-                      url?: string | null;
-                    };
-                    id?: string | null;
-                  }[];
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'pricing';
-                }
-              | {
-                  items: {
-                    question: string;
-                    answer: string;
-                    id?: string | null;
-                  }[];
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'faq';
-                }
-              | {
-                  items: {
-                    description: string;
-                    name: string;
-                    place?: string | null;
-                    image?: (number | null) | Media;
-                    id?: string | null;
-                  }[];
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'testimonials';
-                }
-              | {
-                  companyName?: string | null;
-                  ceo?: string | null;
-                  address?: string | null;
-                  contact?: string | null;
-                  services?:
-                    | {
-                        text: string;
-                        id?: string | null;
-                      }[]
-                    | null;
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'company';
-                }
-              | {
-                  form: number | Form;
-                  footerItems?:
-                    | {
-                        kind?: ('text' | 'link' | 'button') | null;
-                        icon?: (number | null) | Icon;
-                        text?: string | null;
-                        link?: {
-                          label?: string | null;
-                          variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-                          withIcon?: boolean | null;
-                          icon?: ('arrowRight' | 'mail' | 'phone') | null;
-                          type?: ('anchor' | 'internal' | 'external') | null;
-                          anchor?: string | null;
-                          page?:
-                            | ({
-                                relationTo: 'pages';
-                                value: number | Page;
-                              } | null)
-                            | ({
-                                relationTo: 'landing-pages';
-                                value: number | LandingPage;
-                              } | null);
-                          url?: string | null;
-                        };
-                        id?: string | null;
-                      }[]
-                    | null;
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'contact';
-                }
-            )[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'section';
-      }
-  )[];
+  content: (HomepageHeroBlock | HomepageSectionBlock)[];
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HomepageHeroBlock".
+ */
+export interface HomepageHeroBlock {
+  tagline?: string | null;
+  title: string;
+  sub: string;
+  highlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  primaryCTA: {
+    label: string;
+    variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+    withIcon?: boolean | null;
+    icon?: ('arrowRight' | 'mail' | 'phone') | null;
+    type: 'anchor' | 'internal' | 'external';
+    anchor?: string | null;
+    page?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'landing-pages';
+          value: number | LandingPage;
+        } | null);
+    url?: string | null;
+  };
+  secondaryCTA?: {
+    label?: string | null;
+    variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+    withIcon?: boolean | null;
+    icon?: ('arrowRight' | 'mail' | 'phone') | null;
+    type?: ('anchor' | 'internal' | 'external') | null;
+    anchor?: string | null;
+    page?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'landing-pages';
+          value: number | LandingPage;
+        } | null);
+    url?: string | null;
+  };
+  rightVisual?: ('chat' | 'image') | null;
+  image?: (number | null) | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -489,12 +334,7 @@ export interface Page {
     | HomepageSectionBlock
     | CallToActionBlock
     | ContentBlock
-    | {
-        media: number | Media;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'mediaBlock';
-      }
+    | MediaBlock
     | ArchiveBlock
     | FormBlock
   )[];
@@ -745,103 +585,6 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "HomepageHeroBlock".
- */
-export interface HomepageHeroBlock {
-  tagline?: string | null;
-  title: string;
-  sub: string;
-  highlights?:
-    | {
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  primaryCTA: {
-    label: string;
-    variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-    withIcon?: boolean | null;
-    icon?: ('arrowRight' | 'mail' | 'phone') | null;
-    type: 'anchor' | 'internal' | 'external';
-    anchor?: string | null;
-    page?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'landing-pages';
-          value: number | LandingPage;
-        } | null);
-    url?: string | null;
-  };
-  secondaryCTA?: {
-    label?: string | null;
-    variant?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
-    withIcon?: boolean | null;
-    icon?: ('arrowRight' | 'mail' | 'phone') | null;
-    type?: ('anchor' | 'internal' | 'external') | null;
-    anchor?: string | null;
-    page?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'landing-pages';
-          value: number | LandingPage;
-        } | null);
-    url?: string | null;
-  };
-  rightVisual?: ('chat' | 'image') | null;
-  image?: (number | null) | Media;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'hero';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "landing-pages".
- */
-export interface LandingPage {
-  id: number;
-  title: string;
-  /**
-   * Legacy section relationship field. Replaced by Section Items.
-   */
-  sections?: (number | LandingSection)[] | null;
-  /**
-   * Drag and drop to reorder rendered section order.
-   */
-  sectionItems?:
-    | {
-        section: number | LandingSection;
-        id?: string | null;
-      }[]
-    | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    /**
-     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
-     */
-    imageURL?: string | null;
-    description?: string | null;
-  };
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HomepageSectionBlock".
  */
 export interface HomepageSectionBlock {
@@ -956,6 +699,47 @@ export interface PricingComponentBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'pricing';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "landing-pages".
+ */
+export interface LandingPage {
+  id: number;
+  title: string;
+  /**
+   * Legacy section relationship field. Replaced by Section Items.
+   */
+  sections?: (number | LandingSection)[] | null;
+  /**
+   * Drag and drop to reorder rendered section order.
+   */
+  sectionItems?:
+    | {
+        section: number | LandingSection;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    /**
+     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
+     */
+    imageURL?: string | null;
+    description?: string | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1318,6 +1102,16 @@ export interface ContentBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock".
+ */
+export interface MediaBlock {
+  media: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2807,16 +2601,6 @@ export interface TaskSchedulePublish {
     user?: (number | null) | User;
   };
   output?: unknown;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock".
- */
-export interface MediaBlock {
-  media: number | Media;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'mediaBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
