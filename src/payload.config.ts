@@ -69,7 +69,6 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: databaseURL,
-      options: '-c search_path=public',
     },
   }),
   localization: {
