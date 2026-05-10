@@ -61,9 +61,11 @@ export const CompanySection: React.FC<{
               {(block.services || []).length > 0 ? (
                 <>
                   <div className="bg-card rounded-br-xl text-muted-foreground p-3.5 md:p-5">
-                    {(block.services || []).map((service, index) => {
-                      return <span key={service.id || index}>{service.text}</span>
-                    })}
+                    <div className="flex flex-col gap-2">
+                      {(block.services || []).map((service, index) => {
+                        return <span key={service.id || index}>{service.text}</span>
+                      })}
+                    </div>
                   </div>
                 </>
               ) : null}

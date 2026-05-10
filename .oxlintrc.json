@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "react", "import", "nextjs", "vitest"],
+  "ignorePatterns": [
+    ".next/**",
+    "backups/**",
+    "build/**",
+    "coverage/**",
+    "dist/**",
+    "docs/**",
+    "node_modules/**",
+    "public/**",
+    "src/app/(payload)/**",
+    "src/payload-types.ts"
+  ]
+}

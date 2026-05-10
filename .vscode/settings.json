@@ -1,37 +1,12 @@
 {
   "npm.packageManager": "pnpm",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    }
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    }
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    }
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": false, // disable default behavior
+  "editor.codeActionsOnSave": {
+    "source.format.oxc": "always", // run formatter first
+    "source.fixAll.oxc": "always" // run lint fixes after
   },
   "editor.formatOnSaveMode": "file",
-  "typescript.tsdk": "node_modules/typescript/lib",
   "files.exclude": {
     "**/.pnpm-store": true
   },
@@ -41,9 +16,16 @@
   "files.watcherExclude": {
     "**/.pnpm-store/**": true
   },
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
   "[javascript][typescript][typescriptreact]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     }
-  }
+  },
+  "js/ts.updateImportsOnFileMove.enabled": "never",
+  "python.analysis.autoImportCompletions": false,
+  "python.analysis.autoSearchPaths": false,
+  "python.analysis.fixAll": [],
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "javascript.updateImportsOnFileMove.enabled": "never"
 }

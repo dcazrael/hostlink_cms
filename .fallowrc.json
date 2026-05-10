@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "ignorePatterns": [
+    "src/app/(payload)/**",
+    "src/components/BeforeDashboard/**",
+    "src/components/BeforeLogin/**",
+    "src/components/admin/**",
+    "src/fields/components/**",
+    "src/**/*RowLabel.tsx"
+  ]
+}
