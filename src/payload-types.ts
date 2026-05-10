@@ -337,6 +337,14 @@ export interface Page {
     | MediaBlock
     | ArchiveBlock
     | FormBlock
+    | ProblemsComponentBlock
+    | ServicesComponentBlock
+    | FlowComponentBlock
+    | PricingComponentBlock
+    | FaqComponentBlock
+    | TestimonialsComponentBlock
+    | CompanyComponentBlock
+    | ContactComponentBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1834,6 +1842,14 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        problems?: T | ProblemsComponentBlockSelect<T>;
+        services?: T | ServicesComponentBlockSelect<T>;
+        flow?: T | FlowComponentBlockSelect<T>;
+        pricing?: T | PricingComponentBlockSelect<T>;
+        faq?: T | FaqComponentBlockSelect<T>;
+        testimonials?: T | TestimonialsComponentBlockSelect<T>;
+        company?: T | CompanyComponentBlockSelect<T>;
+        contact?: T | ContactComponentBlockSelect<T>;
       };
   meta?:
     | T

@@ -9,6 +9,14 @@ import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { HeroBlock } from '@/blocks/HeroBlock'
 import { SectionBlock } from '@/blocks/SectionBlock'
+import { ProblemsBlock } from '@/blocks/ProblemsBlock'
+import { ServicesBlock } from '@/blocks/ServicesBlock'
+import { FlowBlock } from '@/blocks/FlowBlock'
+import { PricingBlock } from '@/blocks/PricingBlock'
+import { FaqBlock } from '@/blocks/FaqBlock'
+import { TestimonialsBlock } from '@/blocks/TestimonialsBlock'
+import { CompanyBlock } from '@/blocks/CompanyBlock'
+import { ContactBlock } from '@/blocks/ContactBlock'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -77,7 +85,23 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [HeroBlock, SectionBlock, CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [
+                HeroBlock,
+                SectionBlock,
+                CallToAction,
+                Content,
+                MediaBlock,
+                Archive,
+                FormBlock,
+                ProblemsBlock,
+                ServicesBlock,
+                FlowBlock,
+                PricingBlock,
+                FaqBlock,
+                TestimonialsBlock,
+                CompanyBlock,
+                ContactBlock,
+              ],
               required: true,
               admin: {
                 initCollapsed: true,
