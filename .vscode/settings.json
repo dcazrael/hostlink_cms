@@ -25,7 +25,5 @@
   "js/ts.updateImportsOnFileMove.enabled": "never",
   "python.analysis.autoImportCompletions": false,
   "python.analysis.autoSearchPaths": false,
-  "python.analysis.fixAll": [],
-  "typescript.updateImportsOnFileMove.enabled": "never",
-  "javascript.updateImportsOnFileMove.enabled": "never"
+  "python.analysis.fixAll": []
 }
