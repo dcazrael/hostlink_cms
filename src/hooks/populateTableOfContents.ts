@@ -1,8 +1,5 @@
-import type {
-  CollectionBeforeChangeHook,
-  CollectionBeforeValidateHook,
-  ValidationError as PayloadValidationError,
-} from 'payload'
+import type { CollectionBeforeChangeHook, CollectionBeforeValidateHook } from 'payload'
+import { ValidationError } from 'payload'
 import type { Page as PageType } from '../payload-types'
 
 type ContentColumn = {
@@ -160,14 +157,5 @@ export const enforceTocTitle: CollectionBeforeValidateHook = ({ data, req }) => 
 
   if (errors.length === 0) return data
 
-  const ValidationErrorCtor = (
-    req.payload as unknown as {
-      errors?: { APIError?: new (data: unknown) => unknown }
-    }
-  ).errors?.APIError
-  const err = ValidationErrorCtor
-    ? new ValidationErrorCtor({ collection: 'pages', errors, req })
-    : Object.assign(new Error('Validation failed'), { data: { collection: 'pages', errors } })
-
-  throw err as PayloadValidationError
+  throw new ValidationError({ collection: 'pages', errors, req })
 }
