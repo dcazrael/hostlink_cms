@@ -23,3 +23,6 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Storybook static build output
+/storybook-static/
