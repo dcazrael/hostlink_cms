@@ -115,14 +115,12 @@ export default async function Page({ params: paramsPromise }: Args) {
       ) : page ? (
         <>
           <RenderHero {...page.hero} title={page.title} />
-          {page.showTableOfContents &&
-          page.tableOfContentsHeadings &&
-          page.tableOfContentsHeadings.length > 0 ? (
+          {page.showTableOfContents ? (
             <div className="container lg:grid lg:grid-cols-[4fr_2fr] lg:gap-20">
               <div className="lg:col-start-1">
                 <RenderBlocks blocks={page.layout} />
               </div>
-              <TableOfContents headings={page.tableOfContentsHeadings} />
+              <TableOfContents headings={page.tableOfContentsHeadings ?? []} />
             </div>
           ) : (
             <RenderBlocks blocks={page.layout} />
