@@ -21,6 +21,7 @@ import { ContactBlock } from '@/blocks/ContactBlock'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
+import { populateTableOfContents } from '../../hooks/populateTableOfContents'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { seoFields } from '@/fields/seoFields'
 import { ensurePageSlugUniqueAcrossLandingPages } from './hooks/ensurePageSlugUniqueAcrossLandingPages'
@@ -146,7 +147,7 @@ export const Pages: CollectionConfig<'pages'> = {
   hooks: {
     beforeValidate: [ensurePageSlugUniqueAcrossLandingPages],
     afterChange: [revalidatePage],
-    beforeChange: [populatePublishedAt],
+    beforeChange: [populatePublishedAt, populateTableOfContents],
     afterDelete: [revalidateDelete],
   },
   versions: {
