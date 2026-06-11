@@ -1111,7 +1111,7 @@ export interface ContentBlock {
   columns?:
     | {
         /**
-         * Title shown in Table of Contents
+         * Title shown in the page Table of Contents. Required when the page has Show Table of Contents enabled.
          */
         tocTitle?: string | null;
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
