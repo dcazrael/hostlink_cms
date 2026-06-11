@@ -92,17 +92,17 @@ docker compose \
   -f "$compose_file" \
   build migrator
 
-for attempt in $(seq 1 10); do
-  if docker compose \
-    --project-name "$project_name" \
-    --env-file "$env_file" \
-    -f "$compose_file" \
-    run --rm migrator pnpm db:migrate; then
-    exit 0
-  fi
+  for attempt in $(seq 1 10); do
+    if docker compose \
+      --project-name "$project_name" \
+      --env-file "$env_file" \
+      -f "$compose_file" \
+      run --rm migrator pnpm tsx src/scripts/apply-schema.ts --yes; then
+      exit 0
+    fi
 
-  sleep 3
-done
+    sleep 3
+  done
 
-echo "Database migration run failed after multiple attempts." >&2
-exit 1
+  echo "Database schema push failed after multiple attempts." >&2
+  exit 1
