@@ -86,6 +86,9 @@ if [[ "$skip_db_migrate" != "true" ]]; then
     --skip-git-sync
 fi
 
+website_image="${project_name}-app:latest"
+docker image rm -f "$website_image" 2>/dev/null || true
+
 docker compose \
   --project-name "$project_name" \
   --env-file "$env_file" \

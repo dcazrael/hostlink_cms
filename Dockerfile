@@ -2,6 +2,8 @@
 # From https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
 FROM node:24-alpine AS base
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable pnpm && corepack prepare pnpm@10.30.3 --activate
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -14,9 +16,16 @@ COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm i --frozen-lockfile; \
   else echo "Lockfile not found." && exit 1; \
   fi
+
+
+FROM base AS migrator
+WORKDIR /app
+ENV NODE_ENV production
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
 
 # Rebuild the source code only when needed
@@ -35,16 +44,9 @@ COPY . .
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
-
-FROM base AS migrator
-WORKDIR /app
-ENV NODE_ENV production
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN corepack enable pnpm
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -70,6 +72,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
+
+RUN mkdir -p /app/public/media && chown -R nextjs:nodejs /app/public
 
 EXPOSE 3000
 

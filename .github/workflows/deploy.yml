@@ -43,9 +43,9 @@ jobs:
 
           printf 'Changed files:\n%s\n' "$changed_files"
 
-          if printf '%s\n' "$changed_files" | grep -E '^(src/collections/|src/globals/|src/Footer/|src/Header/|src/payload\.config\.ts$|src/migrations/)' >/dev/null; then
-            echo "Production website deploy blocked because schema-sensitive files changed."
-            echo "Run ./scripts/vps-db-migrate.sh on the VPS, then trigger the manual workflow dispatch."
+          if printf '%s\n' "$changed_files" | grep -E '^(src/collections/|src/globals/|src/Footer/|src/Header/|src/payload\.config\.ts$)' >/dev/null; then
+            echo "Production website deploy paused because schema-sensitive files changed."
+            echo "Run pnpm exec tsx src/scripts/apply-schema.ts --yes on the VPS, then trigger the manual workflow dispatch."
             exit 1
           fi
 

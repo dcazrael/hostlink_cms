@@ -93,18 +93,22 @@ Create or update:
 Keep records as `DNS only` during the first cutover. Remove the existing `www` target that still points at Vercel once the VPS site is live.
 Leave MX/TXT mail records unchanged.
 
-## Migrations
+## Schema Changes
 
-Do not use the interactive schema-apply flow on the VPS.
+This repo does not use committed Payload migrations. Schema changes are applied directly to the production database by running the Drizzle pushSchema path against the live Postgres.
 
-Use committed Payload migrations instead:
+To deploy a schema change on the VPS:
 
 ```bash
-pnpm db:migrate:create
-pnpm db:migrate
+cd /srv/hostlink/site
+git pull --ff-only origin main
+./scripts/vps-db-migrate.sh --branch main   # runs apply-schema in the migrator service
+./scripts/deploy-vps.sh --branch main
 ```
 
-This repo currently has no committed migration directory yet, so before the first production schema-changing release you should create and commit an initial migration from a stable schema state.
+`scripts/vps-db-migrate.sh` first builds and starts the migrator image, then runs `pnpm exec tsx src/scripts/apply-schema.ts --yes` against the live Postgres, before the website image is rebuilt and restarted.
+
+Because schema changes are not migration-based, the GitHub Actions workflow `Block schema-sensitive production deploys` step pauses push-to-main deploys when files under `src/collections/`, `src/globals/`, `src/Footer/`, `src/Header/`, or `src/payload.config.ts` change. To proceed, run the apply-schema step above on the VPS, then re-run the workflow via `workflow_dispatch`.
 
 ## GitHub Actions
 
