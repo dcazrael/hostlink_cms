@@ -7,16 +7,24 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { link } from '@/fields/link'
-import { GridBlock } from '@/blocks/GridBlock/config'
 import { FaqBlock } from '@/blocks/FaqBlock'
+import { GridBlock } from '@/blocks/GridBlock/config'
+import { link } from '@/fields/link'
+
+const hasShowTableOfContentsEnabled = (data: unknown): boolean => {
+  if (!data || typeof data !== 'object') return false
+
+  return (data as { showTableOfContents?: unknown }).showTableOfContents === true
+}
 
 export const columnFields: Field[] = [
   {
     name: 'tocTitle',
     type: 'text',
     label: 'ToC Title',
+    required: true,
     admin: {
+      condition: (data) => hasShowTableOfContentsEnabled(data),
       description:
         'Title shown in the page Table of Contents. Required when the page has Show Table of Contents enabled.',
     },

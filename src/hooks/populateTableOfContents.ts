@@ -1,5 +1,4 @@
-import type { CollectionBeforeChangeHook, CollectionBeforeValidateHook } from 'payload'
-import { ValidationError } from 'payload'
+import type { CollectionBeforeChangeHook } from 'payload'
 import type { Page as PageType } from '../payload-types'
 
 type ContentColumn = {
@@ -130,32 +129,4 @@ export const populateTableOfContents: CollectionBeforeChangeHook = ({ data, orig
     ...(data as PageType),
     tableOfContentsHeadings: next,
   }
-}
-
-export const enforceTocTitle: CollectionBeforeValidateHook = ({ data, req }) => {
-  const page = (data ?? {}) as PageType
-  if (page.showTableOfContents !== true) return data
-
-  const layout = Array.isArray(page.layout) ? page.layout : []
-  const errors: { path: string; message: string }[] = []
-
-  for (let i = 0; i < layout.length; i += 1) {
-    const block = layout[i] as { blockType?: string; columns?: ContentColumn[] | null } | null
-    if (!block || block.blockType !== 'content') continue
-    const columns = Array.isArray(block.columns) ? block.columns : []
-    for (let c = 0; c < columns.length; c += 1) {
-      const col = columns[c] as ContentColumn | null
-      const title = typeof col?.tocTitle === 'string' ? col.tocTitle.trim() : ''
-      if (!title) {
-        errors.push({
-          path: `layout.${i}.columns.${c}.tocTitle`,
-          message: 'ToC Title is required when Show Table of Contents is enabled.',
-        })
-      }
-    }
-  }
-
-  if (errors.length === 0) return data
-
-  throw new ValidationError({ collection: 'pages', errors, req })
 }
