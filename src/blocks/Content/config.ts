@@ -15,8 +15,10 @@ export const columnFields: Field[] = [
   {
     name: 'tocTitle',
     type: 'text',
+    label: 'ToC Title',
     admin: {
-      description: 'Title shown in Table of Contents',
+      description:
+        'Title shown in the page Table of Contents. Required when the page has Show Table of Contents enabled.',
     },
   },
   {

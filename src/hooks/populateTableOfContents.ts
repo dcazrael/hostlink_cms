@@ -1,4 +1,8 @@
-import type { CollectionBeforeChangeHook } from 'payload'
+import type {
+  CollectionBeforeChangeHook,
+  CollectionBeforeValidateHook,
+  ValidationError as PayloadValidationError,
+} from 'payload'
 import type { Page as PageType } from '../payload-types'
 
 type ContentColumn = {
@@ -42,31 +46,6 @@ const dedupe = (items: HeadingItem[]): HeadingItem[] => {
   return out
 }
 
-const collectHeadingsFromRichText = (richText: unknown): HeadingItem[] => {
-  if (!richText || typeof richText !== 'object') return []
-  const root = (richText as { root?: { children?: unknown[] } }).root
-  if (!root || !Array.isArray(root.children)) return []
-
-  const out: HeadingItem[] = []
-  const walk = (nodes: unknown[]): void => {
-    for (const node of nodes) {
-      if (!node || typeof node !== 'object') continue
-      const n = node as { type?: string; tag?: string; children?: unknown[]; text?: string }
-      const tag = (n.tag ?? n.type ?? '').toString().toLowerCase()
-      if (tag === 'h2' || tag === 'h3' || tag === 'h4') {
-        const text = (n.text ?? '').toString().trim()
-        if (text) {
-          const id = normalizeAnchor(text)
-          if (id) out.push({ id, text })
-        }
-      }
-      if (Array.isArray(n.children)) walk(n.children)
-    }
-  }
-  walk(root.children)
-  return out
-}
-
 const sectionAnchorFor = (block: SectionBlockRow, sectionIndex: number): string => {
   const semantic =
     (typeof block.blockName === 'string' && block.blockName.trim().length > 0
@@ -91,7 +70,6 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
 
   const collected: HeadingItem[] = []
   let sectionCounter = 0
-  let contentCounter = 0
 
   for (const raw of layout) {
     if (!raw || typeof raw !== 'object') continue
@@ -116,7 +94,6 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
     }
 
     if (block.blockType === 'content') {
-      contentCounter += 1
       const columns = Array.isArray(block.columns) ? block.columns : []
       for (const col of columns) {
         if (!col || typeof col !== 'object') continue
@@ -126,8 +103,6 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
           const id = normalizeAnchor(text)
           if (id) collected.push({ id, text })
         }
-        const fromRichText = collectHeadingsFromRichText(c.richText)
-        for (const h of fromRichText) collected.push(h)
       }
     }
   }
@@ -158,4 +133,41 @@ export const populateTableOfContents: CollectionBeforeChangeHook = ({ data, orig
     ...(data as PageType),
     tableOfContentsHeadings: next,
   }
+}
+
+export const enforceTocTitle: CollectionBeforeValidateHook = ({ data, req }) => {
+  const page = (data ?? {}) as PageType
+  if (page.showTableOfContents !== true) return data
+
+  const layout = Array.isArray(page.layout) ? page.layout : []
+  const errors: { path: string; message: string }[] = []
+
+  for (let i = 0; i < layout.length; i += 1) {
+    const block = layout[i] as { blockType?: string; columns?: ContentColumn[] | null } | null
+    if (!block || block.blockType !== 'content') continue
+    const columns = Array.isArray(block.columns) ? block.columns : []
+    for (let c = 0; c < columns.length; c += 1) {
+      const col = columns[c] as ContentColumn | null
+      const title = typeof col?.tocTitle === 'string' ? col.tocTitle.trim() : ''
+      if (!title) {
+        errors.push({
+          path: `layout.${i}.columns.${c}.tocTitle`,
+          message: 'ToC Title is required when Show Table of Contents is enabled.',
+        })
+      }
+    }
+  }
+
+  if (errors.length === 0) return data
+
+  const ValidationErrorCtor = (
+    req.payload as unknown as {
+      errors?: { APIError?: new (data: unknown) => unknown }
+    }
+  ).errors?.APIError
+  const err = ValidationErrorCtor
+    ? new ValidationErrorCtor({ collection: 'pages', errors, req })
+    : Object.assign(new Error('Validation failed'), { data: { collection: 'pages', errors } })
+
+  throw err as PayloadValidationError
 }
