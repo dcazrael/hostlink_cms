@@ -35,7 +35,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   }
 
   return (
-    <div className="my-8">
+    <div className="container my-8">
       <div className="flex flex-wrap gap-y-8 gap-x-4 md:gap-x-8">
         {columns &&
           columns.length > 0 &&
