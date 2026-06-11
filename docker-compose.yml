@@ -1,6 +1,8 @@
 services:
   payload:
-    image: node:24-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     stdin_open: true
     tty: true
     ports:
@@ -12,7 +14,7 @@ services:
     working_dir: /home/node/app/
     command: >
       sh -lc "
-        npm i -g pnpm@10.30.3 &&
+        rm -rf .next &&
         pnpm config set store-dir /pnpm/store &&
         pnpm install --frozen-lockfile --prefer-offline &&
         pnpm dev

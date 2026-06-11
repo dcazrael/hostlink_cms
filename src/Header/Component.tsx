@@ -7,8 +7,15 @@ import { LocalizedLink } from '@/components/LocalizedLink'
 import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
 
+export const dynamic = 'force-dynamic'
+
 export async function Header() {
-  const headerData: Header = await getCachedGlobal('header', 1)()
+  const headerData: Header | null = await getCachedGlobal('header', 1)()
+
+  if (!headerData) {
+    return null
+  }
+
   const showLoginCTA = headerData.showLoginCTA !== false
   const showConsultationCTA = headerData.showConsultationCTA !== false
   const showActionArea = showLoginCTA || showConsultationCTA
@@ -20,14 +27,16 @@ export async function Header() {
           <Logo loading="eager" priority="high" />
         </LocalizedLink>
 
-        <div className="hidden flex-1 justify-center lg:flex">
-          <HeaderNav data={headerData} />
-        </div>
+        <HeaderNav data={headerData} />
 
         {showActionArea ? (
-          <div className="flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             {showLoginCTA ? (
-              <CMSLink {...headerData.loginCTA} appearance="outline" className="rounded-full px-6" />
+              <CMSLink
+                {...headerData.loginCTA}
+                appearance="outline"
+                className="rounded-full px-6"
+              />
             ) : null}
             {showConsultationCTA ? (
               <CMSLink

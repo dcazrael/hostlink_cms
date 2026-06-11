@@ -14,18 +14,11 @@ import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { seoFields } from '@/fields/seoFields'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from '@payloadcms/plugin-seo/fields'
-import { seoImageURLField } from '@/fields/seoImageURL'
 import { slugField } from 'payload'
 
 export const Posts: CollectionConfig<'posts'> = {
@@ -99,6 +92,9 @@ export const Posts: CollectionConfig<'posts'> = {
                 },
               }),
               label: false,
+              admin: {
+                description: 'Heading IDs will be based on this content',
+              },
               required: true,
             },
           ],
@@ -134,34 +130,7 @@ export const Posts: CollectionConfig<'posts'> = {
           ],
           label: 'Meta',
         },
-        {
-          name: 'meta',
-          label: 'SEO',
-          fields: [
-            OverviewField({
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: 'media',
-            }),
-            seoImageURLField,
-
-            MetaDescriptionField({}),
-            PreviewField({
-              // if the `generateUrl` function is configured
-              hasGenerateFn: true,
-
-              // field paths to match the target field for data
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-            }),
-          ],
-        },
+        seoFields,
       ],
     },
     {
@@ -183,6 +152,33 @@ export const Posts: CollectionConfig<'posts'> = {
           },
         ],
       },
+    },
+    {
+      name: 'showTableOfContents',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Show a table of contents on the side of this page',
+      },
+    },
+    {
+      name: 'tableOfContentsHeadings',
+      type: 'array',
+      admin: {
+        hidden: true,
+        disabled: true,
+      },
+      fields: [
+        {
+          name: 'id',
+          type: 'text',
+        },
+        {
+          name: 'text',
+          type: 'text',
+        },
+      ],
     },
     {
       name: 'authors',

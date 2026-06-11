@@ -1,11 +1,13 @@
-build
-dist / media
-node_modules
 .DS_Store
-.env
+.omo
+.vscode
 .next
 .vercel
-backups/
+node_modules
+build
+dist / media
+backups
+.env
 .env.production
 
 # Payload default media upload directory

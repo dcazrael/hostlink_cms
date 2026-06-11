@@ -5,18 +5,18 @@ import {
   isFlowGuideHighlightedStep,
   sortFlowSteps,
 } from '@/components/homepage/sections/flowProgress'
-import type { SectionComponentBlock } from '@/components/homepage/types'
+import type { FlowComponentBlock } from '@/payload-types'
 
-type FlowBlock = Extract<SectionComponentBlock, { blockType: 'flow' }>
-const SECTION_MAX_WIDTH_CLASS = 'mx-auto w-full max-w-[56rem]'
+type Props = {
+  block: FlowComponentBlock
+}
 
-export const FlowSection: React.FC<{ block: FlowBlock }> = ({ block }) => {
+export const FlowBlockComponent: React.FC<Props> = ({ block }) => {
   const steps = sortFlowSteps(block.steps || [])
   const connectorCount = getFlowConnectorCount(steps.length)
 
   return (
-    // Section max width is design-owned in component (not CMS).
-    <div className={SECTION_MAX_WIDTH_CLASS}>
+    <div className="mx-auto w-full max-w-4xl">
       <article className="p-6">
         <ol className="space-y-8">
           {steps.map((step, index) => {

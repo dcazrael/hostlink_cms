@@ -1,5 +1,4 @@
 'use client'
-import type { FormFieldBlock } from '@payloadcms/plugin-form-builder/types'
 
 import { TurnstileChallenge } from '@/components/form/TurnstileChallenge'
 import { resolveLucideName } from '@/components/homepage/utils'
@@ -86,11 +85,13 @@ export const FormBlock: React.FC<
   const submitButtonIcon = (formFromProps as FormType & { submitButtonIcon?: unknown })
     .submitButtonIcon
   const submitButtonIconName = resolveLucideName(submitButtonIcon)
-  const formHtmlId = typeof formID === 'number' || typeof formID === 'string' ? String(formID) : undefined
+  const formHtmlId =
+    typeof formID === 'number' || typeof formID === 'string' ? String(formID) : undefined
 
   const formMethods = useForm<Record<string, unknown>>({
-    defaultValues:
-      (formFromProps.fields ?? undefined) as unknown as Record<string, unknown> | undefined,
+    defaultValues: (formFromProps.fields ?? undefined) as unknown as
+      | Record<string, unknown>
+      | undefined,
   })
   const {
     control,
@@ -277,7 +278,7 @@ export const FormBlock: React.FC<
   )
 
   return (
-    <div className="container lg:max-w-3xl px-0! md:px-4!">
+    <div className="lg:max-w-3xl px-0! md:px-4!">
       {enableIntro && introContent && !hasSubmitted && (
         <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
       )}

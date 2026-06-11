@@ -1,8 +1,9 @@
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
+'use client'
+
 import {
   DefaultNodeTypes,
-  SerializedBlockNode,
   SerializedLinkNode,
+  SerializedBlockNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
@@ -11,20 +12,9 @@ import {
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
+import React from 'react'
 
-import type {
-  BannerBlock as BannerBlockProps,
-  CallToActionBlock as CTABlockProps,
-  MediaBlock as MediaBlockProps,
-} from '@/payload-types'
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
-
-type NodeTypes =
-  | DefaultNodeTypes
-  | SerializedBlockNode<CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps>
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
@@ -35,23 +25,87 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   return relationTo === 'posts' ? `/posts/${slug}` : `/${slug}`
 }
 
-const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
+type BlockNode = SerializedBlockNode<DefaultNodeTypes>
+
+const DefaultBlockConverters: JSXConvertersFunction<DefaultNodeTypes> = ({
+  defaultConverters,
+}) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   blocks: {
-    banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-    mediaBlock: ({ node }) => (
-      <MediaBlock
-        className="col-start-1 col-span-3"
-        imgClassName="m-0"
-        {...node.fields}
-        captionClassName="mx-auto max-w-[48rem]"
-        enableGutter={false}
-        disableInnerContainer={true}
-      />
-    ),
-    code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
-    cta: ({ node }) => <CallToActionBlock {...node.fields} />,
+    banner: ({ node }: { node: BlockNode }) => {
+      const content = (node.fields as any)?.content
+      const style = (node.fields as any)?.style as string | undefined
+      if (!content) return null
+      return (
+        <div
+          className={cn('border py-3 px-6 flex items-center rounded my-4', {
+            'border-border bg-card': style === 'info',
+            'border-error bg-error/30': style === 'error',
+            'border-success bg-success/30': style === 'success',
+            'border-warning bg-warning/30': style === 'warning',
+          })}
+        >
+          <div className="flex-1 rich-text-content">
+            <ConvertRichText data={content} />
+          </div>
+        </div>
+      )
+    },
+    cta: ({ node }: { node: BlockNode }) => {
+      const richText = (node.fields as any)?.richText
+      const links = (node.fields as any)?.links as
+        | Array<{ label?: string; url?: string; reference?: { value?: { slug: string } } }>
+        | undefined
+      return (
+        <div className="my-4 flex flex-wrap gap-2 items-center">
+          {richText && <ConvertRichText data={richText} />}
+          {Array.isArray(links) &&
+            links.map((link, i) => {
+              const href =
+                link.url || (link.reference?.value?.slug ? `/${link.reference.value.slug}` : '#')
+              return (
+                <a
+                  key={i}
+                  href={href}
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded inline-block"
+                >
+                  {link.label}
+                </a>
+              )
+            })}
+        </div>
+      )
+    },
+    mediaBlock: ({ node }: { node: BlockNode }) => {
+      const media = (node.fields as any)?.media as { url?: string; alt?: string } | undefined
+      const caption = (node.fields as any)?.caption as string | undefined
+      const alignment = (node.fields as any)?.alignment as string | undefined
+      if (!media?.url) return null
+      return (
+        <figure
+          className={cn(
+            'my-4',
+            alignment === 'center' ? 'text-center' : alignment === 'right' ? 'text-right' : '',
+          )}
+        >
+          <img src={media.url} alt={media.alt || ''} className="max-w-full h-auto mx-auto" />
+          {caption && (
+            <figcaption className="text-sm text-muted-foreground mt-2">{caption}</figcaption>
+          )}
+        </figure>
+      )
+    },
+    code: ({ node }: { node: BlockNode }) => {
+      const code = (node.fields as any)?.code as string | undefined
+      const language = (node.fields as any)?.language as string | undefined
+      if (!code) return null
+      return (
+        <pre className="bg-muted p-4 rounded overflow-x-auto my-4 text-sm">
+          <code className={language ? `language-${language}` : ''}>{code}</code>
+        </pre>
+      )
+    },
   },
 })
 
@@ -59,13 +113,19 @@ type Props = {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
-} & React.HTMLAttributes<HTMLDivElement>
+  className?: string
+}
 
-export default function RichText(props: Props) {
-  const { className, enableProse = true, enableGutter = true, ...rest } = props
+export default function RichText({
+  data,
+  enableGutter = true,
+  enableProse = true,
+  className,
+}: Props) {
   return (
     <ConvertRichText
-      converters={jsxConverters}
+      converters={DefaultBlockConverters}
+      data={data}
       className={cn(
         'payload-richtext',
         {
@@ -75,7 +135,6 @@ export default function RichText(props: Props) {
         },
         className,
       )}
-      {...rest}
     />
   )
 }

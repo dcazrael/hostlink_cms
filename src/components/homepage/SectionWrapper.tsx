@@ -46,7 +46,7 @@ export const SectionWrapper: React.FC<{
       ) : null}
 
       <div className="mt-8 w-full">
-        <SectionContent component={inner} t={t} />
+        <SectionContent component={inner} />
       </div>
 
       <IconText

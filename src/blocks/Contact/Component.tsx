@@ -4,13 +4,12 @@ import { FormBlock as EmbeddedFormBlock } from '@/blocks/Form/Component'
 import { LocalizedLink } from '@/components/LocalizedLink'
 import { LucideIcon } from '@/components/LucideIcon'
 import { IconText } from '@/components/homepage/IconText'
-import type { HomepageLinkLike, SectionComponentBlock } from '@/components/homepage/types'
+import type { HomepageLinkLike } from '@/components/homepage/types'
 import { resolveHomepageLinkHref, resolveLucideName } from '@/components/homepage/utils'
 import { Button, type ButtonProps } from '@/components/ui/button'
+import type { ContactComponentBlock } from '@/payload-types'
 
-type ContactBlock = Extract<SectionComponentBlock, { blockType: 'contact' }>
-type ContactFooterItem = NonNullable<ContactBlock['footerItems']>[number]
-const SECTION_MAX_WIDTH_CLASS = 'mx-auto w-full max-w-[40rem]'
+type ContactFooterItem = NonNullable<ContactComponentBlock['footerItems']>[number]
 
 const buttonVariantMap: Record<NonNullable<HomepageLinkLike['variant']>, ButtonProps['variant']> = {
   primary: 'default',
@@ -75,7 +74,11 @@ const renderFooterItem = (item: ContactFooterItem, index: number) => {
   )
 }
 
-export const ContactSection: React.FC<{ block: ContactBlock }> = ({ block }) => {
+type Props = {
+  block: ContactComponentBlock
+}
+
+export const ContactBlockComponent: React.FC<Props> = ({ block }) => {
   const form = block.form && typeof block.form === 'object' ? block.form : null
   const footerItems = Array.isArray(block.footerItems) ? block.footerItems : []
   const renderedFooterItems = footerItems
@@ -84,16 +87,9 @@ export const ContactSection: React.FC<{ block: ContactBlock }> = ({ block }) => 
   const hasFooterContent = renderedFooterItems.length > 0
 
   return (
-    // Section max width is design-owned in component (not CMS).
-    <div
-      className={`${SECTION_MAX_WIDTH_CLASS} space-y-6 rounded-2xl border border-border bg-card p-6 md:p-8`}
-    >
+    <div className="mx-auto w-full max-w-160 space-y-6 rounded-2xl border border-border bg-card p-6 md:p-8">
       {form ? (
-        <EmbeddedFormBlock
-          enableIntro={false}
-          form={form}
-          includePlanFromQueryParam
-        />
+        <EmbeddedFormBlock enableIntro={false} form={form} includePlanFromQueryParam />
       ) : null}
 
       {hasFooterContent ? (

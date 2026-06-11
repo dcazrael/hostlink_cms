@@ -4,6 +4,7 @@ import { CompanyBlock } from '@/blocks/CompanyBlock'
 import { ContactBlock } from '@/blocks/ContactBlock'
 import { FaqBlock } from '@/blocks/FaqBlock'
 import { FlowBlock } from '@/blocks/FlowBlock'
+import { GridBlock } from '@/blocks/GridBlock/config'
 import { PricingBlock } from '@/blocks/PricingBlock'
 import { ProblemsBlock } from '@/blocks/ProblemsBlock'
 import { ServicesBlock } from '@/blocks/ServicesBlock'
@@ -75,6 +76,7 @@ export const SectionBlock: Block = {
         initCollapsed: true,
       },
       blocks: [
+        GridBlock,
         ProblemsBlock,
         ServicesBlock,
         FlowBlock,

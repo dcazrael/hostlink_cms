@@ -6,11 +6,21 @@ import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
-export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
+export const MediumImpactHero: React.FC<Page['hero'] & { title?: string }> = ({
+  links,
+  media,
+  richText,
+  title,
+}) => {
   return (
-    <div className="">
+    <>
       <div className="container mb-8">
-        {richText && <RichText className="mb-6" data={richText} enableGutter={false} />}
+        {title && (
+          <h1 className="mb-6 mx-auto max-w-5xl text-3xl lg:text-4xl xl:text-5xl leading-14 whitespace-pre-line text-center">
+            {title}
+          </h1>
+        )}
+        {richText && <RichText className="mb-6 max-w-3xl" data={richText} enableGutter={false} />}
 
         {Array.isArray(links) && links.length > 0 && (
           <ul className="flex gap-4">
@@ -24,12 +34,12 @@ export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richTex
           </ul>
         )}
       </div>
-      <div className="container ">
+      <div className="container my-8">
         {media && typeof media === 'object' && (
           <div>
             <Media
               className="-mx-4 md:-mx-8 2xl:-mx-16"
-              imgClassName=""
+              imgClassName="rounded-2xl max-h-[50vh] object-cover"
               priority
               resource={media}
             />
@@ -41,6 +51,6 @@ export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richTex
           </div>
         )}
       </div>
-    </div>
+    </>
   )
 }

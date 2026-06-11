@@ -29,7 +29,7 @@ Codebase intelligence for JavaScript and TypeScript. The free static layer finds
 
 - Runtime error analysis or debugging
 - Type checking (use `tsc` for that)
-- Linting style or formatting issues (use ESLint, Biome, Prettier)
+- Linting style or formatting issues (use Oxfmt, Biome, OxLint)
 - Security vulnerability scanning
 - Bundle size analysis
 - Projects that are not JavaScript or TypeScript

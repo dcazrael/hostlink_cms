@@ -2,17 +2,30 @@ import { ArrowRight, CircleCheckBig, CircleHelp, Mail, Phone, Star } from 'lucid
 import React from 'react'
 
 import { LocalizedLink } from '@/components/LocalizedLink'
-import type { SectionComponentBlock } from '@/components/homepage/types'
+import type { PricingComponentBlock } from '@/payload-types'
 import {
   appendQueryParamsToHomepageHref,
   resolveHomepageLinkHref,
 } from '@/components/homepage/utils'
-import type { TranslateFn } from '@/i18n/createTranslator'
 import { cn } from '@/utilities/ui'
 
-type PricingBlock = Extract<SectionComponentBlock, { blockType: 'pricing' }>
-type PricingPlan = PricingBlock['plans'][number]
-type PricingCTAVariant = NonNullable<PricingPlan['cta']>['variant']
+type PricingPlan = {
+  planName: string
+  planSub?: string | null
+  recommended?: boolean | null
+  stylePreset?: 'style1' | 'style2' | 'style3' | 'style4' | 'style5'
+  price: number
+  priceDisclaimer?: string | null
+  contents?: { id?: string | null; text: string; tooltip?: string | null }[]
+  cta?: {
+    label?: string | null
+    href?: string | null
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
+    icon?: 'arrowRight' | 'mail' | 'phone'
+    withIcon?: boolean | null
+  }
+}
+
 const pricingStylePresetClassMap = {
   style1: 'pricing-card--style1',
   style2: 'pricing-card--style2',
@@ -27,7 +40,7 @@ const linkIconMap = {
   phone: Phone,
 } as const
 
-const resolveCtaVariant = (value: PricingCTAVariant | null | undefined) => {
+const resolveCtaVariant = (value: string | undefined) => {
   if (value === 'secondary' || value === 'outline' || value === 'ghost') return value
   return 'primary'
 }
@@ -42,25 +55,21 @@ const resolveStylePresetClassName = (
   return pricingStylePresetClassMap.style1
 }
 
-const formatPrice = (price: number, t: TranslateFn): string => {
-  const numberLocale = t('homepage.pricing.numberlocale', 'ja-JP')
-  const currency = t('homepage.pricing.currency', 'JPY')
-
-  try {
-    return new Intl.NumberFormat(numberLocale, {
-      style: 'currency',
-      currency,
-    }).format(price)
-  } catch {
-    return new Intl.NumberFormat('ja-JP', {
-      style: 'currency',
-      currency: 'JPY',
-    }).format(price)
-  }
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('ja-JP', {
+    style: 'currency',
+    currency: 'JPY',
+  }).format(price)
 }
 
 const PricingPlanCTA: React.FC<{
-  link?: PricingPlan['cta']
+  link?: {
+    label?: string | null
+    href?: string | null
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | null
+    icon?: 'arrowRight' | 'mail' | 'phone' | null
+    withIcon?: boolean | null
+  }
   planName: string
 }> = ({ link, planName }) => {
   if (!link) return null
@@ -71,8 +80,13 @@ const PricingPlanCTA: React.FC<{
 
   if (!hrefWithQuery || !link.label) return null
 
-  const variant = resolveCtaVariant(link.variant)
-  const Icon = link.withIcon === false ? null : link.icon ? linkIconMap[link.icon] : ArrowRight
+  const variant = resolveCtaVariant(link.variant || undefined)
+  const Icon =
+    link.withIcon === false
+      ? null
+      : link.icon
+        ? linkIconMap[link.icon as keyof typeof linkIconMap]
+        : ArrowRight
 
   return (
     <LocalizedLink
@@ -90,37 +104,15 @@ const PricingPlanCTA: React.FC<{
   )
 }
 
-export const PricingSection: React.FC<{ block: PricingBlock; t: TranslateFn }> = ({ block, t }) => {
-  const legacyBlock = block as PricingBlock & {
-    planName?: string
-    planSub?: string | null
-    recommended?: boolean | null
-    stylePreset?: PricingPlan['stylePreset']
-    price?: number
-    priceDisclaimer?: string | null
-    contents?: { id?: string | null; text: string; tooltip?: string | null }[]
-    cta?: PricingPlan['cta']
-  }
+type Props = {
+  block: PricingComponentBlock
+}
 
-  const plans: PricingPlan[] =
-    block.plans && block.plans.length > 0
-      ? block.plans
-      : legacyBlock.planName && typeof legacyBlock.price === 'number'
-        ? [
-            {
-              planName: legacyBlock.planName,
-              planSub: legacyBlock.planSub,
-              recommended: legacyBlock.recommended,
-              stylePreset: legacyBlock.stylePreset,
-              price: legacyBlock.price,
-              priceDisclaimer: legacyBlock.priceDisclaimer,
-              contents: legacyBlock.contents || [],
-              cta: legacyBlock.cta,
-            },
-          ]
-        : []
+export const PricingBlockComponent: React.FC<Props> = ({ block }) => {
+  const plans = block.plans || []
 
   if (plans.length === 0) return null
+
   return (
     <div className="pricing-section">
       <div
@@ -131,7 +123,7 @@ export const PricingSection: React.FC<{ block: PricingBlock; t: TranslateFn }> =
       >
         {plans.map((plan, planIndex) => {
           const stylePresetClassName = resolveStylePresetClassName(plan.stylePreset)
-          const formattedPrice = formatPrice(plan.price, t)
+          const formattedPrice = formatPrice(plan.price)
           const isPrimaryCard = plans.length > 1 && planIndex === 0
 
           return (
@@ -146,9 +138,9 @@ export const PricingSection: React.FC<{ block: PricingBlock; t: TranslateFn }> =
               <div className="pricing-card__surface">
                 <div className="pricing-card__header">
                   <div className="pricing-card__heading">
-                    <h3 className="pricing-card__title">{plan.planName}</h3>
+                    <h3 className="pricing-card__title whitespace-pre-line">{plan.planName}</h3>
                     {plan.planSub ? (
-                      <p className="pricing-card__plan-sub">{plan.planSub}</p>
+                      <p className="pricing-card__plan-sub whitespace-pre-line">{plan.planSub}</p>
                     ) : null}
                   </div>
                   {plan.recommended ? (
@@ -156,16 +148,14 @@ export const PricingSection: React.FC<{ block: PricingBlock; t: TranslateFn }> =
                       <div className="pricing-card__chip-icon-wrap">
                         <Star className="pricing-card__chip-icon" />
                       </div>
-                      {t('homepage.pricing.recommendedlabel', 'Popular')}
+                      <span>Popular</span>
                     </span>
                   ) : null}
                 </div>
 
                 <div className="pricing-card__divider" />
 
-                <p className="pricing-card__includes-label">
-                  {t('homepage.pricing.includeslabel', 'Includes')}
-                </p>
+                <p className="pricing-card__includes-label">Includes</p>
 
                 <ul className="pricing-card__list">
                   {(plan.contents || []).map((item, itemIndex) => {
@@ -197,10 +187,7 @@ export const PricingSection: React.FC<{ block: PricingBlock; t: TranslateFn }> =
 
                 <div className="pricing-card__price-wrap">
                   <p className="pricing-card__price">
-                    {formattedPrice}{' '}
-                    <span className="pricing-card__price-period">
-                      {t('homepage.pricing.perperiodlabel', '/月')}
-                    </span>
+                    {formattedPrice} <span className="pricing-card__price-period">/月</span>
                   </p>
                   {plan.priceDisclaimer ? (
                     <p className="pricing-card__price-disclaimer">{plan.priceDisclaimer}</p>

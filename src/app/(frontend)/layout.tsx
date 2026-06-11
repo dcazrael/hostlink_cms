@@ -45,7 +45,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             />
           ) : null}
           <Header />
-          <main id="main-content">{children}</main>
+          <main id="main-content" className="main-gradient">
+            {children}
+          </main>
           <Footer />
         </Providers>
         <Analytics />

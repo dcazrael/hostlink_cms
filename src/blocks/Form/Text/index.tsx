@@ -1,12 +1,9 @@
 import type { TextField } from '@payloadcms/plugin-form-builder/types'
 import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form'
 
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import React from 'react'
 
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { BaseInput } from '../BaseInput'
 
 export const Text: React.FC<
   TextField & {
@@ -14,26 +11,6 @@ export const Text: React.FC<
     placeholder?: string | null
     register: UseFormRegister<FieldValues>
   }
-> = ({ name, defaultValue, errors, label, placeholder, register, required, width }) => {
-  return (
-    <Width width={width}>
-      <Label htmlFor={name}>
-        {label}
-
-        {required && (
-          <span className="required">
-            * <span className="sr-only">(required)</span>
-          </span>
-        )}
-      </Label>
-      <Input
-        defaultValue={defaultValue}
-        id={name}
-        placeholder={placeholder || undefined}
-        type="text"
-        {...register(name, { required })}
-      />
-      {errors[name] && <Error name={name} />}
-    </Width>
-  )
+> = (props) => {
+  return <BaseInput type="text" validation={{ required: props.required }} {...props} />
 }

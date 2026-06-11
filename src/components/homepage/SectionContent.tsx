@@ -1,39 +1,34 @@
 import React from 'react'
 
-import { CompanySection } from '@/components/homepage/sections/CompanySection'
-import { ContactSection } from '@/components/homepage/sections/ContactSection'
-import { FaqSection } from '@/components/homepage/sections/FaqSection'
-import { FlowSection } from '@/components/homepage/sections/FlowSection'
-import { PricingSection } from '@/components/homepage/sections/PricingSection'
-import { ProblemsSection } from '@/components/homepage/sections/ProblemsSection'
-import { ServicesSection } from '@/components/homepage/sections/ServicesSection'
-import { TestimonialsSection } from '@/components/homepage/sections/TestimonialsSection'
+import { CompanyBlockComponent } from '@/blocks/Company/Component'
+import { ContactBlockComponent } from '@/blocks/Contact/Component'
+import { FaqBlockComponent } from '@/blocks/Faq/Component'
+import { FlowBlockComponent } from '@/blocks/Flow/Component'
+import { GridBlockComponent } from '@/blocks/GridBlock/Component'
+import { PricingBlockComponent } from '@/blocks/Pricing/Component'
+import { TestimonialsBlockComponent } from '@/blocks/Testimonials/Component'
 import type { SectionComponentBlock } from '@/components/homepage/types'
-import type { TranslateFn } from '@/i18n/createTranslator'
 
 export const SectionContent: React.FC<{
   component?: SectionComponentBlock
-  t: TranslateFn
-}> = ({ component, t }) => {
+}> = ({ component }) => {
   if (!component) return null
 
   switch (component.blockType) {
-    case 'problems':
-      return <ProblemsSection block={component} />
-    case 'services':
-      return <ServicesSection block={component} />
+    case 'grid':
+      return <GridBlockComponent block={component} />
     case 'flow':
-      return <FlowSection block={component} />
+      return <FlowBlockComponent block={component} />
     case 'pricing':
-      return <PricingSection block={component} t={t} />
+      return <PricingBlockComponent block={component} />
     case 'faq':
-      return <FaqSection block={component} />
+      return <FaqBlockComponent block={component} />
     case 'testimonials':
-      return <TestimonialsSection block={component} />
+      return <TestimonialsBlockComponent block={component} />
     case 'company':
-      return <CompanySection block={component} t={t} />
+      return <CompanyBlockComponent block={component} />
     case 'contact':
-      return <ContactSection block={component} />
+      return <ContactBlockComponent block={component} />
     default:
       return null
   }

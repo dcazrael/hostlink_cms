@@ -9,6 +9,7 @@ import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { HeroBlock } from '@/blocks/HeroBlock'
 import { SectionBlock } from '@/blocks/SectionBlock'
+import { GridBlock } from '@/blocks/GridBlock/config'
 import { ProblemsBlock } from '@/blocks/ProblemsBlock'
 import { ServicesBlock } from '@/blocks/ServicesBlock'
 import { FlowBlock } from '@/blocks/FlowBlock'
@@ -21,17 +22,9 @@ import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import { seoFields } from '@/fields/seoFields'
 import { ensurePageSlugUniqueAcrossLandingPages } from './hooks/ensurePageSlugUniqueAcrossLandingPages'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
-
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from '@payloadcms/plugin-seo/fields'
-import { seoImageURLField } from '@/fields/seoImageURL'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -70,7 +63,7 @@ export const Pages: CollectionConfig<'pages'> = {
   fields: [
     {
       name: 'title',
-      type: 'text',
+      type: 'textarea',
       required: true,
     },
     {
@@ -95,6 +88,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 FormBlock,
                 ProblemsBlock,
                 ServicesBlock,
+                GridBlock,
                 FlowBlock,
                 PricingBlock,
                 FaqBlock,
@@ -110,34 +104,7 @@ export const Pages: CollectionConfig<'pages'> = {
           ],
           label: 'Content',
         },
-        {
-          name: 'meta',
-          label: 'SEO',
-          fields: [
-            OverviewField({
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: 'media',
-            }),
-            seoImageURLField,
-
-            MetaDescriptionField({}),
-            PreviewField({
-              // if the `generateUrl` function is configured
-              hasGenerateFn: true,
-
-              // field paths to match the target field for data
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-            }),
-          ],
-        },
+        seoFields,
       ],
     },
     {
@@ -146,6 +113,33 @@ export const Pages: CollectionConfig<'pages'> = {
       admin: {
         position: 'sidebar',
       },
+    },
+    {
+      name: 'showTableOfContents',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Show a table of contents on the side of this page',
+      },
+    },
+    {
+      name: 'tableOfContentsHeadings',
+      type: 'array',
+      admin: {
+        hidden: true,
+        disabled: true,
+      },
+      fields: [
+        {
+          name: 'id',
+          type: 'text',
+        },
+        {
+          name: 'text',
+          type: 'text',
+        },
+      ],
     },
     slugField(),
   ],

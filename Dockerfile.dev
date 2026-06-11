@@ -1,0 +1,4 @@
+FROM node:24-alpine
+
+WORKDIR /home/node/app
+RUN corepack enable pnpm && corepack prepare pnpm@10.30.3 --activate

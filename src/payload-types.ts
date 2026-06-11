@@ -339,6 +339,7 @@ export interface Page {
     | FormBlock
     | ProblemsComponentBlock
     | ServicesComponentBlock
+    | GridComponentBlock
     | FlowComponentBlock
     | PricingComponentBlock
     | FaqComponentBlock
@@ -360,6 +361,16 @@ export interface Page {
   };
   publishedAt?: string | null;
   /**
+   * Show a table of contents on the side of this page
+   */
+  showTableOfContents?: boolean | null;
+  tableOfContentsHeadings?:
+    | {
+        id?: string | null;
+        text?: string | null;
+      }[]
+    | null;
+  /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
@@ -376,6 +387,9 @@ export interface Post {
   id: number;
   title: string;
   heroImage?: (number | null) | Media;
+  /**
+   * Heading IDs will be based on this content
+   */
   content: {
     root: {
       type: string;
@@ -406,6 +420,16 @@ export interface Post {
     description?: string | null;
   };
   publishedAt?: string | null;
+  /**
+   * Show a table of contents on the side of this page
+   */
+  showTableOfContents?: boolean | null;
+  tableOfContentsHeadings?:
+    | {
+        id?: string | null;
+        text?: string | null;
+      }[]
+    | null;
   authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
@@ -607,6 +631,7 @@ export interface HomepageSectionBlock {
   progressLabel?: string | null;
   component?:
     | (
+        | GridComponentBlock
         | ProblemsComponentBlock
         | ServicesComponentBlock
         | FlowComponentBlock
@@ -620,6 +645,23 @@ export interface HomepageSectionBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'section';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GridComponentBlock".
+ */
+export interface GridComponentBlock {
+  columns: '2' | '3';
+  items: {
+    icon?: (number | null) | Icon;
+    title: string;
+    sub?: string | null;
+    description?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'grid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1068,6 +1110,10 @@ export interface CallToActionBlock {
 export interface ContentBlock {
   columns?:
     | {
+        /**
+         * Title shown in Table of Contents
+         */
+        tocTitle?: string | null;
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
         richText?: {
           root: {
@@ -1104,6 +1150,14 @@ export interface ContentBlock {
            */
           appearance?: ('default' | 'outline') | null;
         };
+        /**
+         * Show a divider after this column
+         */
+        divider?: boolean | null;
+        /**
+         * Embed a component after the rich text
+         */
+        embeddedComponent?: (GridComponentBlock | FaqComponentBlock)[] | null;
         id?: string | null;
       }[]
     | null;
@@ -1599,6 +1653,7 @@ export interface HomepageSectionBlockSelect<T extends boolean = true> {
   component?:
     | T
     | {
+        grid?: T | GridComponentBlockSelect<T>;
         problems?: T | ProblemsComponentBlockSelect<T>;
         services?: T | ServicesComponentBlockSelect<T>;
         flow?: T | FlowComponentBlockSelect<T>;
@@ -1607,6 +1662,24 @@ export interface HomepageSectionBlockSelect<T extends boolean = true> {
         testimonials?: T | TestimonialsComponentBlockSelect<T>;
         company?: T | CompanyComponentBlockSelect<T>;
         contact?: T | ContactComponentBlockSelect<T>;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GridComponentBlock_select".
+ */
+export interface GridComponentBlockSelect<T extends boolean = true> {
+  columns?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        sub?: T;
+        description?: T;
+        id?: T;
       };
   id?: T;
   blockName?: T;
@@ -1844,6 +1917,7 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         problems?: T | ProblemsComponentBlockSelect<T>;
         services?: T | ServicesComponentBlockSelect<T>;
+        grid?: T | GridComponentBlockSelect<T>;
         flow?: T | FlowComponentBlockSelect<T>;
         pricing?: T | PricingComponentBlockSelect<T>;
         faq?: T | FaqComponentBlockSelect<T>;
@@ -1860,6 +1934,13 @@ export interface PagesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  showTableOfContents?: T;
+  tableOfContentsHeadings?:
+    | T
+    | {
+        id?: T;
+        text?: T;
+      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1898,6 +1979,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
   columns?:
     | T
     | {
+        tocTitle?: T;
         size?: T;
         richText?: T;
         enableLink?: T;
@@ -1910,6 +1992,13 @@ export interface ContentBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+            };
+        divider?: T;
+        embeddedComponent?:
+          | T
+          | {
+              grid?: T | GridComponentBlockSelect<T>;
+              faq?: T | FaqComponentBlockSelect<T>;
             };
         id?: T;
       };
@@ -1969,6 +2058,13 @@ export interface PostsSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  showTableOfContents?: T;
+  tableOfContentsHeadings?:
+    | T
+    | {
+        id?: T;
+        text?: T;
+      };
   authors?: T;
   populatedAuthors?:
     | T

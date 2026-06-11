@@ -116,8 +116,8 @@
   --accent-foreground: oklch(0.2733 0.0242 253.69); /* blueish gray */
 
   /* --- Muted / subtext system --- */
-  --muted: var(--muted); /* light-grey */
-  --muted-foreground: var(--muted-foreground); /* muted-green-gray (FAQ answers, step desc) */
+  --muted: oklch(0.8816 0.0017 247.84); /* light-grey */
+  --muted-foreground: oklch(0.368 0.0195 207.12); /* muted-green-gray (FAQ answers, step desc) */
 
   /* --- Status colors (keep consistent with your palette) --- */
   --success: var(--lime); /* lime */
@@ -203,6 +203,16 @@
 }
 
 @layer components {
+  .main-gradient {
+    background: linear-gradient(
+      180deg,
+      var(--subtle-background) 0%,
+      transparent 10%,
+      transparent 90%,
+      var(--subtle-background) 100%
+    );
+  }
+
   .pricing-section {
     @apply mx-auto w-full max-w-7xl;
   }
@@ -496,4 +506,12 @@ html[data-theme='light'] {
   html {
     scroll-behavior: auto;
   }
+}
+
+.prose :where(ul > li):not(:where([class~='not-prose'], [class~='not-prose'] *))::marker {
+  color: var(--primary);
+}
+
+.lexical-table-cell-header-1 {
+  @apply bg-primary text-primary-foreground;
 }

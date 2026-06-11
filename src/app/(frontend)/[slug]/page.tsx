@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 
-import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { layoutBlocksFromLandingPage } from '@/components/homepage/fromLandingSections'
+import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { TableOfContents } from '@/components/TableOfContents/Component'
 import { homeStatic } from '@/endpoints/seed/home-static'
 import configPromise from '@payload-config'
 import { draftMode } from 'next/headers'
@@ -12,8 +13,8 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHomepageLayout } from '@/blocks/RenderHomepageLayout'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { RenderHero } from '@/heros/RenderHero'
-import { createTranslator } from '@/i18n/createTranslator'
 import { DEFAULT_LOCALE, type AppLocale } from '@/i18n/config'
+import { createTranslator } from '@/i18n/createTranslator'
 import { getActiveLocale } from '@/i18n/getActiveLocale'
 import { generateMeta } from '@/utilities/generateMeta'
 
@@ -101,7 +102,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const translator = hasHomepageBlocks ? await createTranslator(locale) : null
 
   return (
-    <article className="">
+    <article className="pt-8 md:pt-12 xl:pt-20 pb-8 md:pb-12 xl:pb-20">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -113,8 +114,19 @@ export default async function Page({ params: paramsPromise }: Args) {
         <RenderHomepageLayout blocks={page.layout} t={translator!} />
       ) : page ? (
         <>
-          <RenderHero {...page.hero} />
-          <RenderBlocks blocks={page.layout} />
+          <RenderHero {...page.hero} title={page.title} />
+          {page.showTableOfContents &&
+          page.tableOfContentsHeadings &&
+          page.tableOfContentsHeadings.length > 0 ? (
+            <div className="container lg:grid lg:grid-cols-[4fr_2fr] lg:gap-20">
+              <div className="lg:col-start-1">
+                <RenderBlocks blocks={page.layout} />
+              </div>
+              <TableOfContents headings={page.tableOfContentsHeadings} />
+            </div>
+          ) : (
+            <RenderBlocks blocks={page.layout} />
+          )}
         </>
       ) : (
         <PayloadRedirects url={url} />
@@ -202,36 +214,18 @@ const queryPageBySlug = cache(async ({ locale, slug }: { locale: AppLocale; slug
   return noLocaleResult.docs?.[0] || null
 })
 
-const queryLandingPageBySlug = cache(async ({ locale, slug }: { locale: AppLocale; slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+const queryLandingPageBySlug = cache(
+  async ({ locale, slug }: { locale: AppLocale; slug: string }) => {
+    const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config: configPromise })
 
-  const localeResult = await payload.find({
-    collection: 'landing-pages',
-    draft,
-    depth: 3,
-    limit: 1,
-    locale,
-    fallbackLocale: DEFAULT_LOCALE,
-    pagination: false,
-    overrideAccess: draft,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-  })
-
-  if (localeResult.docs?.[0]) return localeResult.docs[0]
-
-  if (locale !== DEFAULT_LOCALE) {
-    const defaultLocaleResult = await payload.find({
+    const localeResult = await payload.find({
       collection: 'landing-pages',
       draft,
       depth: 3,
       limit: 1,
-      locale: DEFAULT_LOCALE,
+      locale,
       fallbackLocale: DEFAULT_LOCALE,
       pagination: false,
       overrideAccess: draft,
@@ -242,22 +236,42 @@ const queryLandingPageBySlug = cache(async ({ locale, slug }: { locale: AppLocal
       },
     })
 
-    if (defaultLocaleResult.docs?.[0]) return defaultLocaleResult.docs[0]
-  }
+    if (localeResult.docs?.[0]) return localeResult.docs[0]
 
-  const noLocaleResult = await payload.find({
-    collection: 'landing-pages',
-    draft,
-    depth: 3,
-    limit: 1,
-    pagination: false,
-    overrideAccess: draft,
-    where: {
-      slug: {
-        equals: slug,
+    if (locale !== DEFAULT_LOCALE) {
+      const defaultLocaleResult = await payload.find({
+        collection: 'landing-pages',
+        draft,
+        depth: 3,
+        limit: 1,
+        locale: DEFAULT_LOCALE,
+        fallbackLocale: DEFAULT_LOCALE,
+        pagination: false,
+        overrideAccess: draft,
+        where: {
+          slug: {
+            equals: slug,
+          },
+        },
+      })
+
+      if (defaultLocaleResult.docs?.[0]) return defaultLocaleResult.docs[0]
+    }
+
+    const noLocaleResult = await payload.find({
+      collection: 'landing-pages',
+      draft,
+      depth: 3,
+      limit: 1,
+      pagination: false,
+      overrideAccess: draft,
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-  })
+    })
 
-  return noLocaleResult.docs?.[0] || null
-})
+    return noLocaleResult.docs?.[0] || null
+  },
+)

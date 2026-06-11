@@ -8,8 +8,17 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { link } from '@/fields/link'
+import { GridBlock } from '@/blocks/GridBlock/config'
+import { FaqBlock } from '@/blocks/FaqBlock'
 
-const columnFields: Field[] = [
+export const columnFields: Field[] = [
+  {
+    name: 'tocTitle',
+    type: 'text',
+    admin: {
+      description: 'Title shown in Table of Contents',
+    },
+  },
   {
     name: 'size',
     type: 'select',
@@ -61,6 +70,22 @@ const columnFields: Field[] = [
       },
     },
   }),
+  {
+    name: 'divider',
+    type: 'checkbox',
+    admin: {
+      description: 'Show a divider after this column',
+    },
+  },
+  {
+    name: 'embeddedComponent',
+    type: 'blocks',
+    maxRows: 1,
+    admin: {
+      description: 'Embed a component after the rich text',
+    },
+    blocks: [GridBlock, FaqBlock],
+  },
 ]
 
 export const Content: Block = {
