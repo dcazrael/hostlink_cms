@@ -1,5 +1,5 @@
-import { Button, type ButtonProps } from '@/components/ui/button'
 import { LocalizedLink } from '@/components/LocalizedLink'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
 import React from 'react'
 
@@ -51,24 +51,24 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (!href) return null
 
-  const size = appearance === 'link' ? 'clear' : sizeFromProps
+  const size = appearance === 'link' ? 'default' : sizeFromProps
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
 
   /* Ensure we don't break any styles set by richText */
   if (appearance === 'inline') {
     return (
       <LocalizedLink className={cn(className)} href={href || url || ''} {...newTabProps}>
-        {label && label}
-        {children && children}
+        {label}
+        {children}
       </LocalizedLink>
     )
   }
 
   return (
-    <Button asChild className={className} size={size} variant={appearance}>
+    <Button className={className} size={size} variant={appearance}>
       <LocalizedLink className={cn(className)} href={href || url || ''} {...newTabProps}>
-        {label && label}
-        {children && children}
+        {label}
+        {children}
       </LocalizedLink>
     </Button>
   )

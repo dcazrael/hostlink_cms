@@ -38,10 +38,12 @@ const renderFooterItem = (item: ContactFooterItem, index: number) => {
         const variant = buttonVariantMap[link?.variant || 'primary']
 
         return (
-          <Button asChild key={key} size="lg" variant={variant}>
-            <LocalizedLink href={href}>
-              {icon}
-              <span>{label}</span>
+          <Button key={key} size="lg" variant={variant}>
+            <LocalizedLink
+              className="mx-auto inline-flex max-w-full items-center gap-2"
+              href={href}
+            >
+              {icon} <span>{label}</span>
             </LocalizedLink>
           </Button>
         )
@@ -53,8 +55,7 @@ const renderFooterItem = (item: ContactFooterItem, index: number) => {
           href={href}
           key={key}
         >
-          {icon}
-          <span>{label}</span>
+          {icon} <span>{label}</span>
         </LocalizedLink>
       )
     }

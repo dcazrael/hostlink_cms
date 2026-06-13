@@ -19,12 +19,14 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "storybook": "cross-env NODE_OPTIONS=--no-deprecation storybook dev -p 6006",
+    "test-storybook": "vitest --project=storybook",
     "build-storybook": "cross-env NODE_OPTIONS=--no-deprecation storybook build",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
+    "@base-ui/react": "^1.5.0",
     "@payloadcms/admin-bar": "3.80.0",
     "@payloadcms/db-postgres": "3.80.0",
     "@payloadcms/email-nodemailer": "3.80.0",
@@ -46,7 +48,6 @@
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
-    "geist": "^1.3.0",
     "graphql": "^16.8.2",
     "lucide-react": "^1.6.0",
     "next": "16.2.1",
@@ -56,6 +57,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "7.71.1",
+    "shadcn": "^4.11.0",
     "sharp": "0.34.5",
     "tailwind-merge": "^3.5.0"
   },
@@ -63,8 +65,10 @@
     "@eslint/eslintrc": "^3.2.0",
     "@playwright/test": "1.58.2",
     "@storybook/addon-docs": "10.4.4",
+    "@storybook/addon-vitest": "^10.4.4",
     "@storybook/nextjs-vite": "10.4.4",
     "@storybook/react": "10.4.4",
+    "@storybook/test": "^8.6.15",
     "@tailwindcss/postcss": "^4.2.2",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/react": "16.3.0",
@@ -78,6 +82,9 @@
     "eslint-config-next": "16.2.1",
     "fallow": "^2.67.0",
     "jsdom": "28.0.0",
+    "mockdate": "^3.0.5",
+    "msw": "^2.14.6",
+    "msw-storybook-addon": "^2.0.7",
     "oxfmt": "^0.48.0",
     "oxlint": "^1.63.0",
     "postcss": "^8.4.38",
@@ -99,6 +106,11 @@
       "sharp",
       "esbuild",
       "unrs-resolver"
+    ]
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
     ]
   }
 }

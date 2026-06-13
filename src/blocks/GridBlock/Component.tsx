@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { resolveLucideName } from '@/components/homepage/utils'
-import { LucideIcon } from '@/components/LucideIcon'
 import type { GridComponentBlock, Icon } from '@/payload-types'
+import { GridBlockCard } from './GridBlockCard'
 
 type GridItem = {
   id?: string | null
@@ -32,19 +32,13 @@ export const GridBlockComponent: React.FC<Props> = ({ block }) => {
           const iconName = resolveLucideName(item.icon)
 
           return (
-            <article
-              className="rounded-xl border border-border from-bg-card to-primary/10 bg-linear-to-br from-50% to-150% hover:from-0% hover:to-100% p-5 transition-colors duration-300"
+            <GridBlockCard
+              description={item.description}
+              iconName={iconName}
               key={item.id || index}
-            >
-              <h3 className="inline-flex items-center gap-4 text-lg font-semibold">
-                {iconName ? <LucideIcon className="size-6 text-primary" name={iconName} /> : null}
-                <span className="whitespace-pre-line">{item.title}</span>
-              </h3>
-              {item.sub && (
-                <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{item.sub}</p>
-              )}
-              {item.description && <p className="mt-2 text-muted-foreground">{item.description}</p>}
-            </article>
+              sub={item.sub}
+              title={item.title}
+            />
           )
         })}
       </div>

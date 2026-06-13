@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { LocalizedLink } from '@/components/LocalizedLink'
 import { Button } from '@/components/ui/button'
 import { createTranslator } from '@/i18n/createTranslator'
@@ -15,7 +13,7 @@ export default async function NotFound() {
         <h1 style={{ marginBottom: 0 }}>404</h1>
         <p className="mb-4">{t('shared.notfound.description', 'This page could not be found.')}</p>
       </div>
-      <Button asChild variant="default">
+      <Button variant="default">
         <LocalizedLink href="/">{t('shared.notfound.gohome', 'Go home')}</LocalizedLink>
       </Button>
     </div>

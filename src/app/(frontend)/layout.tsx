@@ -1,18 +1,16 @@
 import type { Metadata } from 'next'
 
-import { cn } from '@/utilities/ui'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
 import React from 'react'
+import { draftMode } from 'next/headers'
+import { Analytics } from '@vercel/analytics/next'
+import { cn } from '@/utilities/ui'
 
+import { ZenKakuGothicNew } from '@/lib/fonts'
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { defaultTheme } from '@/providers/Theme/shared'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { Analytics } from '@vercel/analytics/next'
-import { draftMode } from 'next/headers'
-
 import { Providers } from '@/providers'
 import { getServerSideURL } from '@/utilities/getURL'
 import './globals.css'
@@ -22,7 +20,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html
-      className={cn(GeistSans.variable, GeistMono.variable)}
+      className={cn(ZenKakuGothicNew.variable)}
       data-theme={defaultTheme}
       lang="en"
       suppressHydrationWarning

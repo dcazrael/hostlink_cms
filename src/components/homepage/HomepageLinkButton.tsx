@@ -3,8 +3,11 @@ import React from 'react'
 
 import { LocalizedLink } from '@/components/LocalizedLink'
 import type { HomepageLinkLike } from '@/components/homepage/types'
-import { appendQueryParamsToHomepageHref, resolveHomepageLinkHref } from '@/components/homepage/utils'
-import { Button, type ButtonProps } from '@/components/ui/button'
+import {
+  appendQueryParamsToHomepageHref,
+  resolveHomepageLinkHref,
+} from '@/components/homepage/utils'
+import { Button, ButtonProps } from '@/components/ui/button'
 
 const buttonVariantMap: Record<NonNullable<HomepageLinkLike['variant']>, ButtonProps['variant']> = {
   primary: 'default',
@@ -35,7 +38,7 @@ export const HomepageLinkButton: React.FC<{
   const variant = buttonVariantMap[link.variant || 'primary']
 
   return (
-    <Button asChild size="lg" variant={variant}>
+    <Button size="lg" variant={variant}>
       <LocalizedLink href={hrefWithQuery}>
         {link.label}
         {Icon ? <Icon className="size-4" /> : null}

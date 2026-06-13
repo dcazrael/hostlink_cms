@@ -1,0 +1,76 @@
+:root {
+  --lime: oklch(0.7492 0.1353 131.08);
+  --sora: oklch(0.7492 0.1353 257.62);
+  --rose: oklch(0.7492 0.1353 24);
+  --amber-shade: oklch(0.7492 0.1353 82);
+  --purple: oklch(0.7492 0.1353 306);
+
+  /* --- Core surfaces + text (light theme) --- */
+  --background: oklch(0.9612 0 0); /* offwhite */
+  --foreground: oklch(0.2568 0.0195 207.12); /* dark_teal (general text) */
+
+  --card: oklch(0.9816 0.0017 247.84); /* light-grey (even section bg / cards) */
+  --card-foreground: oklch(0.2568 0.0195 207.12);
+
+  --popover: oklch(0.9612 0 0);
+  --popover-foreground: oklch(0.2568 0.0195 207.12);
+
+  /* --- Brand actions --- */
+  --primary: var(--lime); /* lime (PRIMARY CTA) */
+  --primary-foreground: oklch(0.2733 0.0242 253.69); /* blueish gray */
+
+  /* secondary (you decided: dark blue) */
+  --secondary: oklch(0.3421 0.0574 257.62); /* dark blue (SECONDARY) */
+  --secondary-foreground: oklch(0.9612 0 0); /* offwhite text on secondary */
+
+  /* accent (mint) */
+  --accent: oklch(0.7633 0.0596 175.22); /* mint (tag line, icons, subtle highlights) */
+  --accent-foreground: oklch(0.2733 0.0242 253.69); /* blueish gray */
+
+  /* --- Muted / subtext system --- */
+  --muted: oklch(0.8816 0.0017 247.84); /* light-grey */
+  --muted-foreground: oklch(0.368 0.0195 207.12); /* muted-green-gray (FAQ answers, step desc) */
+
+  /* --- Status colors (keep consistent with your palette) --- */
+  --success: var(--lime); /* lime */
+  --warning: oklch(0.89 0.1 75); /* keep shadcn default for now */
+  --error: oklch(0.75 0.15 25); /* keep shadcn default for now */
+
+  /* destructive left close to shadcn defaults */
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  /* --- Borders / inputs / focus --- */
+  --border: oklch(0.9199 0.0013 106.42); /* grey (inputs/borders) */
+  --input: oklch(0.9199 0.0013 106.42);
+  --ring: var(--accent); /* mint ring (calm focus) */
+
+  /* --- Charts (map to your accents instead of random defaults) --- */
+  --chart-1: var(--lime); /* lime */
+  --chart-2: var(--accent); /* mint */
+  --chart-3: var(--secondary); /* dark blue */
+  --chart-4: var(--muted); /* muted-green-gray */
+  --chart-5: var(--heading); /* blueish gray */
+
+  --radius: 0.625rem;
+
+  /* --- Sidebar (align with the same system) --- */
+  --sidebar: oklch(0.9612 0 0); /* offwhite */
+  --sidebar-foreground: oklch(0.2568 0.0195 207.12); /* dark_teal */
+
+  --sidebar-primary: var(--lime); /* lime */
+  --sidebar-primary-foreground: var(--background); /* offwhite */
+
+  --sidebar-accent: var(--accent); /* mint */
+  --sidebar-accent-foreground: var(--heading);
+  --sidebar-border: oklch(0.9699 0.0013 106.42); /* grey */
+  --sidebar-ring: oklch(0.7633 0.0596 175.22); /* mint */
+
+  /* --- Optional extra tokens you wanted enabled --- */
+  --heading: oklch(0.2733 0.0242 253.69); /* blueish gray (headings) */
+  --subtle-foreground: oklch(0.6652 0.0249 128.88); /* muted-green (sub text in cards) */
+  --subtle-background: oklch(
+    0.9831 0.0101 131.36
+  ); /* light green (subtle bg in hero and contact) */
+  --even-background: var(--card); /* even lighter grey (even section bg) */
+}
