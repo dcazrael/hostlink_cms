@@ -1,4 +1,4 @@
-import type { CollectionBeforeValidateHook } from 'payload'
+import { ValidationError, type CollectionBeforeValidateHook } from 'payload'
 
 import {
   isValidManualAnchor,
@@ -10,7 +10,23 @@ type LayoutBlockWithManualAnchor = {
   manualAnchor?: unknown
 }
 
-export const validatePageLayoutAnchors: CollectionBeforeValidateHook = ({ data }) => {
+const throwLayoutValidationError = (
+  message: string,
+  req: Parameters<CollectionBeforeValidateHook>[0]['req'],
+) => {
+  throw new ValidationError({
+    collection: 'pages',
+    errors: [
+      {
+        path: 'layout',
+        message,
+      },
+    ],
+    req,
+  })
+}
+
+export const validatePageLayoutAnchors: CollectionBeforeValidateHook = ({ data, req }) => {
   const layout = Array.isArray(data?.layout) ? data.layout : []
   const seen = new Set<string>()
 
@@ -20,14 +36,19 @@ export const validatePageLayoutAnchors: CollectionBeforeValidateHook = ({ data }
     const anchor = normalizeManualAnchor((rawBlock as LayoutBlockWithManualAnchor).manualAnchor)
     if (!anchor) continue
 
-    if (!isValidManualAnchor(anchor)) return manualAnchorValidationMessage
+    if (!isValidManualAnchor(anchor)) {
+      throwLayoutValidationError(manualAnchorValidationMessage, req)
+    }
 
     if (seen.has(anchor)) {
-      return `Manual anchors must be unique within a page. Duplicate anchor: ${anchor}.`
+      throwLayoutValidationError(
+        `Manual anchors must be unique within a page. Duplicate anchor: ${anchor}.`,
+        req,
+      )
     }
 
     seen.add(anchor)
   }
 
-  return true
+  return data
 }

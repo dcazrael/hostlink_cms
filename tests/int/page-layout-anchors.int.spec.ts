@@ -81,8 +81,28 @@ const getManualAnchorField = (block: Block): TextField => {
   return field
 }
 
-const validateLayout = (layout: unknown) =>
-  validatePageLayoutAnchors({ data: { layout } } as Parameters<typeof validatePageLayoutAnchors>[0])
+const getPayloadValidationMessage = (error: unknown): string => {
+  if (error && typeof error === 'object' && 'data' in error) {
+    const errors = (error as { data?: { errors?: Array<{ message?: unknown }> } }).data?.errors
+    const message = errors?.[0]?.message
+    if (typeof message === 'string') return message
+  }
+
+  if (error instanceof Error) return error.message
+  return String(error)
+}
+
+const validateLayout = (layout: unknown) => {
+  try {
+    validatePageLayoutAnchors({
+      data: { layout },
+      req: {} as never,
+    } as unknown as Parameters<typeof validatePageLayoutAnchors>[0])
+    return true
+  } catch (error) {
+    return getPayloadValidationMessage(error)
+  }
+}
 
 describe('Page layout manual anchors', () => {
   it('adds manualAnchor to Page layout blocks except Hero', () => {
