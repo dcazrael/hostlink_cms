@@ -118,6 +118,9 @@ export const link: LinkType = ({
             admin: {
               condition: (_data: unknown, siblingData: LinkReferenceSiblingData) =>
                 isPageReferenceLink(siblingData),
+              components: {
+                Field: '@/fields/components/PageAnchorSelect#PageAnchorSelect',
+              },
               description:
                 'Optional anchor on the selected Page. Use the Page block manual anchor without #.',
             },
@@ -133,7 +136,7 @@ export const link: LinkType = ({
                 return 'Page anchors can only be used with Page links.'
               }
 
-              return isValidManualAnchor(normalized) ? true : manualAnchorValidationMessage
+              return true
             },
           },
         ]

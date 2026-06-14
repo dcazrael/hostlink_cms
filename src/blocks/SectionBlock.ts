@@ -9,11 +9,13 @@ import { PricingBlock } from '@/blocks/PricingBlock'
 import { ProblemsBlock } from '@/blocks/ProblemsBlock'
 import { ServicesBlock } from '@/blocks/ServicesBlock'
 import { TestimonialsBlock } from '@/blocks/TestimonialsBlock'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const SectionBlock: Block = {
   slug: 'section',
   interfaceName: 'HomepageSectionBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'heading',
       type: 'textarea',

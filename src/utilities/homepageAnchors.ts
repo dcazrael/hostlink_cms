@@ -1,11 +1,9 @@
-import { normalizeManualAnchor } from '@/fields/pageAnchor'
-
 type LayoutSectionLike = {
   blockName?: string | null
   blockType?: string | null
   heading?: string | null
   id?: number | string | null
-  manualAnchor?: string | null
+  anchor?: boolean | null
 }
 
 type LandingSectionLike = {
@@ -19,7 +17,7 @@ export type AnchorOption = {
   value: string
 }
 
-const normalizeAnchorToken = (value: string): string =>
+export const normalizeAnchorToken = (value: string): string =>
   value
     .trim()
     .toLowerCase()
@@ -53,9 +51,20 @@ export const getSectionAnchorValue = (block: LayoutSectionLike, sectionIndex: nu
   return `section-${sectionIndex}`
 }
 
-const getManualAnchor = (block: LayoutSectionLike): string | undefined => {
-  const anchor = normalizeManualAnchor(block.manualAnchor)
-  return anchor || undefined
+export const getDerivedAnchor = (block: LayoutSectionLike): string | undefined => {
+  if (block.anchor !== true) return undefined
+
+  const semanticSource =
+    (typeof block.blockName === 'string' && block.blockName.trim().length > 0
+      ? block.blockName
+      : typeof block.heading === 'string' && block.heading.trim().length > 0
+        ? block.heading
+        : null) || null
+
+  if (!semanticSource) return undefined
+
+  const normalized = normalizeAnchorToken(semanticSource)
+  return normalized || undefined
 }
 
 export const getAnchorOptionsFromLayout = (
@@ -71,10 +80,10 @@ export const getAnchorOptionsFromLayout = (
     if (!rawBlock || typeof rawBlock !== 'object') return
 
     const block = rawBlock as LayoutSectionLike
-    const manualAnchor = getManualAnchor(block)
+    const derivedAnchor = getDerivedAnchor(block)
     const isSection = block.blockType === 'section'
 
-    if (!manualAnchor && !isSection) return
+    if (!derivedAnchor && !isSection) return
 
     if (isSection) sectionCounter += 1
 
@@ -86,7 +95,7 @@ export const getAnchorOptionsFromLayout = (
     const labelSource = block.heading || block.blockName || block.blockType
     const label = labelSource?.trim() || `Block ${layoutIndex + 1}`
 
-    const value = isSection ? getSectionAnchorValue(block, sectionCounter) : manualAnchor
+    const value = isSection ? getSectionAnchorValue(block, sectionCounter) : derivedAnchor
     if (!value) return
 
     options.push({

@@ -4,6 +4,7 @@ import { TableOfContents as TOCIcon } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 type TableOfContentsHeading = {
+  anchor?: string | null
   id?: string | null
   text?: string | null
 }
@@ -21,15 +22,16 @@ export const TableOfContents: React.FC<Props> = ({ headings }) => {
   const isDragging = useRef(false)
 
   useEffect(() => {
-    if (headings.length > 0 && headings[0].id) {
-      setActiveId(headings[0].id)
+    const firstAnchor = headings[0]?.anchor || headings[0]?.id
+    if (firstAnchor) {
+      setActiveId(firstAnchor)
     }
   }, [headings])
 
   useEffect(() => {
     if (headings.length === 0) return
 
-    const validIds = new Set(headings.map((h) => h.id))
+    const validIds = new Set(headings.map((h) => h.anchor || h.id))
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -46,7 +48,8 @@ export const TableOfContents: React.FC<Props> = ({ headings }) => {
       },
     )
 
-    for (const { id } of headings) {
+    for (const heading of headings) {
+      const id = heading.anchor || heading.id
       if (!id) continue
       const el = document.getElementById(id)
       if (el) {
@@ -108,7 +111,8 @@ export const TableOfContents: React.FC<Props> = ({ headings }) => {
       <nav className="self-start top-4 lg:sticky lg:pt-4 hidden lg:block">
         <ul className="space-y-0">
           {headings.map((heading) => {
-            const { id, text } = heading
+            const id = heading.anchor || heading.id
+            const { text } = heading
             const isActive = activeId === id
             return (
               <li
@@ -168,7 +172,8 @@ export const TableOfContents: React.FC<Props> = ({ headings }) => {
             <h3 className="text-lg font-semibold mb-4">On this page</h3>
             <ul className="space-y-2">
               {headings.map((heading) => {
-                const { id, text } = heading
+                const id = heading.anchor || heading.id
+                const { text } = heading
                 const isActive = activeId === id
                 return (
                   <li key={id}>

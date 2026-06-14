@@ -1,5 +1,5 @@
 import type { CollectionBeforeChangeHook } from 'payload'
-import { normalizeManualAnchor } from '@/fields/pageAnchor'
+import { getDerivedAnchor, normalizeAnchorToken } from '@/utilities/homepageAnchors'
 import type { Page as PageType } from '../payload-types'
 
 type ContentColumn = {
@@ -9,7 +9,7 @@ type ContentColumn = {
 
 type ContentBlockRow = {
   id?: number | string | null
-  manualAnchor?: string | null
+  anchor?: boolean | null
   columns?: ContentColumn[] | null
 }
 
@@ -17,11 +17,11 @@ type SectionBlockRow = {
   id?: number | string | null
   blockName?: string | null
   heading?: string | null
-  manualAnchor?: string | null
+  anchor?: boolean | null
 }
 
 type HeadingItem = {
-  id: string
+  anchor: string
   text: string
 }
 
@@ -33,18 +33,28 @@ const normalizeAnchor = (value: string): string =>
     .replace(/-{2,}/g, '-')
     .replace(/^-+|-+$/g, '')
 
-const getManualAnchor = (value: unknown): string | undefined => {
-  const anchor = normalizeManualAnchor(value)
-  return anchor || undefined
+const getAnchorFromBlock = (block: ContentBlockRow | SectionBlockRow): string | undefined => {
+  if (block.anchor !== true) return undefined
+  const source =
+    'blockName' in block && block.blockName
+      ? block.blockName
+      : 'heading' in block && block.heading
+        ? block.heading
+        : null
+  if (source && typeof source === 'string' && source.trim().length > 0) {
+    const normalized = normalizeAnchor(source)
+    return normalized || undefined
+  }
+  return undefined
 }
 
 const dedupe = (items: HeadingItem[]): HeadingItem[] => {
   const seen = new Set<string>()
   const out: HeadingItem[] = []
   for (const item of items) {
-    if (!item.id || !item.text) continue
-    if (seen.has(item.id)) continue
-    seen.add(item.id)
+    if (!item.anchor || !item.text) continue
+    if (seen.has(item.anchor)) continue
+    seen.add(item.anchor)
     out.push(item)
   }
   return out
@@ -82,7 +92,7 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
       id?: number | string | null
       blockName?: string | null
       heading?: string | null
-      manualAnchor?: string | null
+      anchor?: boolean | null
       columns?: ContentColumn[] | null
     }
 
@@ -93,23 +103,23 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
         .trim()
       if (text) {
         const id =
-          getManualAnchor(block.manualAnchor) ||
+          getAnchorFromBlock(block as SectionBlockRow) ||
           sectionAnchorFor(block as SectionBlockRow, sectionCounter)
-        collected.push({ id, text })
+        collected.push({ anchor: id, text })
       }
       continue
     }
 
     if (block.blockType === 'content') {
       const columns = Array.isArray(block.columns) ? block.columns : []
-      const manualAnchor = getManualAnchor(block.manualAnchor)
+      const derivedAnchor = getAnchorFromBlock(block as ContentBlockRow)
       for (const [columnIndex, col] of columns.entries()) {
         if (!col || typeof col !== 'object') continue
         const c = col as ContentColumn
         if (typeof c.tocTitle === 'string' && c.tocTitle.trim().length > 0) {
           const text = c.tocTitle.trim()
-          const id = columnIndex === 0 && manualAnchor ? manualAnchor : normalizeAnchor(text)
-          if (id) collected.push({ id, text })
+          const id = columnIndex === 0 && derivedAnchor ? derivedAnchor : normalizeAnchor(text)
+          if (id) collected.push({ anchor: id, text })
         }
       }
     }
@@ -121,7 +131,7 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
 const sameHeadings = (a: HeadingItem[] | null | undefined, b: HeadingItem[]): boolean => {
   if (!a || a.length !== b.length) return false
   for (let i = 0; i < a.length; i += 1) {
-    if (a[i].id !== b[i].id || a[i].text !== b[i].text) return false
+    if (a[i].anchor !== b[i].anchor || a[i].text !== b[i].text) return false
   }
   return true
 }

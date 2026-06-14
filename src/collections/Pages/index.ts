@@ -27,9 +27,6 @@ import { seoFields } from '@/fields/seoFields'
 import { ensurePageSlugUniqueAcrossLandingPages } from './hooks/ensurePageSlugUniqueAcrossLandingPages'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
 import { validatePageLayoutAnchors } from './hooks/validatePageLayoutAnchors'
-import { withManualAnchorField } from '@/fields/pageAnchor'
-
-const pageAnchoredBlock = withManualAnchorField
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -85,21 +82,21 @@ export const Pages: CollectionConfig<'pages'> = {
               type: 'blocks',
               blocks: [
                 HeroBlock,
-                pageAnchoredBlock(SectionBlock),
-                pageAnchoredBlock(CallToAction),
-                pageAnchoredBlock(Content),
-                pageAnchoredBlock(MediaBlock),
-                pageAnchoredBlock(Archive),
-                pageAnchoredBlock(FormBlock),
-                pageAnchoredBlock(ProblemsBlock),
-                pageAnchoredBlock(ServicesBlock),
-                pageAnchoredBlock(GridBlock),
-                pageAnchoredBlock(FlowBlock),
-                pageAnchoredBlock(PricingBlock),
-                pageAnchoredBlock(FaqBlock),
-                pageAnchoredBlock(TestimonialsBlock),
-                pageAnchoredBlock(CompanyBlock),
-                pageAnchoredBlock(ContactBlock),
+                SectionBlock,
+                CallToAction,
+                Content,
+                MediaBlock,
+                Archive,
+                FormBlock,
+                ProblemsBlock,
+                ServicesBlock,
+                GridBlock,
+                FlowBlock,
+                PricingBlock,
+                FaqBlock,
+                TestimonialsBlock,
+                CompanyBlock,
+                ContactBlock,
               ],
               required: true,
               admin: {
@@ -137,7 +134,7 @@ export const Pages: CollectionConfig<'pages'> = {
       },
       fields: [
         {
-          name: 'id',
+          name: 'anchor',
           type: 'text',
         },
         {

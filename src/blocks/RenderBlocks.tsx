@@ -27,14 +27,12 @@ import { GridBlockComponent } from '@/blocks/GridBlock/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { PricingBlockComponent } from '@/blocks/Pricing/Component'
 import { TestimonialsBlockComponent } from '@/blocks/Testimonials/Component'
-import { normalizeManualAnchor } from '@/fields/pageAnchor'
-
 type RenderBlocksProps = {
   blocks: Page['layout'][0][]
 }
 
 type PageLayoutBlockWithAnchor = Page['layout'][number] & {
-  manualAnchor?: string | null
+  anchor?: boolean | null
 }
 
 function slugify(text: string): string {
@@ -47,8 +45,13 @@ function slugify(text: string): string {
 }
 
 const getManualAnchor = (block: PageLayoutBlockWithAnchor): string | undefined => {
-  const anchor = normalizeManualAnchor(block.manualAnchor)
-  return anchor || undefined
+  if (block.anchor !== true) return undefined
+  const blockWithHeading = block as { blockName?: string | null; heading?: string | null }
+  const source = blockWithHeading.blockName || blockWithHeading.heading
+  if (source && typeof source === 'string' && source.trim().length > 0) {
+    return slugify(source)
+  }
+  return undefined
 }
 
 const getContentFallbackAnchor = (

@@ -1,4 +1,4 @@
-import type { Block, Field, TextField } from 'payload'
+import type { Block, CheckboxField, Field, TextField } from 'payload'
 import type { GroupField, RowField } from 'payload'
 import { cleanup, render, screen } from '@testing-library/react'
 import React from 'react'
@@ -26,6 +26,35 @@ vi.mock('@/components/RichText', () => ({
 
 vi.mock('@/blocks/Content/Component', () => ({
   ContentBlock: () => React.createElement('div', null, 'Content block body'),
+}))
+
+const mockSetParams = vi.fn()
+
+vi.mock('@payloadcms/ui', () => ({
+  SelectInput: ({ options, value, placeholder, ...props }: Record<string, unknown>) =>
+    React.createElement('select', {
+      'data-testid': 'page-anchor-select',
+      'data-options': JSON.stringify(options ?? []),
+      'data-value': String(value ?? ''),
+      placeholder: placeholder ?? null,
+      ...props,
+    }),
+  useField: vi.fn(() => ({ setValue: vi.fn(), showError: false, value: undefined })),
+  useFormFields: vi.fn(() => undefined),
+  usePayloadAPI: vi.fn(() => [{ data: { docs: [] } }, { setParams: mockSetParams }]),
+  useWatchForm: vi.fn(() => ({
+    getData: () => ({
+      links: [
+        {
+          link: {
+            type: 'reference',
+            reference: { relationTo: 'pages', value: 'page-123' },
+            label: 'Test link',
+          },
+        },
+      ],
+    }),
+  })),
 }))
 
 afterEach(() => {
@@ -56,6 +85,9 @@ const blockHasFieldNamed = (block: Block, name: string): boolean => {
   return fieldsContainName(block.fields)
 }
 
+const blockHasTopLevelCheckboxNamed = (block: Block, name: string): boolean =>
+  block.fields.some((field) => 'name' in field && field.name === name && field.type === 'checkbox')
+
 const getPageLayoutBlocks = (): Block[] => {
   for (const field of Pages.fields) {
     if (!fieldHasTabs(field)) continue
@@ -76,15 +108,55 @@ const getPageLayoutBlocks = (): Block[] => {
   throw new Error('Pages.layout blocks field was not found')
 }
 
-const getManualAnchorField = (block: Block): TextField => {
+const getAnchorField = (block: Block): CheckboxField => {
   const field = block.fields.find(
-    (candidate): candidate is TextField =>
-      'name' in candidate && candidate.name === 'manualAnchor' && candidate.type === 'text',
+    (candidate): candidate is CheckboxField =>
+      'name' in candidate && candidate.name === 'anchor' && candidate.type === 'checkbox',
   )
 
-  if (!field) throw new Error(`${block.slug} is missing manualAnchor`)
+  if (!field) throw new Error(`${block.slug} is missing anchor field`)
   return field
 }
+
+const getPageTableOfContentsField = (): Field & {
+  fields: Field[]
+  name: 'tableOfContentsHeadings'
+  type: 'array'
+} => {
+  const field = Pages.fields.find(
+    (
+      candidate,
+    ): candidate is Field & {
+      fields: Field[]
+      name: 'tableOfContentsHeadings'
+      type: 'array'
+    } =>
+      fieldHasName(candidate, 'tableOfContentsHeadings') &&
+      candidate.type === 'array' &&
+      fieldHasNestedFields(candidate),
+  )
+
+  if (!field) throw new Error('Pages.tableOfContentsHeadings field was not found')
+  return field
+}
+
+const getSectionComponentBlocks = (): Block[] => {
+  const componentField = SectionBlock.fields.find(
+    (field): field is Field & { blocks: Block[]; name: 'component'; type: 'blocks' } =>
+      fieldHasName(field, 'component') &&
+      field.type === 'blocks' &&
+      'blocks' in field &&
+      Array.isArray(field.blocks),
+  )
+
+  if (!componentField) throw new Error('Section.component blocks field was not found')
+  return componentField.blocks
+}
+
+const blockFieldShape = (block: Block): string =>
+  block.fields
+    .map((field) => ('name' in field ? `${field.type}:${field.name}` : field.type))
+    .join('|')
 
 const getCtaLinkField = (): GroupField => {
   const linksField = CallToAction.fields.find(
@@ -151,7 +223,7 @@ const populateTocForLayout = (layout: unknown): Page['tableOfContentsHeadings'] 
 }
 
 describe('Page layout manual anchors', () => {
-  it('adds manualAnchor to Page layout blocks except Hero', () => {
+  it('adds anchor checkbox to Page layout blocks except Hero', () => {
     const pageLayoutBlocks = getPageLayoutBlocks()
     const nonHeroPageLayoutBlocks = pageLayoutBlocks.filter(
       (block) => block.slug !== HeroBlock.slug,
@@ -161,57 +233,107 @@ describe('Page layout manual anchors', () => {
     expect(nonHeroPageLayoutBlocks.length).toBeGreaterThan(0)
 
     for (const block of nonHeroPageLayoutBlocks) {
-      const field = getManualAnchorField(block)
+      const field = getAnchorField(block)
 
       expect(field.required).not.toBe(true)
-      expect(field.admin?.description).toContain('lowercase')
+      expect(field.admin?.description).toContain('anchor target')
     }
 
-    expect(blockHasFieldNamed(HeroBlock, 'manualAnchor')).toBe(false)
+    expect(blockHasTopLevelCheckboxNamed(HeroBlock, 'anchor')).toBe(false)
   })
 
-  it('does not add manualAnchor to shared block definitions outside Pages.layout', () => {
-    expect(blockHasFieldNamed(MediaBlock, 'manualAnchor')).toBe(false)
-    expect(blockHasFieldNamed(SectionBlock, 'manualAnchor')).toBe(false)
+  it('shows anchor only for top-level Page layout blocks', () => {
+    const mediaAnchor = getAnchorField(MediaBlock)
+    const sectionAnchor = getAnchorField(SectionBlock)
+
+    expect(blockHasFieldNamed(MediaBlock, 'anchor')).toBe(true)
+    expect(blockHasFieldNamed(SectionBlock, 'anchor')).toBe(true)
+    expect(
+      mediaAnchor.admin?.condition?.({}, {}, {
+        path: ['layout', 0, 'anchor'],
+      } as never),
+    ).toBe(true)
+    expect(
+      mediaAnchor.admin?.condition?.({}, {}, {
+        path: ['layout', 'anchor'],
+      } as never),
+    ).toBe(true)
+    expect(
+      sectionAnchor.admin?.condition?.({}, {}, {
+        path: ['layout', 0, 'component', 0, 'anchor'],
+      } as never),
+    ).toBe(false)
+    expect(
+      sectionAnchor.admin?.condition?.({}, {}, {
+        path: ['sections', 0, 'anchor'],
+      } as never),
+    ).toBe(false)
   })
 
-  it('accepts empty and unique slug-like anchors', () => {
+  it('uses one field shape for repeated block slugs under Pages to avoid split block tables', () => {
+    const blocksBySlug = new Map<string, Set<string>>()
+
+    for (const block of [...getPageLayoutBlocks(), ...getSectionComponentBlocks()]) {
+      const shapes = blocksBySlug.get(block.slug) ?? new Set<string>()
+      shapes.add(blockFieldShape(block))
+      blocksBySlug.set(block.slug, shapes)
+    }
+
+    const duplicateShapeSlugs = [...blocksBySlug.entries()]
+      .filter(([, shapes]) => shapes.size > 1)
+      .map(([slug]) => slug)
+
+    expect(duplicateShapeSlugs).toEqual([])
+  })
+
+  it('does not use id as the stored ToC anchor field name', () => {
+    const tocField = getPageTableOfContentsField()
+    const fieldNames = tocField.fields
+      .filter((field): field is Field & { name: string } => 'name' in field)
+      .map((field) => field.name)
+
+    expect(fieldNames).toContain('anchor')
+  })
+
+  it('requires blockName when anchor checkbox is checked', () => {
     expect(
       validateLayout([
-        { blockType: 'content', manualAnchor: 'intro' },
-        { blockType: 'cta', manualAnchor: '' },
-        { blockType: 'mediaBlock', manualAnchor: 'pricing-2026' },
+        { blockType: 'content', anchor: true, blockName: 'Intro' },
+        { blockType: 'cta', anchor: true, blockName: 'Pricing' },
+        { blockType: 'mediaBlock', anchor: true, blockName: 'Gallery' },
       ]),
     ).toBe(true)
+    expect(validateLayout([{ blockType: 'content', anchor: true, blockName: '' }])).toBe(
+      'Block must have a name or heading when used as an anchor.',
+    )
+    expect(validateLayout([{ blockType: 'content', anchor: true }])).toBe(
+      'Block must have a name or heading when used as an anchor.',
+    )
   })
 
-  it('rejects invalid manual anchors', () => {
-    expect(validateLayout([{ blockType: 'content', manualAnchor: 'Intro Section' }])).toBe(
-      'Manual anchors must use lowercase letters, numbers, and hyphens only, with no leading or trailing hyphen.',
-    )
-    expect(validateLayout([{ blockType: 'content', manualAnchor: '-intro' }])).toBe(
-      'Manual anchors must use lowercase letters, numbers, and hyphens only, with no leading or trailing hyphen.',
-    )
+  it('validates using heading when blockName is empty', () => {
+    expect(validateLayout([{ blockType: 'content', anchor: true, heading: 'Features' }])).toBe(true)
   })
 
   it('rejects duplicate anchors on the same Page', () => {
     expect(
       validateLayout([
-        { blockType: 'content', manualAnchor: 'services' },
-        { blockType: 'cta', manualAnchor: 'services' },
+        { blockType: 'content', anchor: true, blockName: 'Services' },
+        { blockType: 'cta', anchor: true, blockName: 'Services' },
       ]),
     ).toBe(
-      'Manual anchors must be unique within a page. Duplicate anchor: services also appears at layout.0.manualAnchor.',
+      'Anchors must be unique within a page. Duplicate anchor: services also appears at layout.0.anchor.',
     )
   })
 
-  it('renders manual anchors as Page layout wrapper ids', () => {
+  it('renders anchor blocks as Page layout wrapper ids', () => {
     render(
       React.createElement(RenderBlocks, {
         blocks: [
           {
             blockType: 'content',
-            manualAnchor: 'overview',
+            anchor: true,
+            blockName: 'Overview',
             columns: [{ richText: { root: { children: [] } } }],
           },
         ] as unknown as Page['layout'],
@@ -222,7 +344,7 @@ describe('Page layout manual anchors', () => {
     expect(screen.getByText('Content block body')).toBeDefined()
   })
 
-  it('uses ToC title ids as a Content fallback when manualAnchor is empty', () => {
+  it('uses ToC title ids as a Content fallback when anchor is not checked', () => {
     render(
       React.createElement(RenderBlocks, {
         blocks: [
@@ -237,18 +359,19 @@ describe('Page layout manual anchors', () => {
     expect(document.getElementById('feature-list')).not.toBeNull()
   })
 
-  it('uses a manualAnchor for only the first ToC item in a multi-column Content block', () => {
+  it('uses an anchor checkbox for only the first ToC item in a multi-column Content block', () => {
     expect(
       populateTocForLayout([
         {
           blockType: 'content',
-          manualAnchor: 'overview',
+          anchor: true,
+          blockName: 'Overview',
           columns: [{ tocTitle: 'Overview' }, { tocTitle: 'Details' }],
         },
       ]),
     ).toEqual([
-      { id: 'overview', text: 'Overview' },
-      { id: 'details', text: 'Details' },
+      { anchor: 'overview', text: 'Overview' },
+      { anchor: 'details', text: 'Details' },
     ])
   })
 
@@ -276,19 +399,143 @@ describe('Page layout manual anchors', () => {
       }),
     ).toBe(true)
     expect(
-      validateTextField(pageAnchorField, '#pricing', {
+      validateTextField(pageAnchorField, '対応範囲', {
         type: 'reference',
         reference: { relationTo: 'pages' },
       }),
-    ).toBe(
-      'Manual anchors must use lowercase letters, numbers, and hyphens only, with no leading or trailing hyphen.',
-    )
+    ).toBe(true)
     expect(
       validateTextField(pageAnchorField, 'pricing', {
         type: 'reference',
         reference: { relationTo: 'posts' },
       }),
     ).toBe('Page anchors can only be used with Page links.')
+  })
+
+  it('uses a custom admin component for the CTA pageAnchor field', () => {
+    const pageAnchorField = getCtaPageAnchorField()
+    expect(pageAnchorField.admin?.components?.Field).toBe(
+      '@/fields/components/PageAnchorSelect#PageAnchorSelect',
+    )
+  })
+
+  it('renders PageAnchorSelect with anchor options from the referenced Page API', async () => {
+    const { PageAnchorSelect } = await import('@/fields/components/PageAnchorSelect')
+    const { useField, usePayloadAPI, useWatchForm } = await import('@payloadcms/ui')
+
+    const mockSetValue = vi.fn()
+    vi.mocked(useField).mockReturnValueOnce({
+      setValue: mockSetValue,
+      showError: false,
+      value: 'intro',
+    } as never)
+    vi.mocked(useWatchForm).mockReturnValueOnce({
+      getData: () => ({
+        links: [
+          {
+            link: {
+              type: 'reference',
+              reference: { relationTo: 'pages', value: 'page-456' },
+              label: 'Test link',
+            },
+          },
+        ],
+      }),
+    } as never)
+    vi.mocked(usePayloadAPI).mockReset()
+    vi.mocked(usePayloadAPI).mockReturnValueOnce([
+      {
+        data: {
+          docs: [
+            {
+              id: 'page-456',
+              layout: [
+                {
+                  blockType: 'content',
+                  anchor: true,
+                  blockName: 'Intro',
+                  heading: 'Intro',
+                  id: 'b1',
+                },
+                {
+                  blockType: 'cta',
+                  anchor: true,
+                  blockName: 'Pricing 2026',
+                  heading: 'Pricing',
+                  id: 'b2',
+                },
+                { blockType: 'mediaBlock', anchor: true, blockName: 'Gallery', id: 'b3' },
+              ],
+            },
+          ],
+        },
+        isError: false,
+        isLoading: false,
+      } as never,
+      { setParams: mockSetParams as never },
+    ])
+
+    render(
+      React.createElement(PageAnchorSelect, {
+        field: { name: 'pageAnchor', type: 'text', label: 'Page anchor' },
+        path: 'links.0.link.pageAnchor',
+        readOnly: false,
+      }),
+    )
+
+    const select = screen.getByTestId('page-anchor-select')
+    const options = JSON.parse(select.getAttribute('data-options') ?? '[]') as Array<{
+      label: string
+      value: string
+    }> as Array<{ label: string; value: string }>
+    const values = options.map((o) => o.value)
+
+    expect(values).toContain('intro')
+    expect(values).toContain('pricing-2026')
+    expect(values).toContain('gallery')
+    expect(select.getAttribute('data-value')).toBe('intro')
+  })
+
+  it('shows a placeholder when no Page is selected for the anchor selector', async () => {
+    const { PageAnchorSelect } = await import('@/fields/components/PageAnchorSelect')
+    const { useField, usePayloadAPI, useWatchForm } = await import('@payloadcms/ui')
+
+    vi.mocked(useField).mockReturnValueOnce({
+      setValue: vi.fn(),
+      showError: false,
+      value: undefined,
+    } as never)
+    // No page selected (reference is posts, not pages)
+    vi.mocked(useWatchForm).mockReturnValueOnce({
+      getData: () => ({
+        links: [
+          {
+            link: {
+              type: 'reference',
+              reference: { relationTo: 'posts', value: 'post-789' },
+              label: 'Test link',
+            },
+          },
+        ],
+      }),
+    } as never)
+    vi.mocked(usePayloadAPI).mockReset()
+    vi.mocked(usePayloadAPI).mockReturnValueOnce([
+      { data: { docs: [] }, isError: false, isLoading: false } as never,
+      { setParams: mockSetParams as never },
+    ])
+
+    render(
+      React.createElement(PageAnchorSelect, {
+        field: { name: 'pageAnchor', type: 'text', label: 'Page anchor' },
+        path: 'links.0.link.pageAnchor',
+        readOnly: false,
+      }),
+    )
+
+    const select = screen.getByTestId('page-anchor-select')
+    expect(select.getAttribute('placeholder')).toBe('Select a Page link first')
+    expect(select.getAttribute('data-value')).toBe('')
   })
 
   it('appends page anchors to Page reference links only', () => {

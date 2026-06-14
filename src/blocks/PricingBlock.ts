@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { homepageLink } from '@/fields/link'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 const pricingStylePresetFieldOptions = [
   { label: '🟢 Style 1 - Emerald', value: 'style1' },
@@ -14,6 +15,7 @@ export const PricingBlock: Block = {
   slug: 'pricing',
   interfaceName: 'PricingComponentBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'plans',
       type: 'array',
