@@ -10,6 +10,7 @@ import { SectionBlock } from '@/blocks/SectionBlock'
 import { CMSLink } from '@/components/Link'
 import { Pages } from '@/collections/Pages'
 import { validatePageLayoutAnchors } from '@/collections/Pages/hooks/validatePageLayoutAnchors'
+import { populateTableOfContents } from '@/hooks/populateTableOfContents'
 import type { Page } from '@/payload-types'
 
 vi.mock('next/navigation', () => ({
@@ -106,6 +107,15 @@ const validateLayout = (layout: unknown) => {
   }
 }
 
+const populateTocForLayout = (layout: unknown): Page['tableOfContentsHeadings'] => {
+  const result = populateTableOfContents({
+    data: { layout },
+    originalDoc: {},
+  } as unknown as Parameters<typeof populateTableOfContents>[0]) as Page
+
+  return result.tableOfContentsHeadings
+}
+
 describe('Page layout manual anchors', () => {
   it('adds manualAnchor to Page layout blocks except Hero', () => {
     const pageLayoutBlocks = getPageLayoutBlocks()
@@ -191,6 +201,21 @@ describe('Page layout manual anchors', () => {
     )
 
     expect(document.getElementById('feature-list')).not.toBeNull()
+  })
+
+  it('uses a manualAnchor for only the first ToC item in a multi-column Content block', () => {
+    expect(
+      populateTocForLayout([
+        {
+          blockType: 'content',
+          manualAnchor: 'overview',
+          columns: [{ tocTitle: 'Overview' }, { tocTitle: 'Details' }],
+        },
+      ]),
+    ).toEqual([
+      { id: 'overview', text: 'Overview' },
+      { id: 'details', text: 'Details' },
+    ])
   })
 
   it('appends page anchors to Page reference links only', () => {

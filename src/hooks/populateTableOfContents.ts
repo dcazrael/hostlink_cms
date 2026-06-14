@@ -1,4 +1,5 @@
 import type { CollectionBeforeChangeHook } from 'payload'
+import { normalizeManualAnchor } from '@/fields/pageAnchor'
 import type { Page as PageType } from '../payload-types'
 
 type ContentColumn = {
@@ -33,7 +34,7 @@ const normalizeAnchor = (value: string): string =>
     .replace(/^-+|-+$/g, '')
 
 const getManualAnchor = (value: unknown): string | undefined => {
-  const anchor = typeof value === 'string' ? value.trim() : ''
+  const anchor = normalizeManualAnchor(value)
   return anchor || undefined
 }
 
@@ -101,12 +102,13 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
 
     if (block.blockType === 'content') {
       const columns = Array.isArray(block.columns) ? block.columns : []
-      for (const col of columns) {
+      const manualAnchor = getManualAnchor(block.manualAnchor)
+      for (const [columnIndex, col] of columns.entries()) {
         if (!col || typeof col !== 'object') continue
         const c = col as ContentColumn
         if (typeof c.tocTitle === 'string' && c.tocTitle.trim().length > 0) {
           const text = c.tocTitle.trim()
-          const id = getManualAnchor(block.manualAnchor) || normalizeAnchor(text)
+          const id = columnIndex === 0 && manualAnchor ? manualAnchor : normalizeAnchor(text)
           if (id) collected.push({ id, text })
         }
       }

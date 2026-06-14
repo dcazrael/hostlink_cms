@@ -1,3 +1,5 @@
+import { normalizeManualAnchor } from '@/fields/pageAnchor'
+
 type LayoutSectionLike = {
   blockName?: string | null
   blockType?: string | null
@@ -52,7 +54,7 @@ export const getSectionAnchorValue = (block: LayoutSectionLike, sectionIndex: nu
 }
 
 const getManualAnchor = (block: LayoutSectionLike): string | undefined => {
-  const anchor = typeof block.manualAnchor === 'string' ? block.manualAnchor.trim() : ''
+  const anchor = normalizeManualAnchor(block.manualAnchor)
   return anchor || undefined
 }
 

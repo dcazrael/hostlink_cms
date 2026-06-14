@@ -27,6 +27,7 @@ import { GridBlockComponent } from '@/blocks/GridBlock/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { PricingBlockComponent } from '@/blocks/Pricing/Component'
 import { TestimonialsBlockComponent } from '@/blocks/Testimonials/Component'
+import { normalizeManualAnchor } from '@/fields/pageAnchor'
 
 type RenderBlocksProps = {
   blocks: Page['layout'][0][]
@@ -46,7 +47,7 @@ function slugify(text: string): string {
 }
 
 const getManualAnchor = (block: PageLayoutBlockWithAnchor): string | undefined => {
-  const anchor = typeof block.manualAnchor === 'string' ? block.manualAnchor.trim() : ''
+  const anchor = normalizeManualAnchor(block.manualAnchor)
   return anchor || undefined
 }
 
