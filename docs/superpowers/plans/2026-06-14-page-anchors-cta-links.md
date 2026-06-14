@@ -24,17 +24,17 @@
 - Modify `src/hooks/populateTableOfContents.ts`: prefer `manualAnchor` for Section and Content ToC ids when present.
 - Modify `src/utilities/homepageAnchors.ts`: include manual anchors in current-page anchor options for Page layout links.
 - Modify `src/payload-types.ts`: regenerate via `pnpm generate:types`.
-- Create `tests/int/page-layout-anchors.int.spec.tsx`: schema, hook, rendering, and link tests for #12.
+- Create `tests/int/page-layout-anchors.int.spec.ts`: schema, hook, rendering, and link tests for #12.
 - Create `tests/int/cta-links-rendering.int.spec.tsx`: CTA config and rendering tests for #13.
 
 ## Task 1: Add failing tests for Page layout anchors and Page+anchor links
 
 **Files:**
-- Create: `tests/int/page-layout-anchors.int.spec.tsx`
+- Create: `tests/int/page-layout-anchors.int.spec.ts`
 
 - [ ] **Step 1: Write the failing test file**
 
-Create `tests/int/page-layout-anchors.int.spec.tsx` with:
+Create `tests/int/page-layout-anchors.int.spec.ts` with:
 
 ```tsx
 import type { Block, Field, TextField } from 'payload'
@@ -203,7 +203,7 @@ describe('Page layout manual anchors', () => {
 Run:
 
 ```bash
-pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.tsx
+pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.ts
 ```
 
 Expected: FAIL because `src/fields/pageAnchor.ts` and `validatePageLayoutAnchors` do not exist, `manualAnchor` is not on blocks, and `CMSLink` does not accept `pageAnchor`.
@@ -215,7 +215,7 @@ Expected: FAIL because `src/fields/pageAnchor.ts` and `validatePageLayoutAnchors
 - Create: `src/collections/Pages/hooks/validatePageLayoutAnchors.ts`
 - Modify: `src/collections/Pages/index.ts`
 - Modify: Page layout block configs imported by `src/collections/Pages/index.ts`
-- Test: `tests/int/page-layout-anchors.int.spec.tsx`
+- Test: `tests/int/page-layout-anchors.int.spec.ts`
 
 - [ ] **Step 1: Create the reusable Page anchor field helper**
 
@@ -371,7 +371,7 @@ If the hook block already differs, preserve all existing hooks and only add `bef
 Run:
 
 ```bash
-pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.tsx
+pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.ts
 ```
 
 Expected: still FAIL on rendering/link tests until `RenderBlocks` and `CMSLink` are updated, but schema and validation assertions should pass.
@@ -381,7 +381,7 @@ Expected: still FAIL on rendering/link tests until `RenderBlocks` and `CMSLink` 
 Run:
 
 ```bash
-git add src/fields/pageAnchor.ts src/collections/Pages/hooks/validatePageLayoutAnchors.ts src/collections/Pages/index.ts src/blocks tests/int/page-layout-anchors.int.spec.tsx
+git add src/fields/pageAnchor.ts src/collections/Pages/hooks/validatePageLayoutAnchors.ts src/collections/Pages/index.ts src/blocks tests/int/page-layout-anchors.int.spec.ts
 git commit -m "Add page layout manual anchor fields"
 ```
 
@@ -391,7 +391,7 @@ git commit -m "Add page layout manual anchor fields"
 - Modify: `src/blocks/RenderBlocks.tsx`
 - Modify: `src/hooks/populateTableOfContents.ts`
 - Modify: `src/utilities/homepageAnchors.ts`
-- Test: `tests/int/page-layout-anchors.int.spec.tsx`
+- Test: `tests/int/page-layout-anchors.int.spec.ts`
 
 - [ ] **Step 1: Update `RenderBlocks` id resolution**
 
@@ -519,7 +519,7 @@ options.push({
 Run:
 
 ```bash
-pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.tsx
+pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.ts
 ```
 
 Expected: rendering assertions should pass; link assertions may still fail until Task 4.
@@ -529,7 +529,7 @@ Expected: rendering assertions should pass; link assertions may still fail until
 Run:
 
 ```bash
-git add src/blocks/RenderBlocks.tsx src/hooks/populateTableOfContents.ts src/utilities/homepageAnchors.ts tests/int/page-layout-anchors.int.spec.tsx
+git add src/blocks/RenderBlocks.tsx src/hooks/populateTableOfContents.ts src/utilities/homepageAnchors.ts tests/int/page-layout-anchors.int.spec.ts
 git commit -m "Render page layout manual anchors"
 ```
 
@@ -540,7 +540,7 @@ git commit -m "Render page layout manual anchors"
 - Modify: `src/fields/linkGroup.ts`
 - Modify: `src/components/Link/index.tsx`
 - Modify: `src/blocks/CallToAction/config.ts`
-- Test: `tests/int/page-layout-anchors.int.spec.tsx`
+- Test: `tests/int/page-layout-anchors.int.spec.ts`
 
 - [ ] **Step 1: Add `enablePageAnchor` to `link()`**
 
@@ -686,7 +686,7 @@ linkGroup({
 Run:
 
 ```bash
-pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.tsx
+pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.ts
 ```
 
 Expected: PASS.
@@ -696,7 +696,7 @@ Expected: PASS.
 Run:
 
 ```bash
-git add src/fields/link.ts src/fields/linkGroup.ts src/components/Link/index.tsx src/blocks/CallToAction/config.ts tests/int/page-layout-anchors.int.spec.tsx
+git add src/fields/link.ts src/fields/linkGroup.ts src/components/Link/index.tsx src/blocks/CallToAction/config.ts tests/int/page-layout-anchors.int.spec.ts
 git commit -m "Support page anchors in shared links"
 ```
 
@@ -914,7 +914,7 @@ Expected: command succeeds. Commit `src/app/(payload)/admin/importMap.js` only i
 Run:
 
 ```bash
-pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.tsx tests/int/cta-links-rendering.int.spec.tsx
+pnpm vitest run --config ./vitest.config.mts tests/int/page-layout-anchors.int.spec.ts tests/int/cta-links-rendering.int.spec.tsx
 ```
 
 Expected: PASS.

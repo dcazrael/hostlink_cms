@@ -5,10 +5,21 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { Archive } from '@/blocks/ArchiveBlock/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
+import { CompanyBlock } from '@/blocks/CompanyBlock'
+import { ContactBlock } from '@/blocks/ContactBlock'
 import { Content } from '@/blocks/Content/config'
+import { FaqBlock } from '@/blocks/FaqBlock'
+import { FlowBlock } from '@/blocks/FlowBlock'
+import { FormBlock } from '@/blocks/Form/config'
+import { GridBlock } from '@/blocks/GridBlock/config'
 import { HeroBlock } from '@/blocks/HeroBlock'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { PricingBlock } from '@/blocks/PricingBlock'
+import { ProblemsBlock } from '@/blocks/ProblemsBlock'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { SectionBlock } from '@/blocks/SectionBlock'
+import { ServicesBlock } from '@/blocks/ServicesBlock'
+import { TestimonialsBlock } from '@/blocks/TestimonialsBlock'
 import { CMSLink } from '@/components/Link'
 import { validatePageLayoutAnchors } from '@/collections/Pages/hooks/validatePageLayoutAnchors'
 import type { Page } from '@/payload-types'
@@ -68,7 +79,25 @@ const validateLayout = (layout: unknown) =>
 
 describe('Page layout manual anchors', () => {
   it('adds manualAnchor to Page layout blocks except Hero', () => {
-    for (const block of [Archive, CallToAction, Content, MediaBlock]) {
+    const nonHeroPageLayoutBlocks = [
+      SectionBlock,
+      CallToAction,
+      Content,
+      MediaBlock,
+      Archive,
+      FormBlock,
+      ProblemsBlock,
+      ServicesBlock,
+      GridBlock,
+      FlowBlock,
+      PricingBlock,
+      FaqBlock,
+      TestimonialsBlock,
+      CompanyBlock,
+      ContactBlock,
+    ]
+
+    for (const block of nonHeroPageLayoutBlocks) {
       const field = getManualAnchorField(block)
 
       expect(field.required).not.toBe(true)
