@@ -6,11 +6,13 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const FormBlock: Block = {
   slug: 'formBlock',
   interfaceName: 'FormBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'form',
       type: 'relationship',

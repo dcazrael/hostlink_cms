@@ -26,6 +26,7 @@ import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { seoFields } from '@/fields/seoFields'
 import { ensurePageSlugUniqueAcrossLandingPages } from './hooks/ensurePageSlugUniqueAcrossLandingPages'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
+import { validatePageLayoutAnchors } from './hooks/validatePageLayoutAnchors'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -145,7 +146,7 @@ export const Pages: CollectionConfig<'pages'> = {
     slugField(),
   ],
   hooks: {
-    beforeValidate: [ensurePageSlugUniqueAcrossLandingPages],
+    beforeValidate: [ensurePageSlugUniqueAcrossLandingPages, validatePageLayoutAnchors],
     afterChange: [revalidatePage],
     beforeChange: [populatePublishedAt, populateTableOfContents],
     afterDelete: [revalidateDelete],

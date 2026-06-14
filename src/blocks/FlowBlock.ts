@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const FlowBlock: Block = {
   slug: 'flow',
   interfaceName: 'FlowComponentBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'steps',
       type: 'array',

@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const TestimonialsBlock: Block = {
   slug: 'testimonials',
   interfaceName: 'TestimonialsComponentBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'items',
       type: 'array',

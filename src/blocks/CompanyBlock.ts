@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const CompanyBlock: Block = {
   slug: 'company',
   interfaceName: 'CompanyComponentBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'companyName',
       type: 'text',

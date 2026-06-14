@@ -6,11 +6,13 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const Archive: Block = {
   slug: 'archive',
   interfaceName: 'ArchiveBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'introContent',
       type: 'richText',

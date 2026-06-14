@@ -1,9 +1,11 @@
 import type { Block } from 'payload'
+import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const ProblemsBlock: Block = {
   slug: 'problems',
   interfaceName: 'ProblemsComponentBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'items',
       type: 'array',
