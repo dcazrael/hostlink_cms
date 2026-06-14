@@ -3,30 +3,12 @@ import { cleanup, render, screen } from '@testing-library/react'
 import React from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { Archive } from '@/blocks/ArchiveBlock/config'
-import { CallToAction } from '@/blocks/CallToAction/config'
-import { CompanyBlock } from '@/blocks/CompanyBlock'
-import { ContactBlock } from '@/blocks/ContactBlock'
-import { Content } from '@/blocks/Content/config'
-import { FaqBlock } from '@/blocks/FaqBlock'
-import { FlowBlock } from '@/blocks/FlowBlock'
-import { FormBlock } from '@/blocks/Form/config'
-import { GridBlock } from '@/blocks/GridBlock/config'
 import { HeroBlock } from '@/blocks/HeroBlock'
-import { MediaBlock } from '@/blocks/MediaBlock/config'
-import { PricingBlock } from '@/blocks/PricingBlock'
-import { ProblemsBlock } from '@/blocks/ProblemsBlock'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
-import { SectionBlock } from '@/blocks/SectionBlock'
-import { ServicesBlock } from '@/blocks/ServicesBlock'
-import { TestimonialsBlock } from '@/blocks/TestimonialsBlock'
 import { CMSLink } from '@/components/Link'
+import { Pages } from '@/collections/Pages'
 import { validatePageLayoutAnchors } from '@/collections/Pages/hooks/validatePageLayoutAnchors'
 import type { Page } from '@/payload-types'
-
-const CMSLinkWithFutureAnchor = CMSLink as React.ComponentType<
-  React.ComponentProps<typeof CMSLink> & { pageAnchor?: string | null }
->
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/',
@@ -48,6 +30,9 @@ afterEach(() => {
 const fieldHasNestedFields = (field: Field): field is Field & { fields: Field[] } =>
   'fields' in field && Array.isArray(field.fields)
 
+const fieldHasTabs = (field: Field): field is Field & { tabs: Array<{ fields?: Field[] }> } =>
+  'tabs' in field && Array.isArray(field.tabs)
+
 const fieldHasName = <TName extends string>(
   field: Field,
   name: TName,
@@ -58,10 +43,32 @@ const blockHasFieldNamed = (block: Block, name: string): boolean => {
     fields.some(
       (field) =>
         fieldHasName(field, name) ||
-        (fieldHasNestedFields(field) && fieldsContainName(field.fields)),
+        (fieldHasNestedFields(field) && fieldsContainName(field.fields)) ||
+        (fieldHasTabs(field) &&
+          field.tabs.some((tab) => Array.isArray(tab.fields) && fieldsContainName(tab.fields))),
     )
 
   return fieldsContainName(block.fields)
+}
+
+const getPageLayoutBlocks = (): Block[] => {
+  for (const field of Pages.fields) {
+    if (!fieldHasTabs(field)) continue
+
+    for (const tab of field.tabs) {
+      const layoutField = tab.fields?.find(
+        (candidate): candidate is Field & { blocks: Block[]; name: 'layout'; type: 'blocks' } =>
+          fieldHasName(candidate, 'layout') &&
+          candidate.type === 'blocks' &&
+          'blocks' in candidate &&
+          Array.isArray(candidate.blocks),
+      )
+
+      if (layoutField) return layoutField.blocks
+    }
+  }
+
+  throw new Error('Pages.layout blocks field was not found')
 }
 
 const getManualAnchorField = (block: Block): TextField => {
@@ -79,23 +86,13 @@ const validateLayout = (layout: unknown) =>
 
 describe('Page layout manual anchors', () => {
   it('adds manualAnchor to Page layout blocks except Hero', () => {
-    const nonHeroPageLayoutBlocks = [
-      SectionBlock,
-      CallToAction,
-      Content,
-      MediaBlock,
-      Archive,
-      FormBlock,
-      ProblemsBlock,
-      ServicesBlock,
-      GridBlock,
-      FlowBlock,
-      PricingBlock,
-      FaqBlock,
-      TestimonialsBlock,
-      CompanyBlock,
-      ContactBlock,
-    ]
+    const pageLayoutBlocks = getPageLayoutBlocks()
+    const nonHeroPageLayoutBlocks = pageLayoutBlocks.filter(
+      (block) => block.slug !== HeroBlock.slug,
+    )
+
+    expect(pageLayoutBlocks.map((block) => block.slug)).toContain(HeroBlock.slug)
+    expect(nonHeroPageLayoutBlocks.length).toBeGreaterThan(0)
 
     for (const block of nonHeroPageLayoutBlocks) {
       const field = getManualAnchorField(block)
@@ -170,16 +167,18 @@ describe('Page layout manual anchors', () => {
   it('appends page anchors to Page reference links only', () => {
     render(
       React.createElement(React.Fragment, null, [
-        React.createElement(CMSLinkWithFutureAnchor, {
+        React.createElement(CMSLink, {
           key: 'page-section',
           label: 'Page section',
+          // @ts-expect-error pageAnchor is added to CMSLink in Task 4.
           pageAnchor: '#pricing',
           reference: { relationTo: 'pages', value: { slug: 'services' } as Page },
           type: 'reference',
         }),
-        React.createElement(CMSLinkWithFutureAnchor, {
+        React.createElement(CMSLink, {
           key: 'home-section',
           label: 'Home section',
+          // @ts-expect-error pageAnchor is added to CMSLink in Task 4.
           pageAnchor: 'intro',
           reference: { relationTo: 'pages', value: { slug: 'home' } as Page },
           type: 'reference',
