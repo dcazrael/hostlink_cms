@@ -1147,6 +1147,10 @@ export interface CallToActionBlock {
                 relationTo: 'posts';
                 value: number | Post;
               } | null);
+          /**
+           * Optional anchor on the selected Page. Use the Page block manual anchor without #.
+           */
+          pageAnchor?: string | null;
           url?: string | null;
           label: string;
           /**
@@ -2048,6 +2052,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              pageAnchor?: T;
               url?: T;
               label?: T;
               appearance?: T;
