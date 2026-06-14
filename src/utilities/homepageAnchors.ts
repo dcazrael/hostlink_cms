@@ -3,6 +3,7 @@ type LayoutSectionLike = {
   blockType?: string | null
   heading?: string | null
   id?: number | string | null
+  manualAnchor?: string | null
 }
 
 type LandingSectionLike = {
@@ -50,6 +51,11 @@ export const getSectionAnchorValue = (block: LayoutSectionLike, sectionIndex: nu
   return `section-${sectionIndex}`
 }
 
+const getManualAnchor = (block: LayoutSectionLike): string | undefined => {
+  const anchor = typeof block.manualAnchor === 'string' ? block.manualAnchor.trim() : ''
+  return anchor || undefined
+}
+
 export const getAnchorOptionsFromLayout = (
   layout: unknown,
   currentLayoutIndex?: number,
@@ -63,21 +69,24 @@ export const getAnchorOptionsFromLayout = (
     if (!rawBlock || typeof rawBlock !== 'object') return
 
     const block = rawBlock as LayoutSectionLike
-    if (block.blockType !== 'section') return
+    const manualAnchor = getManualAnchor(block)
+    const isSection = block.blockType === 'section'
 
-    sectionCounter += 1
+    if (!manualAnchor && !isSection) return
 
-    // Avoid linking a section CTA to itself.
+    if (isSection) sectionCounter += 1
+
+    // Avoid linking a block CTA to itself.
     if (typeof currentLayoutIndex === 'number' && layoutIndex === currentLayoutIndex) {
       return
     }
 
-    const labelSource = block.heading || block.blockName
-    const label = labelSource?.trim() || `Section ${sectionCounter}`
+    const labelSource = block.heading || block.blockName || block.blockType
+    const label = labelSource?.trim() || `Block ${layoutIndex + 1}`
 
     options.push({
-      label: `${sectionCounter}. ${label}`,
-      value: getSectionAnchorValue(block, sectionCounter),
+      label: isSection ? `${sectionCounter}. ${label}` : label,
+      value: manualAnchor || getSectionAnchorValue(block, sectionCounter),
     })
   })
 

@@ -8,6 +8,7 @@ type ContentColumn = {
 
 type ContentBlockRow = {
   id?: number | string | null
+  manualAnchor?: string | null
   columns?: ContentColumn[] | null
 }
 
@@ -15,6 +16,7 @@ type SectionBlockRow = {
   id?: number | string | null
   blockName?: string | null
   heading?: string | null
+  manualAnchor?: string | null
 }
 
 type HeadingItem = {
@@ -29,6 +31,11 @@ const normalizeAnchor = (value: string): string =>
     .replace(/[^\p{L}\p{N}_-]+/gu, '-')
     .replace(/-{2,}/g, '-')
     .replace(/^-+|-+$/g, '')
+
+const getManualAnchor = (value: unknown): string | undefined => {
+  const anchor = typeof value === 'string' ? value.trim() : ''
+  return anchor || undefined
+}
 
 const dedupe = (items: HeadingItem[]): HeadingItem[] => {
   const seen = new Set<string>()
@@ -74,6 +81,7 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
       id?: number | string | null
       blockName?: string | null
       heading?: string | null
+      manualAnchor?: string | null
       columns?: ContentColumn[] | null
     }
 
@@ -83,7 +91,9 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
         .toString()
         .trim()
       if (text) {
-        const id = sectionAnchorFor(block as SectionBlockRow, sectionCounter)
+        const id =
+          getManualAnchor(block.manualAnchor) ||
+          sectionAnchorFor(block as SectionBlockRow, sectionCounter)
         collected.push({ id, text })
       }
       continue
@@ -96,7 +106,7 @@ const collectFromLayout = (layout: unknown): HeadingItem[] => {
         const c = col as ContentColumn
         if (typeof c.tocTitle === 'string' && c.tocTitle.trim().length > 0) {
           const text = c.tocTitle.trim()
-          const id = normalizeAnchor(text)
+          const id = getManualAnchor(block.manualAnchor) || normalizeAnchor(text)
           if (id) collected.push({ id, text })
         }
       }
