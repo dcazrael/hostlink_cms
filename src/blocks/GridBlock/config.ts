@@ -1,11 +1,9 @@
 import type { Block } from 'payload'
-import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const GridBlock: Block = {
   slug: 'grid',
   interfaceName: 'GridComponentBlock',
   fields: [
-    manualAnchorField(),
     {
       name: 'columns',
       type: 'select',

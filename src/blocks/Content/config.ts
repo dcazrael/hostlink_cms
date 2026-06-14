@@ -10,7 +10,6 @@ import {
 import { FaqBlock } from '@/blocks/FaqBlock'
 import { GridBlock } from '@/blocks/GridBlock/config'
 import { link } from '@/fields/link'
-import { manualAnchorField } from '@/fields/pageAnchor'
 
 const hasShowTableOfContentsEnabled = (data: unknown): boolean => {
   if (!data || typeof data !== 'object') return false
@@ -103,7 +102,6 @@ export const Content: Block = {
   slug: 'content',
   interfaceName: 'ContentBlock',
   fields: [
-    manualAnchorField(),
     {
       name: 'columns',
       type: 'array',

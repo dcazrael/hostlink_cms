@@ -620,6 +620,10 @@ export interface User {
  * via the `definition` "HomepageSectionBlock".
  */
 export interface HomepageSectionBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   heading: string;
   subheading?: string | null;
   background?: ('default' | 'subtle') | null;
@@ -665,6 +669,10 @@ export interface HomepageSectionBlock {
  * via the `definition` "GridComponentBlock".
  */
 export interface GridComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   columns: '2' | '3';
   items: {
     icon?: (number | null) | Icon;
@@ -682,6 +690,10 @@ export interface GridComponentBlock {
  * via the `definition` "ProblemsComponentBlock".
  */
 export interface ProblemsComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   items: {
     icon?: (number | null) | Icon;
     title: string;
@@ -698,6 +710,10 @@ export interface ProblemsComponentBlock {
  * via the `definition` "ServicesComponentBlock".
  */
 export interface ServicesComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   items: {
     icon?: (number | null) | Icon;
     title: string;
@@ -713,6 +729,10 @@ export interface ServicesComponentBlock {
  * via the `definition` "FlowComponentBlock".
  */
 export interface FlowComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   steps: {
     step: number;
     title: string;
@@ -728,6 +748,10 @@ export interface FlowComponentBlock {
  * via the `definition` "PricingComponentBlock".
  */
 export interface PricingComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   plans: {
     planName: string;
     recommended?: boolean | null;
@@ -810,6 +834,10 @@ export interface LandingPage {
  * via the `definition` "FaqComponentBlock".
  */
 export interface FaqComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   items: {
     question: string;
     answer: string;
@@ -824,6 +852,10 @@ export interface FaqComponentBlock {
  * via the `definition` "TestimonialsComponentBlock".
  */
 export interface TestimonialsComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   items: {
     description: string;
     name: string;
@@ -840,6 +872,10 @@ export interface TestimonialsComponentBlock {
  * via the `definition` "CompanyComponentBlock".
  */
 export interface CompanyComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   companyName?: string | null;
   ceo?: string | null;
   address?: string | null;
@@ -859,6 +895,10 @@ export interface CompanyComponentBlock {
  * via the `definition` "ContactComponentBlock".
  */
 export interface ContactComponentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   form: number | Form;
   footerItems?:
     | {
@@ -1074,6 +1114,10 @@ export interface Form {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   richText?: {
     root: {
       type: string;
@@ -1122,6 +1166,10 @@ export interface CallToActionBlock {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   columns?:
     | {
         /**
@@ -1194,6 +1242,10 @@ export interface MediaBlock {
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   introContent?: {
     root: {
       type: string;
@@ -1228,6 +1280,10 @@ export interface ArchiveBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
+  /**
+   * Optional page section anchor. Use lowercase letters, numbers, and hyphens only, like pricing-details.
+   */
+  manualAnchor?: string | null;
   form: number | Form;
   enableIntro?: boolean | null;
   introContent?: {
@@ -1653,6 +1709,7 @@ export interface HomepageHeroBlockSelect<T extends boolean = true> {
  * via the `definition` "HomepageSectionBlock_select".
  */
 export interface HomepageSectionBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   heading?: T;
   subheading?: T;
   background?: T;
@@ -1690,6 +1747,7 @@ export interface HomepageSectionBlockSelect<T extends boolean = true> {
  * via the `definition` "GridComponentBlock_select".
  */
 export interface GridComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   columns?: T;
   items?:
     | T
@@ -1708,6 +1766,7 @@ export interface GridComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "ProblemsComponentBlock_select".
  */
 export interface ProblemsComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   items?:
     | T
     | {
@@ -1725,6 +1784,7 @@ export interface ProblemsComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "ServicesComponentBlock_select".
  */
 export interface ServicesComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   items?:
     | T
     | {
@@ -1741,6 +1801,7 @@ export interface ServicesComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "FlowComponentBlock_select".
  */
 export interface FlowComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   steps?:
     | T
     | {
@@ -1757,6 +1818,7 @@ export interface FlowComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "PricingComponentBlock_select".
  */
 export interface PricingComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   plans?:
     | T
     | {
@@ -1795,6 +1857,7 @@ export interface PricingComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "FaqComponentBlock_select".
  */
 export interface FaqComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   items?:
     | T
     | {
@@ -1810,6 +1873,7 @@ export interface FaqComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "TestimonialsComponentBlock_select".
  */
 export interface TestimonialsComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   items?:
     | T
     | {
@@ -1827,6 +1891,7 @@ export interface TestimonialsComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "CompanyComponentBlock_select".
  */
 export interface CompanyComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   companyName?: T;
   ceo?: T;
   address?: T;
@@ -1845,6 +1910,7 @@ export interface CompanyComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "ContactComponentBlock_select".
  */
 export interface ContactComponentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   form?: T;
   footerItems?:
     | T
@@ -1971,6 +2037,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   richText?: T;
   links?:
     | T
@@ -1995,6 +2062,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
  * via the `definition` "ContentBlock_select".
  */
 export interface ContentBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   columns?:
     | T
     | {
@@ -2029,6 +2097,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   media?: T;
   id?: T;
   blockName?: T;
@@ -2038,6 +2107,7 @@ export interface MediaBlockSelect<T extends boolean = true> {
  * via the `definition` "ArchiveBlock_select".
  */
 export interface ArchiveBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
@@ -2052,6 +2122,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  * via the `definition` "FormBlock_select".
  */
 export interface FormBlockSelect<T extends boolean = true> {
+  manualAnchor?: T;
   form?: T;
   enableIntro?: T;
   introContent?: T;

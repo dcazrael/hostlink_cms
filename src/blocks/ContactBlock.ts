@@ -1,13 +1,11 @@
 import type { Block } from 'payload'
 
 import { homepageLink } from '@/fields/link'
-import { manualAnchorField } from '@/fields/pageAnchor'
 
 export const ContactBlock: Block = {
   slug: 'contact',
   interfaceName: 'ContactComponentBlock',
   fields: [
-    manualAnchorField(),
     {
       name: 'form',
       type: 'relationship',

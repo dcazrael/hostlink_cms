@@ -1,4 +1,4 @@
-import type { TextField } from 'payload'
+import type { Block, TextField } from 'payload'
 
 export const manualAnchorPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
@@ -24,4 +24,9 @@ export const manualAnchorField = (): TextField => ({
 
     return isValidManualAnchor(normalized) ? true : manualAnchorValidationMessage
   },
+})
+
+export const withManualAnchorField = (block: Block): Block => ({
+  ...block,
+  fields: [manualAnchorField(), ...block.fields],
 })

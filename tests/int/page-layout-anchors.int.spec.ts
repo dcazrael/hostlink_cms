@@ -4,7 +4,9 @@ import React from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { HeroBlock } from '@/blocks/HeroBlock'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { SectionBlock } from '@/blocks/SectionBlock'
 import { CMSLink } from '@/components/Link'
 import { Pages } from '@/collections/Pages'
 import { validatePageLayoutAnchors } from '@/collections/Pages/hooks/validatePageLayoutAnchors'
@@ -124,6 +126,11 @@ describe('Page layout manual anchors', () => {
     expect(blockHasFieldNamed(HeroBlock, 'manualAnchor')).toBe(false)
   })
 
+  it('does not add manualAnchor to shared block definitions outside Pages.layout', () => {
+    expect(blockHasFieldNamed(MediaBlock, 'manualAnchor')).toBe(false)
+    expect(blockHasFieldNamed(SectionBlock, 'manualAnchor')).toBe(false)
+  })
+
   it('accepts empty and unique slug-like anchors', () => {
     expect(
       validateLayout([
@@ -149,7 +156,9 @@ describe('Page layout manual anchors', () => {
         { blockType: 'content', manualAnchor: 'services' },
         { blockType: 'cta', manualAnchor: 'services' },
       ]),
-    ).toBe('Manual anchors must be unique within a page. Duplicate anchor: services.')
+    ).toBe(
+      'Manual anchors must be unique within a page. Duplicate anchor: services also appears at layout.0.manualAnchor.',
+    )
   })
 
   it('renders manual anchors as Page layout wrapper ids', () => {
