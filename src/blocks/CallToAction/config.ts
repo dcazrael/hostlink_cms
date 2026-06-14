@@ -10,6 +10,7 @@ export const CallToAction: Block = {
     richTextField,
     linkGroup({
       appearances: ['default', 'outline'],
+      enablePageAnchor: true,
       overrides: {
         maxRows: 2,
       },

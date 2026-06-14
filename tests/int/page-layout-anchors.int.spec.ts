@@ -224,7 +224,6 @@ describe('Page layout manual anchors', () => {
         React.createElement(CMSLink, {
           key: 'page-section',
           label: 'Page section',
-          // @ts-expect-error pageAnchor is added to CMSLink in Task 4.
           pageAnchor: '#pricing',
           reference: { relationTo: 'pages', value: { slug: 'services' } as Page },
           type: 'reference',
@@ -232,7 +231,6 @@ describe('Page layout manual anchors', () => {
         React.createElement(CMSLink, {
           key: 'home-section',
           label: 'Home section',
-          // @ts-expect-error pageAnchor is added to CMSLink in Task 4.
           pageAnchor: 'intro',
           reference: { relationTo: 'pages', value: { slug: 'home' } as Page },
           type: 'reference',

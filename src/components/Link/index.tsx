@@ -12,6 +12,7 @@ type CMSLinkType = {
   homepageAnchor?: string | null
   label?: string | null
   newTab?: boolean | null
+  pageAnchor?: string | null
   reference?: {
     relationTo: 'landing-pages' | 'pages' | 'posts'
     value: LandingPage | Page | Post | string | number
@@ -19,6 +20,26 @@ type CMSLinkType = {
   size?: ButtonProps['size'] | null
   type?: 'custom' | 'homepageAnchor' | 'reference' | null
   url?: string | null
+}
+
+const normalizeAnchor = (value: string | null | undefined): string =>
+  typeof value === 'string' ? value.trim().replace(/^#/, '') : ''
+
+const getReferenceHref = (
+  reference: CMSLinkType['reference'],
+  pageAnchor?: string | null,
+): string | null => {
+  if (typeof reference?.value !== 'object' || !reference.value.slug) return null
+
+  const basePath =
+    reference.relationTo === 'posts'
+      ? `/posts/${reference.value.slug}`
+      : reference.value.slug === 'home'
+        ? '/'
+        : `/${reference.value.slug}`
+
+  const normalizedPageAnchor = reference.relationTo === 'pages' ? normalizeAnchor(pageAnchor) : ''
+  return normalizedPageAnchor ? `${basePath}#${normalizedPageAnchor}` : basePath
 }
 
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
@@ -30,23 +51,21 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     homepageAnchor,
     label,
     newTab,
+    pageAnchor,
     reference,
     size: sizeFromProps,
     url,
   } = props
 
-  const resolvedHomepageAnchor =
-    typeof homepageAnchor === 'string' ? homepageAnchor.trim().replace(/^#/, '') : ''
+  const resolvedHomepageAnchor = normalizeAnchor(homepageAnchor)
 
   const href =
     type === 'homepageAnchor'
       ? resolvedHomepageAnchor
         ? `/#${resolvedHomepageAnchor}`
         : null
-      : type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-        ? `${reference?.relationTo && !['landing-pages', 'pages'].includes(reference.relationTo) ? `/${reference.relationTo}` : ''}/${
-            reference.value.slug
-          }`
+      : type === 'reference'
+        ? getReferenceHref(reference, pageAnchor)
         : url
 
   if (!href) return null
