@@ -4,6 +4,9 @@ import { IconText } from '@/components/homepage/IconText'
 import { SectionContent } from '@/components/homepage/SectionContent'
 import { SectionShell, type SectionBackground } from '@/components/homepage/SectionShell'
 import type { SectionLayoutBlock } from '@/components/homepage/types'
+import { resolveReadMoreHref } from '@/components/homepage/utils'
+import { LocalizedLink } from '@/components/LocalizedLink'
+import { Button } from '@/components/ui/button'
 import type { TranslateFn } from '@/i18n/createTranslator'
 
 export const SectionWrapper: React.FC<{
@@ -20,6 +23,7 @@ export const SectionWrapper: React.FC<{
       : sectionIndex % 2 === 0
         ? 'even'
         : 'default'
+  const readMoreHref = resolveReadMoreHref(block.readMoreLink?.target)
 
   return (
     <SectionShell
@@ -48,6 +52,14 @@ export const SectionWrapper: React.FC<{
       <div className="mt-8 w-full">
         <SectionContent component={inner} />
       </div>
+
+      {readMoreHref ? (
+        <Button asChild className="mt-6" size="sm" variant="outline">
+          <LocalizedLink href={readMoreHref}>
+            {t('homepage.section.readmore', '続きを読む')}
+          </LocalizedLink>
+        </Button>
+      ) : null}
 
       <IconText
         containerClassName="mt-6 flex items-center justify-center gap-2"

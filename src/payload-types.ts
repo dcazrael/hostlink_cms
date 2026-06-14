@@ -627,6 +627,20 @@ export interface HomepageSectionBlock {
     icon?: (number | null) | Icon;
     text?: string | null;
   };
+  /**
+   * Optional internal page or post shown as a read-more button.
+   */
+  readMoreLink?: {
+    target?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+  };
   showInProgress?: boolean | null;
   progressLabel?: string | null;
   component?:
@@ -1647,6 +1661,11 @@ export interface HomepageSectionBlockSelect<T extends boolean = true> {
     | {
         icon?: T;
         text?: T;
+      };
+  readMoreLink?:
+    | T
+    | {
+        target?: T;
       };
   showInProgress?: T;
   progressLabel?: T;

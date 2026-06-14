@@ -4,11 +4,13 @@ import type {
   HomepageLinkLike,
   IconTextValue,
   LayoutBlock,
+  ReadMoreTargetLike,
   SectionLayoutBlock,
 } from '@/components/homepage/types'
 import { getSectionAnchorValue } from '@/utilities/homepageAnchors'
 
-export const isHeroBlock = (block: LayoutBlock): block is HeroLayoutBlock => block.blockType === 'hero'
+export const isHeroBlock = (block: LayoutBlock): block is HeroLayoutBlock =>
+  block.blockType === 'hero'
 
 export const isSectionBlock = (block: LayoutBlock): block is SectionLayoutBlock =>
   block.blockType === 'section'
@@ -51,35 +53,89 @@ export const normalizeIconTextValue = (value: unknown): IconTextValue | null => 
   }
 }
 
+type ReadMoreDocument = {
+  slug?: unknown
+}
+
+const getReadMoreRelation = (target: ReadMoreTargetLike): 'pages' | 'posts' | undefined => {
+  if (!target || typeof target !== 'object') return undefined
+
+  if ('relationTo' in target && (target.relationTo === 'pages' || target.relationTo === 'posts')) {
+    return target.relationTo
+  }
+
+  return undefined
+}
+
+const getReadMoreDocument = (target: ReadMoreTargetLike): ReadMoreDocument | undefined => {
+  if (!target || typeof target !== 'object') return undefined
+
+  return target.value && typeof target.value === 'object' ? target.value : undefined
+}
+
+export const resolveReadMoreHref = (target: ReadMoreTargetLike): string | undefined => {
+  const relation = getReadMoreRelation(target)
+  const document = getReadMoreDocument(target)
+  const slug = typeof document?.slug === 'string' ? document.slug.trim() : ''
+
+  if (!relation || !slug) return undefined
+
+  if (relation === 'posts') return `/posts/${slug}`
+
+  return slug === 'home' ? '/' : `/${slug}`
+}
+
+const resolveHomepageAnchorHref = (link: HomepageLinkLike): string | undefined => {
+  const anchor = typeof link.anchor === 'string' ? link.anchor.trim() : ''
+  return anchor ? `#${anchor}` : undefined
+}
+
+const resolveHomepageExternalHref = (link: HomepageLinkLike): string | undefined => {
+  const url = typeof link.url === 'string' ? link.url.trim() : ''
+  return url || undefined
+}
+
+const getHomepageInternalPageValue = (link: HomepageLinkLike) => {
+  if (!link.page) return undefined
+
+  if (
+    typeof link.page === 'object' &&
+    link.page !== null &&
+    'value' in link.page &&
+    link.page.value &&
+    typeof link.page.value === 'object'
+  ) {
+    return link.page.value
+  }
+
+  return link.page
+}
+
+const resolveHomepageInternalHref = (link: HomepageLinkLike): string | undefined => {
+  const pageValue = getHomepageInternalPageValue(link)
+
+  if (!pageValue || typeof pageValue !== 'object' || !('slug' in pageValue)) return undefined
+
+  const slug = typeof pageValue.slug === 'string' ? pageValue.slug.trim() : ''
+
+  if (!slug) return undefined
+
+  return slug === 'home' ? '/' : `/${slug}`
+}
+
 export const resolveHomepageLinkHref = (link?: HomepageLinkLike | null) => {
   if (!link) return undefined
 
   if (link.type === 'anchor') {
-    if (typeof link.anchor !== 'string' || link.anchor.trim().length === 0) return undefined
-    return `#${link.anchor}`
+    return resolveHomepageAnchorHref(link)
   }
 
   if (link.type === 'external') {
-    return link.url || undefined
+    return resolveHomepageExternalHref(link)
   }
 
   if (link.type === 'internal' && link.page) {
-    const pageValue =
-      typeof link.page === 'object' &&
-      link.page !== null &&
-      'value' in link.page &&
-      link.page.value &&
-      typeof link.page.value === 'object'
-        ? link.page.value
-        : link.page
-
-    if (!pageValue || typeof pageValue !== 'object' || !('slug' in pageValue)) return undefined
-
-    if (pageValue.slug === 'home') {
-      return '/'
-    }
-
-    return `/${pageValue.slug}`
+    return resolveHomepageInternalHref(link)
   }
 
   return undefined
@@ -152,10 +208,7 @@ export const decorateBlocks = (blocks: LayoutBlock[]): DecoratedBlock[] => {
   return decoratedBlocks
 }
 
-export const getProgressItems = (
-  decoratedBlocks: DecoratedBlock[],
-  fallbackPrefix = 'Section',
-) => {
+export const getProgressItems = (decoratedBlocks: DecoratedBlock[], fallbackPrefix = 'Section') => {
   return decoratedBlocks.flatMap((entry) => {
     if (
       !isSectionBlock(entry.block) ||
@@ -170,7 +223,10 @@ export const getProgressItems = (
       {
         anchor: entry.anchor,
         dotIndex: entry.dotIndex,
-        label: entry.block.progressLabel || entry.block.heading || `${fallbackPrefix} ${entry.sectionIndex}`,
+        label:
+          entry.block.progressLabel ||
+          entry.block.heading ||
+          `${fallbackPrefix} ${entry.sectionIndex}`,
       },
     ]
   })
