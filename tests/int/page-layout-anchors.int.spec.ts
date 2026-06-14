@@ -1,8 +1,10 @@
 import type { Block, Field, TextField } from 'payload'
+import type { GroupField, RowField } from 'payload'
 import { cleanup, render, screen } from '@testing-library/react'
 import React from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { CallToAction } from '@/blocks/CallToAction/config'
 import { HeroBlock } from '@/blocks/HeroBlock'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
@@ -82,6 +84,38 @@ const getManualAnchorField = (block: Block): TextField => {
 
   if (!field) throw new Error(`${block.slug} is missing manualAnchor`)
   return field
+}
+
+const getCtaLinkField = (): GroupField => {
+  const linksField = CallToAction.fields.find(
+    (field): field is Field & { fields: Field[]; name: 'links'; type: 'array' } =>
+      fieldHasName(field, 'links') && field.type === 'array' && fieldHasNestedFields(field),
+  )
+  if (!linksField) throw new Error('CTA links array was not found')
+
+  const linkField = linksField.fields.find(
+    (field): field is GroupField => fieldHasName(field, 'link') && field.type === 'group',
+  )
+  if (!linkField) throw new Error('CTA link group was not found')
+
+  return linkField
+}
+
+const getCtaPageAnchorField = (): TextField => {
+  const rows = getCtaLinkField().fields.filter(
+    (field): field is RowField => field.type === 'row' && fieldHasNestedFields(field),
+  )
+  const pageAnchorField = rows
+    .flatMap((row) => row.fields)
+    .find((field): field is TextField => fieldHasName(field, 'pageAnchor') && field.type === 'text')
+  if (!pageAnchorField) throw new Error('CTA pageAnchor field was not found')
+
+  return pageAnchorField
+}
+
+const validateTextField = (field: TextField, value: string, siblingData: unknown) => {
+  const validate = field.validate as ((value: unknown, options: unknown) => unknown) | undefined
+  return validate?.(value, { siblingData })
 }
 
 const getPayloadValidationMessage = (error: unknown): string => {
@@ -216,6 +250,45 @@ describe('Page layout manual anchors', () => {
       { id: 'overview', text: 'Overview' },
       { id: 'details', text: 'Details' },
     ])
+  })
+
+  it('shows and validates CTA pageAnchor only for Page reference links', () => {
+    const pageAnchorField = getCtaPageAnchorField()
+
+    expect(
+      pageAnchorField.admin?.condition?.(
+        {},
+        { type: 'reference', reference: { relationTo: 'pages' } },
+        {} as never,
+      ),
+    ).toBe(true)
+    expect(
+      pageAnchorField.admin?.condition?.(
+        {},
+        { type: 'reference', reference: { relationTo: 'posts' } },
+        {} as never,
+      ),
+    ).toBe(false)
+    expect(
+      validateTextField(pageAnchorField, 'pricing', {
+        type: 'reference',
+        reference: { relationTo: 'pages' },
+      }),
+    ).toBe(true)
+    expect(
+      validateTextField(pageAnchorField, '#pricing', {
+        type: 'reference',
+        reference: { relationTo: 'pages' },
+      }),
+    ).toBe(
+      'Manual anchors must use lowercase letters, numbers, and hyphens only, with no leading or trailing hyphen.',
+    )
+    expect(
+      validateTextField(pageAnchorField, 'pricing', {
+        type: 'reference',
+        reference: { relationTo: 'posts' },
+      }),
+    ).toBe('Page anchors can only be used with Page links.')
   })
 
   it('appends page anchors to Page reference links only', () => {

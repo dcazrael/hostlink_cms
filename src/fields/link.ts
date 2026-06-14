@@ -1,5 +1,10 @@
 import type { Field, GroupField } from 'payload'
 
+import {
+  isValidManualAnchor,
+  manualAnchorValidationMessage,
+  normalizeManualAnchor,
+} from '@/fields/pageAnchor'
 import deepMerge from '@/utilities/deepMerge'
 
 export type LinkAppearances = 'default' | 'outline'
@@ -14,6 +19,16 @@ export const appearanceOptions: Record<LinkAppearances, { label: string; value: 
     value: 'outline',
   },
 }
+
+type LinkReferenceSiblingData = {
+  reference?: {
+    relationTo?: unknown
+  } | null
+  type?: unknown
+}
+
+const isPageReferenceLink = (siblingData?: LinkReferenceSiblingData): boolean =>
+  siblingData?.type === 'reference' && siblingData.reference?.relationTo === 'pages'
 
 type LinkType = (options?: {
   appearances?: LinkAppearances[] | false
@@ -101,12 +116,25 @@ export const link: LinkType = ({
             name: 'pageAnchor',
             type: 'text' as const,
             admin: {
-              condition: (_data: unknown, siblingData: { type?: unknown }) =>
-                siblingData?.type === 'reference',
+              condition: (_data: unknown, siblingData: LinkReferenceSiblingData) =>
+                isPageReferenceLink(siblingData),
               description:
                 'Optional anchor on the selected Page. Use the Page block manual anchor without #.',
             },
             label: 'Page anchor',
+            validate: (
+              value: unknown,
+              { siblingData }: { siblingData?: LinkReferenceSiblingData },
+            ) => {
+              const normalized = normalizeManualAnchor(value)
+              if (!normalized) return true
+
+              if (!isPageReferenceLink(siblingData)) {
+                return 'Page anchors can only be used with Page links.'
+              }
+
+              return isValidManualAnchor(normalized) ? true : manualAnchorValidationMessage
+            },
           },
         ]
       : []),
