@@ -86,6 +86,10 @@ export const RenderBlocks: React.FC<RenderBlocksProps> = ({ blocks }) => {
             'data-block-index': index,
             id: wrapperID,
           }
+          const contentWrapperProps = {
+            className: wrapperClassName,
+            id: wrapperID,
+          }
 
           switch (block.blockType) {
             case 'archive':
@@ -99,7 +103,7 @@ export const RenderBlocks: React.FC<RenderBlocksProps> = ({ blocks }) => {
                 columns?: { tocTitle?: string }[]
               }
               return (
-                <div {...wrapperProps} key={key}>
+                <div {...contentWrapperProps} key={key}>
                   <ContentBlock {...contentBlock} />
                 </div>
               )

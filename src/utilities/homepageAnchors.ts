@@ -84,9 +84,12 @@ export const getAnchorOptionsFromLayout = (
     const labelSource = block.heading || block.blockName || block.blockType
     const label = labelSource?.trim() || `Block ${layoutIndex + 1}`
 
+    const value = isSection ? getSectionAnchorValue(block, sectionCounter) : manualAnchor
+    if (!value) return
+
     options.push({
       label: isSection ? `${sectionCounter}. ${label}` : label,
-      value: manualAnchor || getSectionAnchorValue(block, sectionCounter),
+      value,
     })
   })
 
