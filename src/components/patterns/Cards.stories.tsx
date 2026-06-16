@@ -72,3 +72,28 @@ export const AllCorners: Story = {
     </div>
   ),
 }
+
+export const FixedSizing: Story = {
+  args: {
+    corner: 'top-right',
+    chamferDepth: 4,
+    hasOppositeCorner: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Uses `sizing="fixed"` for pixel-precise chamfer depths via ResizeObserver.',
+      },
+    },
+  },
+  render: (args) => (
+    <div className="flex flex-wrap gap-6">
+      <Card eyebrow="Width" title="Narrow" {...args} className="w-48">
+        Fixed chamfer at 16px regardless of width.
+      </Card>
+      <Card eyebrow="Width" title="Wide" {...args} className="w-96">
+        Same 16px chamfer even on a wider card.
+      </Card>
+    </div>
+  ),
+}
