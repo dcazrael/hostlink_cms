@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   buildChamferClipPath,
+  buildChamferSvgPath,
   oppositeChamfer,
   resolveChamferCut,
   type ChamferCut,
@@ -57,5 +58,72 @@ describe('UI chamfer geometry', () => {
   it('returns the opposite corner', () => {
     expect(oppositeChamfer('top-right')).toBe('bottom-left')
     expect(oppositeChamfer('bottom-right')).toBe('top-left')
+  })
+})
+
+describe('SVG chamfer path builder', () => {
+  it('builds a full rect when no cuts are specified (all x=0, y=0)', () => {
+    expect(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 0, y: 0 },
+        bottomRight: { x: 0, y: 0 },
+        bottomLeft: { x: 0, y: 0 },
+      }),
+    ).toBe('M 0 0 H 100 V 100 H 0 Z')
+  })
+
+  it('builds a single top-right chamfer in proportional mode', () => {
+    expect(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 8, y: 8 },
+        bottomRight: { x: 0, y: 0 },
+        bottomLeft: { x: 0, y: 0 },
+      }),
+    ).toBe('M 0 0 H 92 L 100 8 V 100 H 0 Z')
+  })
+
+  it('builds opposite corner chamfers (top-right + bottom-left)', () => {
+    expect(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 12, y: 6 },
+        bottomRight: { x: 0, y: 0 },
+        bottomLeft: { x: 8, y: 16 },
+      }),
+    ).toBe('M 0 0 H 88 L 100 6 V 100 H 8 L 0 84 Z')
+  })
+
+  it('builds asymmetric cuts on all four corners', () => {
+    expect(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 4, y: 2 },
+        topRight: { x: 6, y: 3 },
+        bottomRight: { x: 5, y: 7 },
+        bottomLeft: { x: 3, y: 9 },
+      }),
+    ).toBe('M 4 0 H 94 L 100 3 V 93 L 95 100 H 3 L 0 91 Z')
+  })
+
+  it('builds a fixed-mode path using pixel dimensions', () => {
+    expect(
+      buildChamferSvgPath({
+        width: 320,
+        height: 48,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 16, y: 16 },
+        bottomRight: { x: 0, y: 0 },
+        bottomLeft: { x: 0, y: 0 },
+      }),
+    ).toBe('M 0 0 H 304 L 320 16 V 48 H 0 Z')
   })
 })

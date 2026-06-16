@@ -82,3 +82,142 @@ export function buildChamferClipPath(cuts: ChamferCut[]): string | undefined {
 
   return `polygon(${points.join(', ')})`
 }
+
+export type SvgCornerCut = { x: number; y: number }
+
+export type SvgPathArgs = {
+  width: number
+  height: number
+  topLeft?: SvgCornerCut
+  topRight?: SvgCornerCut
+  bottomRight?: SvgCornerCut
+  bottomLeft?: SvgCornerCut
+}
+
+export type ChamferSizing = 'proportional' | 'fixed'
+
+export type ChamferedCardTone = 'card' | 'subtle' | 'background' | 'navy' | 'mint'
+
+export type ChamferedButtonVariant =
+  | 'default'
+  | 'outline'
+  | 'secondary'
+  | 'ghost'
+  | 'destructive'
+  | 'link'
+
+/**
+ * Walks the perimeter of a rectangle clockwise starting at the top-left edge,
+ * emitting the SVG path commands for an arbitrarily chamfered outline.
+ *
+ * A corner is considered "cut" when either of its edge offsets is > 0; in that
+ * case the diagonal `L` segment is included, otherwise the corner is a sharp
+ * 90° turn. The final `Z` closes the subpath back to the start and also serves
+ * as the implicit top-left chamfer (or sharp edge when topLeft has no cut).
+ */
+export function buildChamferSvgPath(args: SvgPathArgs): string {
+  const { width, height } = args
+  const topLeft = args.topLeft ?? { x: 0, y: 0 }
+  const topRight = args.topRight ?? { x: 0, y: 0 }
+  const bottomRight = args.bottomRight ?? { x: 0, y: 0 }
+  const bottomLeft = args.bottomLeft ?? { x: 0, y: 0 }
+
+  const hasCut = (cut: SvgCornerCut): boolean => cut.x > 0 || cut.y > 0
+
+  const parts: string[] = [`M ${topLeft.x} 0`, `H ${width - topRight.x}`]
+
+  if (hasCut(topRight)) {
+    parts.push(`L ${width} ${topRight.y}`)
+  }
+
+  parts.push(`V ${height - bottomRight.y}`)
+
+  if (hasCut(bottomRight)) {
+    parts.push(`L ${width - bottomRight.x} ${height}`)
+  }
+
+  parts.push(`H ${bottomLeft.x}`)
+
+  if (hasCut(bottomLeft)) {
+    parts.push(`L 0 ${height - bottomLeft.y}`)
+  }
+
+  parts.push('Z')
+
+  return parts.join(' ')
+}
+
+export const chamferCardToneMap: Record<
+  ChamferedCardTone,
+  { textClass: string; fill: string; stroke: string }
+> = {
+  card: {
+    textClass: 'text-card-foreground',
+    fill: 'var(--card)',
+    stroke: 'var(--border)',
+  },
+  subtle: {
+    textClass: 'text-(--heading)',
+    fill: 'var(--subtle-background)',
+    stroke: 'var(--border)',
+  },
+  background: {
+    textClass: 'text-foreground',
+    fill: 'var(--background)',
+    stroke: 'var(--border)',
+  },
+  navy: {
+    textClass: 'text-(--secondary-foreground)',
+    fill: 'var(--secondary)',
+    stroke: 'var(--secondary)',
+  },
+  mint: {
+    textClass: 'text-(--accent-foreground)',
+    fill: 'var(--accent)',
+    stroke: 'var(--accent)',
+  },
+}
+
+export const chamferButtonToneMap: Record<
+  ChamferedButtonVariant,
+  { fill: string; stroke: string }
+> = {
+  default: {
+    fill: 'var(--primary)',
+    stroke: 'var(--primary)',
+  },
+  outline: {
+    fill: 'transparent',
+    stroke: 'var(--border)',
+  },
+  secondary: {
+    fill: 'var(--secondary)',
+    stroke: 'var(--secondary)',
+  },
+  ghost: {
+    fill: 'transparent',
+    stroke: 'transparent',
+  },
+  destructive: {
+    fill: 'var(--destructive)',
+    stroke: 'var(--destructive)',
+  },
+  link: {
+    fill: 'transparent',
+    stroke: 'transparent',
+  },
+}
+
+export const CHAMFER_DEPTH_CAPS = {
+  button: 5,
+  card: 10,
+  shape: 20,
+} as const
+
+export function clampChamferDepth(depth: number, max: number): number {
+  return Math.max(0, Math.min(max, Math.round(depth)))
+}
+
+export function chamferDepthToPx(depth: number): number {
+  return depth * 4
+}
