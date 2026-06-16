@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
+import { buildChamferSvgPath } from '@/components/ui/chamfer'
 
 import {
   Bullet,
@@ -88,18 +89,33 @@ describe('pattern component contracts', () => {
     )
   })
 
-  it('renders ChamferedCard with the symmetric depth shorthand', () => {
+  it('renders ChamferedCard with an SVG path for symmetric depth', () => {
     const { container } = render(
       <ChamferedCard corner="bottom-right" chamferDepth={4}>
         <p>Depth-only chamfer</p>
       </ChamferedCard>,
     )
 
-    const card = container.firstElementChild as HTMLElement | null
+    const svg = container.querySelector('svg')
+    expect(svg).not.toBeNull()
+    expect(svg!.getAttribute('viewBox')).toBe('0 0 100 100')
+    expect(svg!.getAttribute('preserveAspectRatio')).toBe('none')
 
-    expect(card?.style.clipPath).toBe(
-      'polygon(0% 0%, 100% 0%, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0% 100%)',
+    const path = svg!.querySelector('path')
+    expect(path).not.toBeNull()
+    expect(path!.getAttribute('d')).toBe(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 0, y: 0 },
+        bottomRight: { x: 4, y: 4 },
+        bottomLeft: { x: 0, y: 0 },
+      }),
     )
+    expect(path!.getAttribute('vector-effect')).toBe('non-scaling-stroke')
+    expect(path!.getAttribute('fill')).toBe('var(--card)')
+    expect(path!.getAttribute('stroke')).toBe('var(--border)')
   })
 
   it('falls back to asymmetric x/y when depth is 0', () => {
@@ -109,14 +125,20 @@ describe('pattern component contracts', () => {
       </ChamferedCard>,
     )
 
-    const card = container.firstElementChild as HTMLElement | null
-
-    expect(card?.style.clipPath).toBe(
-      'polygon(0% 0%, 100% 0%, 100% calc(100% - 1.5rem), calc(100% - 0.75rem) 100%, 0% 100%)',
+    const path = container.querySelector('svg path')!
+    expect(path.getAttribute('d')).toBe(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 0, y: 0 },
+        bottomRight: { x: 3, y: 6 },
+        bottomLeft: { x: 0, y: 0 },
+      }),
     )
   })
 
-  it('renders ChamferedCard with an automatically opposite asymmetric chamfer', () => {
+  it('renders ChamferedCard with an opposite asymmetric chamfer', () => {
     const { container } = render(
       <ChamferedCard
         corner="top-right"
@@ -131,10 +153,16 @@ describe('pattern component contracts', () => {
       </ChamferedCard>,
     )
 
-    const card = container.firstElementChild as HTMLElement | null
-
-    expect(card?.style.clipPath).toBe(
-      'polygon(0% 0%, calc(100% - 0.75rem) 0%, 100% 0.5rem, 100% 100%, 0.5rem 100%, 0% calc(100% - 1rem))',
+    const path = container.querySelector('svg path')!
+    expect(path.getAttribute('d')).toBe(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 3, y: 2 },
+        bottomRight: { x: 0, y: 0 },
+        bottomLeft: { x: 2, y: 4 },
+      }),
     )
   })
 
@@ -145,10 +173,16 @@ describe('pattern component contracts', () => {
       </ChamferedCard>,
     )
 
-    const card = container.firstElementChild as HTMLElement | null
-
-    expect(card?.style.clipPath).toBe(
-      'polygon(0% 0%, calc(100% - 0.75rem) 0%, 100% 0.75rem, 100% 100%, 1.5rem 100%, 0% calc(100% - 1.5rem))',
+    const path = container.querySelector('svg path')!
+    expect(path.getAttribute('d')).toBe(
+      buildChamferSvgPath({
+        width: 100,
+        height: 100,
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 3, y: 3 },
+        bottomRight: { x: 0, y: 0 },
+        bottomLeft: { x: 6, y: 6 },
+      }),
     )
   })
 
