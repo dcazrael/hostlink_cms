@@ -1,11 +1,19 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button'
 import { cva, type VariantProps } from 'class-variance-authority'
+import * as React from 'react'
 
+import {
+  buildChamferSvgPath,
+  CHAMFER_DEPTH_CAPS,
+  chamferButtonToneMap,
+  clampChamferDepth,
+  type ChamferCorner,
+} from '@/components/ui/chamfer'
+import { useElementSize } from '@/components/ui/use-element-size'
 import { cn } from '@/lib/utils'
-import { buildChamferClipPath, type ChamferCorner } from './chamfer'
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding text-xs font-semibold tracking-widest whitespace-nowrap uppercase transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+  "group/button relative inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding text-xs font-semibold tracking-widest whitespace-nowrap uppercase transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
   {
     variants: {
       variant: {
@@ -52,20 +60,74 @@ function Button({
   chamferCorner = 'top-right',
   chamferDepth = 0,
   style,
+  children,
   ...props
 }: ButtonProps) {
-  const clipPath =
-    chamferDepth > 0
-      ? buildChamferClipPath([{ corner: chamferCorner, x: chamferDepth, y: chamferDepth }])
-      : undefined
+  const [buttonRef, pixelSize] = useElementSize<HTMLButtonElement>()
+  const depth = clampChamferDepth(chamferDepth, CHAMFER_DEPTH_CAPS.button)
+  const isChamfered = depth > 0 && variant !== 'link'
+
+  const path = React.useMemo(() => {
+    if (!isChamfered) return ''
+    if (pixelSize.width <= 0 || pixelSize.height <= 0) return ''
+
+    const cutPx = depth * 4
+    const baseCuts = {
+      topLeft: { x: 0, y: 0 },
+      topRight: { x: 0, y: 0 },
+      bottomRight: { x: 0, y: 0 },
+      bottomLeft: { x: 0, y: 0 },
+    } as const
+
+    const cornerKey =
+      chamferCorner === 'top-left'
+        ? 'topLeft'
+        : chamferCorner === 'top-right'
+          ? 'topRight'
+          : chamferCorner === 'bottom-right'
+            ? 'bottomRight'
+            : 'bottomLeft'
+
+    return buildChamferSvgPath({
+      width: pixelSize.width,
+      height: pixelSize.height,
+      ...baseCuts,
+      [cornerKey]: { x: cutPx, y: cutPx },
+    })
+  }, [isChamfered, depth, chamferCorner, pixelSize.width, pixelSize.height])
+
+  const tone = chamferButtonToneMap[variant ?? 'default']
 
   return (
     <ButtonPrimitive
+      ref={buttonRef}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      style={{ clipPath, ...style }}
+      style={style}
       {...props}
-    />
+    >
+      {isChamfered && path !== '' && (
+        <svg
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 size-full"
+          viewBox={`0 0 ${pixelSize.width} ${pixelSize.height}`}
+          preserveAspectRatio="none"
+        >
+          <path
+            d={path}
+            fill={tone.fill}
+            stroke={tone.stroke}
+            strokeWidth={1}
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      )}
+      {isChamfered ? (
+        <span className="relative z-10 inline-flex items-center gap-1.5">{children}</span>
+      ) : (
+        children
+      )}
+    </ButtonPrimitive>
   )
 }
 
