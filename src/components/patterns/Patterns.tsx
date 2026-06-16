@@ -3,6 +3,7 @@ import * as React from 'react'
 import { Button } from '../ui/button'
 import { BulletList, FeatureList, type BulletShape } from './BulletList'
 import { ChamferedCard, type ChamferedCardCorner } from './ChamferedCard'
+import type { ChamferSizing } from '@/components/ui/chamfer'
 import { DiagonalBand } from './DiagonalBand'
 import { SectionFrame } from './SectionFrame'
 import { ShapeMask } from './ShapeMask'
@@ -20,6 +21,8 @@ export const Card: React.FC<{
   oppositeChamferDepth?: number
   oppositeChamferX?: number
   oppositeChamferY?: number
+  sizing?: ChamferSizing
+  strokeWidth?: number
   className?: string
 }> = ({
   eyebrow,
@@ -34,6 +37,8 @@ export const Card: React.FC<{
   oppositeChamferDepth,
   oppositeChamferX,
   oppositeChamferY,
+  sizing,
+  strokeWidth,
   className,
 }) => (
   <ChamferedCard
@@ -46,6 +51,8 @@ export const Card: React.FC<{
     oppositeChamferDepth={oppositeChamferDepth}
     oppositeChamferX={oppositeChamferX}
     oppositeChamferY={oppositeChamferY}
+    sizing={sizing}
+    strokeWidth={strokeWidth}
     className={className}
   >
     {eyebrow ? (

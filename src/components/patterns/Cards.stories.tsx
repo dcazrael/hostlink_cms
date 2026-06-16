@@ -78,6 +78,7 @@ export const FixedSizing: Story = {
     corner: 'top-right',
     chamferDepth: 4,
     hasOppositeCorner: false,
+    sizing: 'fixed',
   },
   parameters: {
     docs: {
