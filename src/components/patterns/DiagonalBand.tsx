@@ -6,14 +6,6 @@ export type DiagonalBandTone = 'navy' | 'mint' | 'subtle' | 'card' | 'border'
 
 export type DiagonalBandOrientation = 'left' | 'right'
 
-const toneClass: Record<DiagonalBandTone, string> = {
-  navy: 'bg-(--secondary)',
-  mint: 'bg-(--accent)',
-  subtle: 'bg-(--subtle-background)',
-  card: 'bg-card',
-  border: 'bg-border',
-}
-
 const toneFill: Record<DiagonalBandTone, string> = {
   navy: 'var(--secondary)',
   mint: 'var(--accent)',
@@ -91,14 +83,7 @@ export const DiagonalBand: React.FC<{
     <div
       aria-hidden={isDecorative || undefined}
       aria-label={ariaLabel}
-      className={cn(
-        'relative w-full overflow-hidden',
-        // Tinted surface that paints the entire band area (not just the
-        // bar). This keeps the label strip readable on light tones where
-        // the skewed bar is the same color as the page background.
-        toneClass[tone],
-        className,
-      )}
+      className={cn('relative w-full overflow-hidden', className)}
       data-pattern-diagonal-surface
     >
       <svg

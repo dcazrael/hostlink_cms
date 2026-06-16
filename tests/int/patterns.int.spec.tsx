@@ -113,7 +113,6 @@ describe('pattern component contracts', () => {
         bottomLeft: { x: 0, y: 0 },
       }),
     )
-    expect(path!.getAttribute('vector-effect')).toBe('non-scaling-stroke')
     expect(path!.getAttribute('fill')).toBe('var(--card)')
     expect(path!.getAttribute('stroke')).toBe('var(--border)')
   })

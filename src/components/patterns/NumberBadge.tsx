@@ -16,16 +16,16 @@ const CHAMFER_PATH = buildChamferSvgPath({
 })
 
 const toneFill: Record<NumberBadgeTone, string> = {
-  navy: 'var(--secondary)',
-  mint: 'var(--accent)',
-  card: 'var(--card)',
-  subtle: 'var(--subtle-background)',
-  border: 'var(--background)',
+  navy: 'transparent',
+  mint: 'transparent',
+  card: 'transparent',
+  subtle: 'transparent',
+  border: 'transparent',
 }
 
 const toneStroke: Record<NumberBadgeTone, string> = {
-  navy: 'var(--secondary)',
-  mint: 'var(--accent)',
+  navy: 'var(--border)',
+  mint: 'var(--border)',
   card: 'var(--border)',
   subtle: 'var(--border)',
   border: 'var(--border)',

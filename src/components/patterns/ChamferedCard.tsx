@@ -166,13 +166,7 @@ export const ChamferedCard: React.FC<{
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         preserveAspectRatio="none"
       >
-        <path
-          d={path}
-          fill={toneDef.fill}
-          stroke={toneDef.stroke}
-          strokeWidth={strokeWidth}
-          vectorEffect="non-scaling-stroke"
-        />
+        <path d={path} fill={toneDef.fill} stroke={toneDef.stroke} strokeWidth={strokeWidth} />
       </svg>
       <div className={cn('relative z-10 px-5 py-5 md:px-6 md:py-6', innerClassName)}>
         {children}

@@ -183,7 +183,7 @@ export const chamferButtonToneMap: Record<
   { fill: string; stroke: string }
 > = {
   default: {
-    fill: 'var(--primary)',
+    fill: 'transparent',
     stroke: 'var(--primary)',
   },
   outline: {
@@ -191,16 +191,16 @@ export const chamferButtonToneMap: Record<
     stroke: 'var(--border)',
   },
   secondary: {
-    fill: 'var(--secondary)',
-    stroke: 'var(--secondary)',
+    fill: 'transparent',
+    stroke: 'var(--border)',
   },
   ghost: {
     fill: 'transparent',
-    stroke: 'transparent',
+    stroke: 'var(--border)',
   },
   destructive: {
-    fill: 'var(--destructive)',
-    stroke: 'var(--destructive)',
+    fill: 'transparent',
+    stroke: 'var(--border)',
   },
   link: {
     fill: 'transparent',
