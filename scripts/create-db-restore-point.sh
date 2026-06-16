@@ -98,7 +98,6 @@ if [ -n "$ENV_FILE" ]; then
 fi
 
 # --- Compose flags ----------------------------------------------------------
-COMPOSE_FLAGS=""
 COMPOSE_PROJECT_ACTUAL="${COMPOSE_PROJECT:-hostlink_cms}"
 
 if [ -n "$COMPOSE_FILE" ]; then
@@ -106,11 +105,14 @@ if [ -n "$COMPOSE_FILE" ]; then
     echo "Error: --compose-file not found: $COMPOSE_FILE" >&2
     exit 1
   fi
-  COMPOSE_FLAGS="-f $COMPOSE_FILE --project-name $COMPOSE_PROJECT_ACTUAL"
 fi
 
-compose_cmd() {
-  docker compose $COMPOSE_FLAGS "$@"
+compose() {
+  if [ -n "$COMPOSE_FILE" ]; then
+    docker compose -f "$COMPOSE_FILE" --project-name "$COMPOSE_PROJECT_ACTUAL" "$@"
+  else
+    docker compose "$@"
+  fi
 }
 
 # --- Tool check ------------------------------------------------------------
@@ -121,7 +123,7 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 
 # --- Service check ---------------------------------------------------------
-if ! compose_cmd ps "$POSTGRES_SERVICE" >/dev/null 2>&1; then
+if ! compose ps "$POSTGRES_SERVICE" >/dev/null 2>&1; then
   echo "Error: $POSTGRES_SERVICE service is not available via docker compose."
   exit 1
 fi
@@ -131,7 +133,7 @@ if [ "$SKIP_READINESS" != "true" ]; then
   echo "[restore-point] Waiting for $POSTGRES_SERVICE to be ready..."
   _ready=0
   for _i in $(seq 1 15); do
-    if compose_cmd exec -T "$POSTGRES_SERVICE" \
+    if compose exec -T "$POSTGRES_SERVICE" \
       pg_isready -U "$DB_USER" -q 2>/dev/null; then
       _ready=1
       break
@@ -155,15 +157,25 @@ echo "[restore-point] Creating backup: $BACKUP_FILE"
 echo "[restore-point]   DB user: $DB_USER   DB name: $DB_NAME"
 
 if command -v timeout >/dev/null 2>&1; then
-  timeout "$TIMEOUT" compose_cmd exec -T "$POSTGRES_SERVICE" \
-    pg_dump \
-    -U "$DB_USER" \
-    -d "$DB_NAME" \
-    --format=custom \
-    --no-owner \
-    --no-privileges >"$BACKUP_FILE"
+  if [ -n "$COMPOSE_FILE" ]; then
+    timeout "$TIMEOUT" docker compose -f "$COMPOSE_FILE" --project-name "$COMPOSE_PROJECT_ACTUAL" exec -T "$POSTGRES_SERVICE" \
+      pg_dump \
+      -U "$DB_USER" \
+      -d "$DB_NAME" \
+      --format=custom \
+      --no-owner \
+      --no-privileges >"$BACKUP_FILE"
+  else
+    timeout "$TIMEOUT" docker compose exec -T "$POSTGRES_SERVICE" \
+      pg_dump \
+      -U "$DB_USER" \
+      -d "$DB_NAME" \
+      --format=custom \
+      --no-owner \
+      --no-privileges >"$BACKUP_FILE"
+  fi
 else
-  compose_cmd exec -T "$POSTGRES_SERVICE" \
+  compose exec -T "$POSTGRES_SERVICE" \
     pg_dump \
     -U "$DB_USER" \
     -d "$DB_NAME" \
