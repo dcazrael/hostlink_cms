@@ -128,7 +128,7 @@ dev_marker_present="$({
     --project-name "$project_name" \
     --env-file "$env_file" \
     -f "$compose_file" \
-    run --rm migrator sh -c 'psql "$DATABASE_URL" -Atc "SELECT 1 FROM payload_migrations WHERE batch = -1 LIMIT 1;"'
+    exec -T postgres psql "$DATABASE_URL" -Atc "SELECT 1 FROM payload_migrations WHERE batch = -1 LIMIT 1;"
 } | tr -d '\r\n')"
 
 if [[ "$dev_marker_present" != "1" ]]; then
@@ -151,10 +151,13 @@ docker compose \
   --project-name "$project_name" \
   --env-file "$env_file" \
   -f "$compose_file" \
-  run --rm migrator sh -c "
-    psql \"\$DATABASE_URL\" -v ON_ERROR_STOP=1 -c \"DELETE FROM payload_migrations WHERE batch = -1;\"
-    psql \"\$DATABASE_URL\" -v ON_ERROR_STOP=1 -c \"INSERT INTO payload_migrations (name, batch, created_at, updated_at) SELECT '${baseline_migration}', 1, NOW(), NOW() WHERE NOT EXISTS (SELECT 1 FROM payload_migrations WHERE name = '${baseline_migration}');\"
-  "
+  exec -T postgres psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "DELETE FROM payload_migrations WHERE batch = -1;"
+
+docker compose \
+  --project-name "$project_name" \
+  --env-file "$env_file" \
+  -f "$compose_file" \
+  exec -T postgres psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "INSERT INTO payload_migrations (name, batch, created_at, updated_at) SELECT '${baseline_migration}', 1, NOW(), NOW() WHERE NOT EXISTS (SELECT 1 FROM payload_migrations WHERE name = '${baseline_migration}');"
 
 docker compose \
   --project-name "$project_name" \
