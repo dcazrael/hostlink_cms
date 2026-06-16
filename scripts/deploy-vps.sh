@@ -4,7 +4,15 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: ./scripts/deploy-vps.sh [--branch <branch>] [--env-file <path>] [--compose-file <path>] [--skip-db-migrate]
+Usage: ./scripts/deploy-vps.sh [--branch <branch>] [--env-file <path>]
+  [--compose-file <path>] [--skip-db-migrate] [--skip-db-backup]
+
+Deploy the website to the VPS.
+
+By default creates a database restore point and runs committed migrations
+before building the website container. Use --skip-db-migrate to skip all
+database operations, or --skip-db-backup to run migrations without backup
+(not recommended for production).
 EOF
 }
 
@@ -12,6 +20,7 @@ branch_name="main"
 env_file=".env.production"
 compose_file="docker-compose.vps.yml"
 skip_db_migrate="false"
+skip_db_backup="false"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -29,6 +38,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --skip-db-migrate)
       skip_db_migrate="true"
+      shift
+      ;;
+    --skip-db-backup)
+      skip_db_backup="true"
       shift
       ;;
     -h|--help)
@@ -79,11 +92,16 @@ export APP_ENV_FILE="$env_file"
 export COMPOSE_PROJECT_NAME="$project_name"
 
 if [[ "$skip_db_migrate" != "true" ]]; then
-  ./scripts/vps-db-migrate.sh \
-    --branch "$branch_name" \
-    --env-file "$env_file" \
-    --compose-file "$compose_file" \
+  mig_args=(
+    --branch "$branch_name"
+    --env-file "$env_file"
+    --compose-file "$compose_file"
     --skip-git-sync
+  )
+  if [[ "$skip_db_backup" == "true" ]]; then
+    mig_args+=(--skip-backup)
+  fi
+  ./scripts/vps-db-migrate.sh "${mig_args[@]}"
 fi
 
 website_image="${project_name}-app:latest"

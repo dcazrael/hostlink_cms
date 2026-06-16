@@ -4,19 +4,16 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: ./scripts/vps-db-migrate.sh [--branch <branch>] [--env-file <path>]
+Usage: ./scripts/vps-db-cutover.sh [--branch <branch>] [--env-file <path>]
   [--compose-file <path>] [--skip-git-sync] [--skip-backup]
 
-Run committed Payload migrations on the VPS production database.
+Runs the one-time production migration cutover when the legacy Payload dev
+marker still exists. If cutover is no longer needed, exits successfully and
+does nothing.
 
-If the legacy Payload dev marker still exists, this script performs the one-time
-cutover automatically first, then exits successfully.
-
-Always creates a database restore point before migration unless --skip-backup
-is given (not recommended for production).
-
-The old schema-push workflow (apply-schema.ts) is no longer used.
-All production schema changes must go through committed migrations.
+Exit codes:
+  0  - cutover not needed
+  20 - cutover ran successfully and already applied migrations
 EOF
 }
 
@@ -25,6 +22,7 @@ env_file=".env.production"
 compose_file="docker-compose.vps.yml"
 skip_git_sync="false"
 skip_backup="false"
+baseline_migration="20260614_210456"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -60,7 +58,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# --- Prerequisite checks ---------------------------------------------------
 if [[ ! -f "$env_file" ]]; then
   echo "Missing environment file: $env_file" >&2
   exit 1
@@ -71,10 +68,9 @@ if [[ ! -f "$compose_file" ]]; then
   exit 1
 fi
 
-# --- Git sync (optional -- caller may have done it) -------------------------
 if [[ "$skip_git_sync" != "true" ]]; then
   if ! git diff --quiet || ! git diff --cached --quiet; then
-    echo "Refusing to run migrations with uncommitted changes in the VPS checkout." >&2
+    echo "Refusing to run cutover with uncommitted changes in the VPS checkout." >&2
     exit 1
   fi
 
@@ -89,30 +85,6 @@ if [[ "$skip_git_sync" != "true" ]]; then
   git pull --ff-only origin "$branch_name"
 fi
 
-cutover_args=(
-  --branch "$branch_name"
-  --env-file "$env_file"
-  --compose-file "$compose_file"
-  --skip-git-sync
-)
-if [[ "$skip_backup" == "true" ]]; then
-  cutover_args+=(--skip-backup)
-fi
-
-set +e
-./scripts/vps-db-cutover.sh "${cutover_args[@]}"
-cutover_status=$?
-set -e
-
-if [[ "$cutover_status" -eq 20 ]]; then
-  exit 0
-fi
-
-if [[ "$cutover_status" -ne 0 ]]; then
-  exit "$cutover_status"
-fi
-
-# --- Source environment ----------------------------------------------------
 set -a
 # shellcheck disable=SC1090
 source "$env_file"
@@ -123,29 +95,25 @@ project_name="${COMPOSE_PROJECT_NAME:-hostlink-site}"
 export APP_ENV_FILE="$env_file"
 export COMPOSE_PROJECT_NAME="$project_name"
 
-# --- Ensure postgres is up -------------------------------------------------
 docker compose \
   --project-name "$project_name" \
   --env-file "$env_file" \
   -f "$compose_file" \
   up -d postgres
 
-# --- Build migrator --------------------------------------------------------
 docker compose \
   --project-name "$project_name" \
   --env-file "$env_file" \
   -f "$compose_file" \
   build migrator
 
-# --- DB readiness gate -----------------------------------------------------
-echo "[migrate] Waiting for postgres to be ready..."
+echo "[cutover] Waiting for postgres to be ready..."
 for attempt in $(seq 1 10); do
   if docker compose \
     --project-name "$project_name" \
     --env-file "$env_file" \
     -f "$compose_file" \
     exec -T postgres pg_isready -U "$POSTGRES_USER" -q 2>/dev/null; then
-    echo "[migrate] postgres is ready."
     break
   fi
   if [[ $attempt -eq 10 ]]; then
@@ -155,25 +123,44 @@ for attempt in $(seq 1 10); do
   sleep 3
 done
 
-# --- Backup (restore point) ------------------------------------------------
+dev_marker_present="$({
+  docker compose \
+    --project-name "$project_name" \
+    --env-file "$env_file" \
+    -f "$compose_file" \
+    run --rm migrator sh -c 'psql "$DATABASE_URL" -Atc "SELECT 1 FROM payload_migrations WHERE batch = -1 LIMIT 1;"'
+} | tr -d '\r\n')"
+
+if [[ "$dev_marker_present" != "1" ]]; then
+  echo "[cutover] No legacy dev marker found. Skipping one-time cutover."
+  exit 0
+fi
+
+echo "[cutover] Legacy dev marker found. Running one-time migration cutover..."
+
 if [[ "$skip_backup" != "true" ]]; then
-  echo "[migrate] Creating database restore point before migration..."
   ./scripts/create-db-restore-point.sh \
     --env-file "$env_file" \
     --compose-file "$compose_file" \
     --compose-project "$project_name" \
     --postgres-service postgres \
     --timeout 120
-
-  echo "[migrate] Restore point created."
 fi
 
-# --- Run committed migrations ----------------------------------------------
-echo "[migrate] Running committed Payload migrations..."
+docker compose \
+  --project-name "$project_name" \
+  --env-file "$env_file" \
+  -f "$compose_file" \
+  run --rm migrator sh -c "
+    psql \"\$DATABASE_URL\" -v ON_ERROR_STOP=1 -c \"DELETE FROM payload_migrations WHERE batch = -1;\"
+    psql \"\$DATABASE_URL\" -v ON_ERROR_STOP=1 -c \"INSERT INTO payload_migrations (name, batch, created_at, updated_at) SELECT '${baseline_migration}', 1, NOW(), NOW() WHERE NOT EXISTS (SELECT 1 FROM payload_migrations WHERE name = '${baseline_migration}');\"
+  "
+
 docker compose \
   --project-name "$project_name" \
   --env-file "$env_file" \
   -f "$compose_file" \
   run --rm migrator pnpm payload migrate
 
-echo "[migrate] Migrations complete."
+echo "[cutover] Cutover complete. Future deploys will skip automatically because the legacy dev marker is gone."
+exit 20

@@ -25,7 +25,7 @@ pnpm i18n:scan-hardcoded -- --seed --dry-run
 pnpm i18n:scan-hardcoded -- --ci --max-literals=0
 ```
 
-Report output:
+Report output when generated:
 
 `docs/i18n/hardcoded-report.json`
 
