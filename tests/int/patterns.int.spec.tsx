@@ -29,15 +29,15 @@ afterEach(() => {
 })
 
 describe('pattern component contracts', () => {
-  it('renders DiagonalBand with an actual clipped/slanted visible surface', () => {
+  it('renders DiagonalBand with an SVG trapezoid instead of clip-path', () => {
     const { container } = render(<DiagonalBand ariaLabel="Operations accent" />)
-    const slantedSurface = container.querySelector('[data-pattern-diagonal-surface]')
-
-    expect(slantedSurface).not.toBeNull()
-    expect((slantedSurface as HTMLElement | null)?.style.getPropertyValue('--tilt')).toBe('0.5rem')
-    expect((slantedSurface as HTMLElement | null)?.style.clipPath).toBe(
-      'polygon(0 0, calc(100% - var(--tilt)) 0, 100% 100%, 0 100%)',
-    )
+    const svg = container.querySelector('svg')
+    expect(svg).not.toBeNull()
+    const path = svg!.querySelector('path')
+    expect(path).not.toBeNull()
+    expect(path!.getAttribute('fill')).toBeTruthy()
+    expect(path!.getAttribute('d')).toContain('L')
+    expect(path!.getAttribute('d')).toContain('Z')
   })
 
   it('renders primitive BulletList rows with shaped bullets', () => {

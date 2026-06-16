@@ -1,9 +1,46 @@
+'use client'
 import { cn } from '@/utilities/ui'
 import * as React from 'react'
 
 export type DiagonalBandTone = 'navy' | 'mint' | 'subtle' | 'card' | 'border'
 
 export type DiagonalBandOrientation = 'left' | 'right'
+
+const toneClass: Record<DiagonalBandTone, string> = {
+  navy: 'bg-(--secondary)',
+  mint: 'bg-(--accent)',
+  subtle: 'bg-(--subtle-background)',
+  card: 'bg-card',
+  border: 'bg-border',
+}
+
+const toneFill: Record<DiagonalBandTone, string> = {
+  navy: 'var(--secondary)',
+  mint: 'var(--accent)',
+  subtle: 'var(--subtle-background)',
+  card: 'var(--card)',
+  border: 'var(--border)',
+}
+
+const toneTextClass: Record<DiagonalBandTone, string> = {
+  navy: 'text-(--secondary-foreground)',
+  mint: 'text-(--accent-foreground)',
+  subtle: 'text-(--heading)',
+  card: 'text-foreground',
+  border: 'text-foreground',
+}
+
+/**
+ * Build the trapezoid path for the band, expressed in viewBox units
+ * (0–100). For `right`, the top-left corner is cut; for `left`, the
+ * top-right corner is cut. The cut slope is controlled by `tilt`.
+ */
+function buildBandPath(orientation: DiagonalBandOrientation, tilt: number): string {
+  if (orientation === 'right') {
+    return `M ${tilt} 0 L 100 0 L 100 100 L 0 100 Z`
+  }
+  return `M 0 0 L ${100 - tilt} 0 L 100 100 L 0 100 Z`
+}
 
 /**
  * `DiagonalBand` is the slim angled slab that runs across the top of a
@@ -44,35 +81,11 @@ export const DiagonalBand: React.FC<{
   className,
   ariaLabel,
 }) => {
-  const toneClass: Record<DiagonalBandTone, string> = {
-    navy: 'bg-(--secondary)',
-    mint: 'bg-(--accent)',
-    subtle: 'bg-(--subtle-background)',
-    card: 'bg-card',
-    border: 'bg-border',
-  }
-
-  // Tone-aware label text class. Pairs each band's background token with
-  // the matching foreground token declared in globals.css so the label
-  // strip stays readable on every exposed tone.
-  const toneTextClass: Record<DiagonalBandTone, string> = {
-    navy: 'text-(--secondary-foreground)',
-    mint: 'text-(--accent-foreground)',
-    subtle: 'text-(--heading)',
-    card: 'text-foreground',
-    border: 'text-foreground',
-  }
+  const tilt = children == null ? 12 : 36
+  const path = buildBandPath(orientation, tilt)
 
   // Decorative only when there is no label AND no children to announce.
   const isDecorative = !ariaLabel && children == null
-
-  const style = {
-    '--tilt': children == null ? '0.5rem' : '1.5rem',
-    clipPath:
-      orientation === 'right'
-        ? 'polygon(0 100%, var(--tilt) 0, 100% 0, 100% 100%)'
-        : 'polygon(0 0, calc(100% - var(--tilt)) 0, 100% 100%, 0 100%)',
-  } as React.CSSProperties
 
   return (
     <div
@@ -87,16 +100,23 @@ export const DiagonalBand: React.FC<{
         className,
       )}
       data-pattern-diagonal-surface
-      style={style}
     >
-      <div aria-hidden className={cn('block w-full', heightClassName)} />
+      <svg
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 size-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+      >
+        <path d={path} fill={toneFill[tone]} />
+      </svg>
+      <div aria-hidden className={cn('relative z-10 block w-full', heightClassName)} />
       {children ? (
         <div
           className={cn(
             // Intrinsic padding (not negative margin) so the label strip
             // occupies visible space below the bar and is never clipped
             // by the parent or hidden under the bar's painted pixels.
-            'relative px-4 pb-3 pt-1 text-xs font-mono uppercase tracking-widest',
+            'relative z-10 px-4 pb-3 pt-1 text-xs font-mono uppercase tracking-widest',
             toneTextClass[tone],
           )}
         >
