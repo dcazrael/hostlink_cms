@@ -3,6 +3,7 @@ type LayoutSectionLike = {
   blockType?: string | null
   heading?: string | null
   id?: number | string | null
+  anchor?: boolean | null
 }
 
 type LandingSectionLike = {
@@ -16,7 +17,7 @@ export type AnchorOption = {
   value: string
 }
 
-const normalizeAnchorToken = (value: string): string =>
+export const normalizeAnchorToken = (value: string): string =>
   value
     .trim()
     .toLowerCase()
@@ -50,6 +51,22 @@ export const getSectionAnchorValue = (block: LayoutSectionLike, sectionIndex: nu
   return `section-${sectionIndex}`
 }
 
+export const getDerivedAnchor = (block: LayoutSectionLike): string | undefined => {
+  if (block.anchor !== true) return undefined
+
+  const semanticSource =
+    (typeof block.blockName === 'string' && block.blockName.trim().length > 0
+      ? block.blockName
+      : typeof block.heading === 'string' && block.heading.trim().length > 0
+        ? block.heading
+        : null) || null
+
+  if (!semanticSource) return undefined
+
+  const normalized = normalizeAnchorToken(semanticSource)
+  return normalized || undefined
+}
+
 export const getAnchorOptionsFromLayout = (
   layout: unknown,
   currentLayoutIndex?: number,
@@ -63,21 +80,27 @@ export const getAnchorOptionsFromLayout = (
     if (!rawBlock || typeof rawBlock !== 'object') return
 
     const block = rawBlock as LayoutSectionLike
-    if (block.blockType !== 'section') return
+    const derivedAnchor = getDerivedAnchor(block)
+    const isSection = block.blockType === 'section'
 
-    sectionCounter += 1
+    if (!derivedAnchor && !isSection) return
 
-    // Avoid linking a section CTA to itself.
+    if (isSection) sectionCounter += 1
+
+    // Avoid linking a block CTA to itself.
     if (typeof currentLayoutIndex === 'number' && layoutIndex === currentLayoutIndex) {
       return
     }
 
-    const labelSource = block.heading || block.blockName
-    const label = labelSource?.trim() || `Section ${sectionCounter}`
+    const labelSource = block.heading || block.blockName || block.blockType
+    const label = labelSource?.trim() || `Block ${layoutIndex + 1}`
+
+    const value = isSection ? getSectionAnchorValue(block, sectionCounter) : derivedAnchor
+    if (!value) return
 
     options.push({
-      label: `${sectionCounter}. ${label}`,
-      value: getSectionAnchorValue(block, sectionCounter),
+      label: isSection ? `${sectionCounter}. ${label}` : label,
+      value,
     })
   })
 

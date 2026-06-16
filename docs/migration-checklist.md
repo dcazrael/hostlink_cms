@@ -1,6 +1,6 @@
 # Migration Checklist
 
-Use this checklist for every schema/content migration.
+Use this checklist for every schema/content migration. This checklist is for the developer making the change — the operator deploy steps live in `docs/deployment-vps.md`.
 
 ## 1) Create restore point
 
@@ -8,30 +8,36 @@ Use this checklist for every schema/content migration.
 pnpm db:restore-point
 ```
 
-## 2) Run migration in safe mode
+On the VPS, the deploy script does this automatically before migrations. See `docs/deployment-vps.md`.
 
-Prefer `:safe` wrappers when available:
+## 2) Run migration locally (development)
 
 ```bash
-pnpm migrate:home-to-landing:safe
-pnpm migrate:landing-section-items:safe
-pnpm migrate:ui-copy-keys:safe
+pnpm db:migrate
 ```
 
-## 3) Verify content immediately
+This runs committed Payload migrations against your local database.
 
-Check in admin:
+## 3) Verify migrations pass
 
-- open 2-3 representative docs before and after migration
-- verify localized tabs still contain expected values
-- verify relation order for landing sections
+```bash
+pnpm payload migrate:status
+```
 
-## 4) Verify runtime
+Confirm each migration shows **Yes / Batch N**.
 
-- open `/` and one non-home landing page
-- open one legal page (`/privacy`, `/imprint`)
-- confirm no unexpected 404s
+## 4) Verify TypeScript
 
-## 5) Rollback reference
+```bash
+pnpm tsc --noEmit
+```
 
-Restore the latest dump from `backups/restore-points/` if verification fails.
+## 5) Push
+
+Push the schema change and migration file together.
+
+## 6) Verify production after deploy
+
+- confirm CI deploy passed
+- confirm admin and frontend load
+- verify representative content still renders

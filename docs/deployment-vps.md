@@ -18,8 +18,7 @@ Later, the same VPS can also host:
 - `docker-compose.vps.yml`: VPS runtime for website + postgres
 - `.env.vps.example`: production env template for the VPS
 - `scripts/bootstrap-vps-site-migration.sh`: one-time full VPS bootstrap and Neon -> local Postgres migration
-- `scripts/vps-db-migrate.sh`: non-interactive migration runner
-- `scripts/deploy-vps.sh`: production deploy helper
+- `scripts/deploy-vps.sh`: production deploy helper (runs migration flow inline)
 - `.github/workflows/deploy.yml`: production GitHub Actions deploy workflow
 - `infra/caddy/Caddyfile.example`: Caddy config for `hostlink.jp`
 
@@ -93,22 +92,116 @@ Create or update:
 Keep records as `DNS only` during the first cutover. Remove the existing `www` target that still points at Vercel once the VPS site is live.
 Leave MX/TXT mail records unchanged.
 
-## Schema Changes
+## Normal Deploy
 
-This repo does not use committed Payload migrations. Schema changes are applied directly to the production database by running the Drizzle pushSchema path against the live Postgres.
-
-To deploy a schema change on the VPS:
+All production schema changes use committed Payload migrations generated and tested in development, then verified with `tsc && pnpm db:migrate` before merging.
 
 ```bash
 cd /srv/hostlink/site
-git pull --ff-only origin main
-./scripts/vps-db-migrate.sh --branch main   # runs apply-schema in the migrator service
 ./scripts/deploy-vps.sh --branch main
 ```
 
-`scripts/vps-db-migrate.sh` first builds and starts the migrator image, then runs `pnpm exec tsx src/scripts/apply-schema.ts --yes` against the live Postgres, before the website image is rebuilt and restarted.
+This creates a restore point automatically before running committed migrations:
 
-Because schema changes are not migration-based, the GitHub Actions workflow `Block schema-sensitive production deploys` step pauses push-to-main deploys when files under `src/collections/`, `src/globals/`, `src/Footer/`, `src/Header/`, or `src/payload.config.ts` change. To proceed, run the apply-schema step above on the VPS, then re-run the workflow via `workflow_dispatch`.
+1. Starts Postgres and waits for readiness.
+2. Creates a database restore point (`backups/restore-points/hostlink_<timestamp>.dump`).
+3. Runs `pnpm payload migrate` — applies only new, committed migrations.
+4. Returns control to `deploy-vps.sh`, which builds and restarts the website container.
+
+### Deploy with migration but no backup
+
+```bash
+./scripts/deploy-vps.sh --branch main --skip-db-backup
+```
+
+Only use this for rapid iteration on a dev VPS, never for production.
+
+## Deploy Without DB Migration
+
+```bash
+cd /srv/hostlink/site
+./scripts/deploy-vps.sh --branch main --skip-db-migrate
+```
+
+Use when the deploy has no schema changes.
+
+## Local DB to VPS cutover
+
+Use this when the verified **local** database must become the new production source of truth. This is the correct flow when you:
+
+- pulled the original production DB into local,
+- reconciled schema and content locally,
+- verified custom block data and collections locally,
+- now want VPS Postgres to exactly match local.
+
+This is **dump + restore**, not migration only.
+
+1. Create a local dump on your local machine:
+
+```bash
+mkdir -p backups/production-cutover
+
+pnpm db:restore-point
+```
+
+Backups are written to `backups/restore-points/hostlink_YYYYMMDD_HHMMSS.dump`. Pick the newest file and copy it to the VPS (e.g. with `scp`).
+
+2. On the VPS, create a VPS restore point that protects the current production database before replacement:
+
+```bash
+cd /srv/hostlink/site
+mkdir -p backups/restore-points
+
+./scripts/create-db-restore-point.sh \
+  --env-file .env.production \
+  --compose-file docker-compose.vps.yml \
+  --compose-project hostlink-site
+```
+
+3. Start VPS Postgres so the local dump can be restored into it:
+
+```bash
+docker compose \
+  --project-name hostlink-site \
+  --env-file .env.production \
+  -f docker-compose.vps.yml \
+  up -d postgres
+```
+
+4. Restore the local dump into VPS Postgres with `pg_restore --clean --if-exists`:
+
+```bash
+LOCAL_DUMP="backups/restore-points/hostlink_<TIMESTAMP>.dump"
+
+docker compose \
+  --project-name hostlink-site \
+  --env-file .env.production \
+  -f docker-compose.vps.yml \
+  exec -T postgres \
+  sh -lc 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --clean --if-exists --no-owner --no-privileges' \
+  < "$LOCAL_DUMP"
+```
+
+5. Deploy the app without running DB migration:
+
+```bash
+./scripts/deploy-vps.sh --branch main --skip-db-migrate
+```
+
+If the restored local DB is wrong, restore the VPS backup created in step 2 with the same `pg_restore --clean --if-exists` command.
+
+## CI guard
+
+The GitHub Actions workflow includes a `Check schema and migration coherence` step that runs on every push to main:
+
+- **Schema + migration both changed** → auto-deploy proceeds, committed migrations run on the VPS.
+- **Schema changed but no migration** → the workflow **fails** immediately with instructions to run `pnpm db:migrate:create` and commit the migration.
+- **Migration only** → auto-deploy proceeds as a normal application deploy.
+- **Neither** → auto-deploy proceeds (no-op migration step).
+
+This ensures every schema change has a corresponding committed migration before reaching production. Always commit the schema change and its migration file in the same push.
+
+Manual deploys via `workflow_dispatch` do not run the coherence check — the deployer is responsible for ensuring schema changes have matching migrations before triggering.
 
 ## GitHub Actions
 
@@ -124,11 +217,5 @@ Use:
 
 - `DEPLOY_APP_DIR=/srv/hostlink/site`
 
-Pushes to `main` auto-deploy only when no schema-sensitive files changed.
-Schema-sensitive production pushes fail intentionally and require:
-
-```bash
-cd /srv/hostlink/site
-./scripts/vps-db-migrate.sh --branch main
-./scripts/deploy-vps.sh --branch main
-```
+Pushes to `main` auto-deploy when schema changes include their committed migration files.
+If schema files change without a migration file, the workflow fails and tells the developer to run `pnpm db:migrate:create` before pushing again.

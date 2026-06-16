@@ -1,5 +1,10 @@
 import type { Field, GroupField } from 'payload'
 
+import {
+  isValidManualAnchor,
+  manualAnchorValidationMessage,
+  normalizeManualAnchor,
+} from '@/fields/pageAnchor'
 import deepMerge from '@/utilities/deepMerge'
 
 export type LinkAppearances = 'default' | 'outline'
@@ -15,10 +20,21 @@ export const appearanceOptions: Record<LinkAppearances, { label: string; value: 
   },
 }
 
+type LinkReferenceSiblingData = {
+  reference?: {
+    relationTo?: unknown
+  } | null
+  type?: unknown
+}
+
+const isPageReferenceLink = (siblingData?: LinkReferenceSiblingData): boolean =>
+  siblingData?.type === 'reference' && siblingData.reference?.relationTo === 'pages'
+
 type LinkType = (options?: {
   appearances?: LinkAppearances[] | false
   disableLabel?: boolean
   enableHomepageAnchor?: boolean
+  enablePageAnchor?: boolean
   overrides?: Partial<GroupField>
 }) => Field
 
@@ -26,6 +42,7 @@ export const link: LinkType = ({
   appearances,
   disableLabel = false,
   enableHomepageAnchor = false,
+  enablePageAnchor = false,
   overrides = {},
 } = {}) => {
   const linkTypeOptions: Array<{ label: string; value: string }> = [
@@ -93,6 +110,37 @@ export const link: LinkType = ({
       relationTo: ['pages', 'posts'],
       required: true,
     },
+    ...(enablePageAnchor
+      ? [
+          {
+            name: 'pageAnchor',
+            type: 'text' as const,
+            admin: {
+              condition: (_data: unknown, siblingData: LinkReferenceSiblingData) =>
+                isPageReferenceLink(siblingData),
+              components: {
+                Field: '@/fields/components/PageAnchorSelect#PageAnchorSelect',
+              },
+              description:
+                'Optional anchor on the selected Page. Use the Page block manual anchor without #.',
+            },
+            label: 'Page anchor',
+            validate: (
+              value: unknown,
+              { siblingData }: { siblingData?: LinkReferenceSiblingData },
+            ) => {
+              const normalized = normalizeManualAnchor(value)
+              if (!normalized) return true
+
+              if (!isPageReferenceLink(siblingData)) {
+                return 'Page anchors can only be used with Page links.'
+              }
+
+              return true
+            },
+          },
+        ]
+      : []),
     {
       name: 'url',
       type: 'text',
@@ -227,7 +275,10 @@ export const homepageLink: HomepageLinkFieldType = ({
             admin: {
               width: '50%',
             },
-            validate: (value: unknown, { siblingData }: { siblingData?: HomepageLinkSiblingData }) => {
+            validate: (
+              value: unknown,
+              { siblingData }: { siblingData?: HomepageLinkSiblingData },
+            ) => {
               if (!required && !hasOptionalHomepageLinkContent(siblingData)) return true
 
               if (typeof value === 'string' && value.trim().length > 0) return true
@@ -296,7 +347,10 @@ export const homepageLink: HomepageLinkFieldType = ({
               { label: 'Internal', value: 'internal' },
               { label: 'External', value: 'external' },
             ],
-            validate: (value: unknown, { siblingData }: { siblingData?: HomepageLinkSiblingData }) => {
+            validate: (
+              value: unknown,
+              { siblingData }: { siblingData?: HomepageLinkSiblingData },
+            ) => {
               if (!required && !hasOptionalHomepageLinkContent(siblingData)) return true
 
               if (value === 'anchor' || value === 'internal' || value === 'external') return true
@@ -316,10 +370,7 @@ export const homepageLink: HomepageLinkFieldType = ({
             Field: '@/fields/components/CurrentPageAnchorSelect#CurrentPageAnchorSelect',
           },
         },
-        validate: (
-          value: unknown,
-          { siblingData }: { siblingData?: HomepageLinkSiblingData },
-        ) => {
+        validate: (value: unknown, { siblingData }: { siblingData?: HomepageLinkSiblingData }) => {
           if (!required && !hasOptionalHomepageLinkContent(siblingData)) return true
 
           if (siblingData?.type === 'anchor') {
@@ -338,10 +389,7 @@ export const homepageLink: HomepageLinkFieldType = ({
         admin: {
           condition: (_, siblingData) => siblingData?.type === 'internal',
         },
-        validate: (
-          value: unknown,
-          { siblingData }: { siblingData?: HomepageLinkSiblingData },
-        ) => {
+        validate: (value: unknown, { siblingData }: { siblingData?: HomepageLinkSiblingData }) => {
           if (!required && !hasOptionalHomepageLinkContent(siblingData)) return true
 
           if (siblingData?.type === 'internal' && !value) {
@@ -358,10 +406,7 @@ export const homepageLink: HomepageLinkFieldType = ({
         admin: {
           condition: (_, siblingData) => siblingData?.type === 'external',
         },
-        validate: (
-          value: unknown,
-          { siblingData }: { siblingData?: HomepageLinkSiblingData },
-        ) => {
+        validate: (value: unknown, { siblingData }: { siblingData?: HomepageLinkSiblingData }) => {
           if (!required && !hasOptionalHomepageLinkContent(siblingData)) return true
 
           if (siblingData?.type === 'external' && !value) {

@@ -1,4 +1,4 @@
-import type { LandingPage, Page } from '@/payload-types'
+import type { LandingPage, Page, Post } from '@/payload-types'
 
 export type LayoutBlock = Page['layout'][number]
 export type HeroLayoutBlock = Extract<LayoutBlock, { blockType: 'hero' }>
@@ -23,6 +23,15 @@ export type HomepageLinkLike = {
   variant?: 'ghost' | 'outline' | 'primary' | 'secondary' | null
   withIcon?: boolean | null
 }
+
+export type ReadMoreTargetLike =
+  | number
+  | {
+      relationTo?: 'pages' | 'posts' | null
+      value?: number | Page | Post | null
+    }
+  | null
+  | undefined
 
 export type IconTextValue = {
   icon?: unknown

@@ -1,11 +1,13 @@
 import type { Block } from 'payload'
 
+import { manualAnchorField } from '@/fields/pageAnchor'
 import { homepageLink } from '@/fields/link'
 
 export const ContactBlock: Block = {
   slug: 'contact',
   interfaceName: 'ContactComponentBlock',
   fields: [
+    manualAnchorField(),
     {
       name: 'form',
       type: 'relationship',
@@ -76,7 +78,8 @@ export const ContactBlock: Block = {
           label: 'Link',
           overrides: {
             admin: {
-              condition: (_, siblingData) => siblingData?.kind === 'link' || siblingData?.kind === 'button',
+              condition: (_, siblingData) =>
+                siblingData?.kind === 'link' || siblingData?.kind === 'button',
             },
           },
         }),

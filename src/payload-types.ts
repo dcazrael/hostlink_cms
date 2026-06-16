@@ -366,8 +366,9 @@ export interface Page {
   showTableOfContents?: boolean | null;
   tableOfContentsHeadings?:
     | {
-        id?: string | null;
+        anchor?: string | null;
         text?: string | null;
+        id?: string | null;
       }[]
     | null;
   /**
@@ -426,8 +427,9 @@ export interface Post {
   showTableOfContents?: boolean | null;
   tableOfContentsHeadings?:
     | {
-        id?: string | null;
+        anchor?: string | null;
         text?: string | null;
+        id?: string | null;
       }[]
     | null;
   authors?: (number | User)[] | null;
@@ -620,12 +622,30 @@ export interface User {
  * via the `definition` "HomepageSectionBlock".
  */
 export interface HomepageSectionBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   heading: string;
   subheading?: string | null;
   background?: ('default' | 'subtle') | null;
   disclaimer?: {
     icon?: (number | null) | Icon;
     text?: string | null;
+  };
+  /**
+   * Optional internal page or post shown as a read-more button.
+   */
+  readMoreLink?: {
+    target?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
   };
   showInProgress?: boolean | null;
   progressLabel?: string | null;
@@ -651,6 +671,10 @@ export interface HomepageSectionBlock {
  * via the `definition` "GridComponentBlock".
  */
 export interface GridComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   columns: '2' | '3';
   items: {
     icon?: (number | null) | Icon;
@@ -668,6 +692,10 @@ export interface GridComponentBlock {
  * via the `definition` "ProblemsComponentBlock".
  */
 export interface ProblemsComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   items: {
     icon?: (number | null) | Icon;
     title: string;
@@ -684,6 +712,10 @@ export interface ProblemsComponentBlock {
  * via the `definition` "ServicesComponentBlock".
  */
 export interface ServicesComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   items: {
     icon?: (number | null) | Icon;
     title: string;
@@ -699,6 +731,10 @@ export interface ServicesComponentBlock {
  * via the `definition` "FlowComponentBlock".
  */
 export interface FlowComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   steps: {
     step: number;
     title: string;
@@ -714,6 +750,10 @@ export interface FlowComponentBlock {
  * via the `definition` "PricingComponentBlock".
  */
 export interface PricingComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   plans: {
     planName: string;
     recommended?: boolean | null;
@@ -796,6 +836,10 @@ export interface LandingPage {
  * via the `definition` "FaqComponentBlock".
  */
 export interface FaqComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   items: {
     question: string;
     answer: string;
@@ -810,6 +854,10 @@ export interface FaqComponentBlock {
  * via the `definition` "TestimonialsComponentBlock".
  */
 export interface TestimonialsComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   items: {
     description: string;
     name: string;
@@ -826,6 +874,10 @@ export interface TestimonialsComponentBlock {
  * via the `definition` "CompanyComponentBlock".
  */
 export interface CompanyComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   companyName?: string | null;
   ceo?: string | null;
   address?: string | null;
@@ -845,6 +897,10 @@ export interface CompanyComponentBlock {
  * via the `definition` "ContactComponentBlock".
  */
 export interface ContactComponentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   form: number | Form;
   footerItems?:
     | {
@@ -1060,6 +1116,10 @@ export interface Form {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   richText?: {
     root: {
       type: string;
@@ -1089,6 +1149,10 @@ export interface CallToActionBlock {
                 relationTo: 'posts';
                 value: number | Post;
               } | null);
+          /**
+           * Optional anchor on the selected Page. Use the Page block manual anchor without #.
+           */
+          pageAnchor?: string | null;
           url?: string | null;
           label: string;
           /**
@@ -1108,6 +1172,10 @@ export interface CallToActionBlock {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   columns?:
     | {
         /**
@@ -1170,6 +1238,10 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   media: number | Media;
   id?: string | null;
   blockName?: string | null;
@@ -1180,6 +1252,10 @@ export interface MediaBlock {
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   introContent?: {
     root: {
       type: string;
@@ -1214,6 +1290,10 @@ export interface ArchiveBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
+  /**
+   * If enabled, this section is used as an anchor target.
+   */
+  anchor?: boolean | null;
   form: number | Form;
   enableIntro?: boolean | null;
   introContent?: {
@@ -1639,6 +1719,7 @@ export interface HomepageHeroBlockSelect<T extends boolean = true> {
  * via the `definition` "HomepageSectionBlock_select".
  */
 export interface HomepageSectionBlockSelect<T extends boolean = true> {
+  anchor?: T;
   heading?: T;
   subheading?: T;
   background?: T;
@@ -1647,6 +1728,11 @@ export interface HomepageSectionBlockSelect<T extends boolean = true> {
     | {
         icon?: T;
         text?: T;
+      };
+  readMoreLink?:
+    | T
+    | {
+        target?: T;
       };
   showInProgress?: T;
   progressLabel?: T;
@@ -1671,6 +1757,7 @@ export interface HomepageSectionBlockSelect<T extends boolean = true> {
  * via the `definition` "GridComponentBlock_select".
  */
 export interface GridComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   columns?: T;
   items?:
     | T
@@ -1689,6 +1776,7 @@ export interface GridComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "ProblemsComponentBlock_select".
  */
 export interface ProblemsComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   items?:
     | T
     | {
@@ -1706,6 +1794,7 @@ export interface ProblemsComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "ServicesComponentBlock_select".
  */
 export interface ServicesComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   items?:
     | T
     | {
@@ -1722,6 +1811,7 @@ export interface ServicesComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "FlowComponentBlock_select".
  */
 export interface FlowComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   steps?:
     | T
     | {
@@ -1738,6 +1828,7 @@ export interface FlowComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "PricingComponentBlock_select".
  */
 export interface PricingComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   plans?:
     | T
     | {
@@ -1776,6 +1867,7 @@ export interface PricingComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "FaqComponentBlock_select".
  */
 export interface FaqComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   items?:
     | T
     | {
@@ -1791,6 +1883,7 @@ export interface FaqComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "TestimonialsComponentBlock_select".
  */
 export interface TestimonialsComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   items?:
     | T
     | {
@@ -1808,6 +1901,7 @@ export interface TestimonialsComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "CompanyComponentBlock_select".
  */
 export interface CompanyComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   companyName?: T;
   ceo?: T;
   address?: T;
@@ -1826,6 +1920,7 @@ export interface CompanyComponentBlockSelect<T extends boolean = true> {
  * via the `definition` "ContactComponentBlock_select".
  */
 export interface ContactComponentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   form?: T;
   footerItems?:
     | T
@@ -1938,8 +2033,9 @@ export interface PagesSelect<T extends boolean = true> {
   tableOfContentsHeadings?:
     | T
     | {
-        id?: T;
+        anchor?: T;
         text?: T;
+        id?: T;
       };
   generateSlug?: T;
   slug?: T;
@@ -1952,6 +2048,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  anchor?: T;
   richText?: T;
   links?:
     | T
@@ -1962,6 +2059,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              pageAnchor?: T;
               url?: T;
               label?: T;
               appearance?: T;
@@ -1976,6 +2074,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
  * via the `definition` "ContentBlock_select".
  */
 export interface ContentBlockSelect<T extends boolean = true> {
+  anchor?: T;
   columns?:
     | T
     | {
@@ -2010,6 +2109,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  anchor?: T;
   media?: T;
   id?: T;
   blockName?: T;
@@ -2019,6 +2119,7 @@ export interface MediaBlockSelect<T extends boolean = true> {
  * via the `definition` "ArchiveBlock_select".
  */
 export interface ArchiveBlockSelect<T extends boolean = true> {
+  anchor?: T;
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
@@ -2033,6 +2134,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  * via the `definition` "FormBlock_select".
  */
 export interface FormBlockSelect<T extends boolean = true> {
+  anchor?: T;
   form?: T;
   enableIntro?: T;
   introContent?: T;
@@ -2062,8 +2164,9 @@ export interface PostsSelect<T extends boolean = true> {
   tableOfContentsHeadings?:
     | T
     | {
-        id?: T;
+        anchor?: T;
         text?: T;
+        id?: T;
       };
   authors?: T;
   populatedAuthors?:

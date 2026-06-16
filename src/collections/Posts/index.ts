@@ -171,7 +171,7 @@ export const Posts: CollectionConfig<'posts'> = {
       },
       fields: [
         {
-          name: 'id',
+          name: 'anchor',
           type: 'text',
         },
         {

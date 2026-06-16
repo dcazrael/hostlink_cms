@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Log schema-sensitive changes
+      - name: Check schema and migration coherence
         env:
           BEFORE_SHA: ${{ github.event.before }}
           AFTER_SHA: ${{ github.sha }}
@@ -43,8 +43,33 @@ jobs:
 
           printf 'Changed files:\n%s\n' "$changed_files"
 
-          if printf '%s\n' "$changed_files" | grep -E '^(src/collections/|src/globals/|src/Footer/|src/Header/|src/payload\.config\.ts$)' >/dev/null; then
-            echo "Note: Schema-sensitive files changed. apply-schema.ts will run automatically during deploy (migrator stage)."
+          schema_pattern='^(src/collections/|src/globals/|src/Footer/|src/Header/|src/payload\.config\.ts$)'
+          migration_pattern='^src/migrations/'
+
+          schema_changed=false
+          migration_changed=false
+
+          if printf '%s\n' "$changed_files" | grep -E "$schema_pattern" >/dev/null; then
+            schema_changed=true
+          fi
+
+          if printf '%s\n' "$changed_files" | grep -E "$migration_pattern" >/dev/null; then
+            migration_changed=true
+          fi
+
+          if $schema_changed && $migration_changed; then
+            echo "Schema files changed and migration files detected — migrations will run on deploy."
+
+          elif $schema_changed && ! $migration_changed; then
+            echo "::error::Schema-sensitive files changed but no migration file found in this push."
+            echo "::error::Run pnpm db:migrate:create locally, commit the migration, and push again."
+            exit 1
+
+          elif ! $schema_changed && $migration_changed; then
+            echo "Migration-only change — safe to deploy."
+
+          else
+            echo "No schema or migration changes — safe to deploy."
           fi
 
       - name: Configure SSH

@@ -12,7 +12,10 @@ export const RenderHomepageLayout: React.FC<{
   t: TranslateFn
 }> = ({ blocks, t }) => {
   const decoratedBlocks = decorateBlocks(blocks)
-  const progressItems = getProgressItems(decoratedBlocks, t('homepage.section.progressfallbacklabel', 'Section'))
+  const progressItems = getProgressItems(
+    decoratedBlocks,
+    t('homepage.section.progressfallbacklabel', 'Section'),
+  )
 
   return (
     <>
@@ -42,8 +45,8 @@ export const RenderHomepageLayout: React.FC<{
       })}
 
       {progressItems.length > 0 ? (
-        <nav className="container py-8 hidden">
-          <ol className="flex flex-wrap gap-3">
+        <nav className="fixed py-8 right-0 top-1/2 -translate-y-1/2 z-10 hidden">
+          <ol className="flex flex-wrap flex-col gap-3">
             {progressItems.map((item) => {
               return (
                 <li key={item.anchor}>
