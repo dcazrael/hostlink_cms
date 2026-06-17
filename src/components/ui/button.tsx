@@ -1,15 +1,24 @@
+/**
+ * Button is the primary action trigger for user interactions that do not
+ * navigate to another route. Supports eight variants (default, outline,
+ * secondary, ghost, destructive, link) plus optional CSS clip-path chamfer
+ * on any corner.
+ *
+ * For navigation actions, use `<a>` or a routing component instead.
+ *
+ * @summary action trigger with variant and chamfer support
+ */
 import { Button as ButtonPrimitive } from '@base-ui/react/button'
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 import {
-  buildChamferSvgPath,
+  buildChamferClipPath,
   CHAMFER_DEPTH_CAPS,
   chamferButtonToneMap,
   clampChamferDepth,
   type ChamferCorner,
 } from '@/components/ui/chamfer'
-import { useElementSize } from '@/components/ui/use-element-size'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
@@ -49,7 +58,9 @@ const buttonVariants = cva(
 
 type ButtonProps = ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & {
+    /** Which corner receives the 45° chamfer cut. Defaults to `top-right`. */
     chamferCorner?: ChamferCorner
+    /** Chamfer depth in Tailwind spacing units (4 = 1rem). 0 = no cut. Max depends on variant. */
     chamferDepth?: number
   }
 
@@ -63,70 +74,35 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
-  const [buttonRef, pixelSize] = useElementSize<HTMLButtonElement>()
   const depth = clampChamferDepth(chamferDepth, CHAMFER_DEPTH_CAPS.button)
   const isChamfered = depth > 0 && variant !== 'link'
 
-  const path = React.useMemo(() => {
-    if (!isChamfered) return ''
-    if (pixelSize.width <= 0 || pixelSize.height <= 0) return ''
-
-    const cutPx = depth * 4
-    const baseCuts = {
-      topLeft: { x: 0, y: 0 },
-      topRight: { x: 0, y: 0 },
-      bottomRight: { x: 0, y: 0 },
-      bottomLeft: { x: 0, y: 0 },
-    } as const
-
-    const cornerKey =
-      chamferCorner === 'top-left'
-        ? 'topLeft'
-        : chamferCorner === 'top-right'
-          ? 'topRight'
-          : chamferCorner === 'bottom-right'
-            ? 'bottomRight'
-            : 'bottomLeft'
-
-    return buildChamferSvgPath({
-      width: pixelSize.width,
-      height: pixelSize.height,
-      ...baseCuts,
-      [cornerKey]: { x: cutPx, y: cutPx },
-    })
-  }, [isChamfered, depth, chamferCorner, pixelSize.width, pixelSize.height])
+  const clipPath = isChamfered
+    ? buildChamferClipPath([{ corner: chamferCorner, x: depth, y: depth }])
+    : undefined
 
   const tone = chamferButtonToneMap[variant ?? 'default']
 
   return (
     <ButtonPrimitive
-      ref={buttonRef}
       data-slot="button"
+      data-chamfer={isChamfered ? '' : undefined}
       className={cn(buttonVariants({ variant, size, className }))}
-      style={style}
+      style={
+        isChamfered
+          ? ({
+              '--cf-fill': tone.fill,
+              '--cf-stroke': tone.stroke,
+              '--cf-inset': '1px',
+              '--cf-clip': clipPath,
+              background: 'transparent',
+              ...style,
+            } as React.CSSProperties & Record<string, string | undefined>)
+          : style
+      }
       {...props}
     >
-      {isChamfered && path !== '' && (
-        <svg
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full"
-          viewBox={`0 0 ${pixelSize.width} ${pixelSize.height}`}
-          preserveAspectRatio="none"
-        >
-          <path
-            d={path}
-            fill={tone.fill}
-            stroke={tone.stroke}
-            strokeWidth={1}
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-      )}
-      {isChamfered ? (
-        <span className="relative z-10 inline-flex items-center gap-1.5">{children}</span>
-      ) : (
-        children
-      )}
+      {children}
     </ButtonPrimitive>
   )
 }

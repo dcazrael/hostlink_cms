@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "storybook": {
+      "type": "remote",
+      "url": "http://localhost:6006/mcp",
+      "enabled": true
+    },
+    "payload": {
+      "type": "local",
+      "command": ["npx", "payload-mcp"],
+      "enabled": true
+    }
+  }
+}

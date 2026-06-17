@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { SectionShape } from './Patterns'
 
 const meta: Meta<typeof SectionShape> = {
@@ -20,10 +20,22 @@ export default meta
 
 type Story = StoryObj<typeof SectionShape>
 
+/**
+ * Interactive variant controls — use the Controls panel to switch
+ * between diagonal-bands, stepped-field, half-field, and corner-mask shapes.
+ *
+ * @summary interactive variant selector
+ */
 export const Controls: Story = {
   name: 'Variant controls',
 }
 
+/**
+ * All four section shapes displayed together with a three-column grid.
+ * Use as a reference set when choosing a shape for a pamphlet section.
+ *
+ * @summary all variants reference grid
+ */
 export const PamphletSet: Story = {
   name: 'Pamphlet reference set',
   render: () => (

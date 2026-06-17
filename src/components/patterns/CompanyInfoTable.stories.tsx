@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { CompanyInfoTable } from './CompanyInfoTable'
 
 const meta: Meta<typeof CompanyInfoTable> = {
@@ -10,7 +10,10 @@ const meta: Meta<typeof CompanyInfoTable> = {
       { label: '会社名', value: 'HostLink' },
       { label: '代表者', value: '代表取締役　前田 真実' },
       { label: '所在地', value: '〒901-1511\n沖縄県南城市\n知念久手堅-737-1' },
-      { label: 'サービス内容', value: 'ゲストサポート・\n電話対応・\nレビュー支援' },
+      {
+        label: 'サービス内容',
+        value: 'ゲストサポート・\n電話対応・\nレビュー支援',
+      },
       { label: '対応言語', value: '日本語・英語' },
       { label: '対応時間', value: '24時間365日' },
       { label: '対応OTA', value: 'Airbnb・\nBooking.com' },
@@ -30,6 +33,12 @@ export default meta
 
 type Story = StoryObj<typeof CompanyInfoTable>
 
+/**
+ * Company information table with Japanese labels and multi-line values.
+ * Use for "About us" pages showing company name, representative, location, services.
+ *
+ * @summary company info table with Japanese content
+ */
 export const HostlinkInfo: Story = {
   name: 'Hostlink company info',
 }

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ShapeMask } from './ShapeMask'
 
 const meta: Meta<typeof ShapeMask> = {
@@ -27,6 +27,12 @@ export default meta
 
 type Story = StoryObj<typeof ShapeMask>
 
+/**
+ * Deep navy hero panel with top-left diagonal cut.
+ * Use as a page hero where the diagonal edge creates visual direction.
+ *
+ * @summary navy hero with top-left cut
+ */
 export const NavyTopLeft: Story = {
   name: 'Navy · top-left cut',
   args: {
@@ -46,6 +52,12 @@ export const NavyTopLeft: Story = {
   ),
 }
 
+/**
+ * All four diagonal directions across four tones (navy, mint, subtle, card).
+ * Use to compare cut direction and tone combinations.
+ *
+ * @summary direction-and-tone comparison grid
+ */
 export const AllDirections: Story = {
   name: 'All four directions',
   render: (args) => (

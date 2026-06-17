@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 
 import React from 'react'
 import { draftMode } from 'next/headers'
-import { Analytics } from '@vercel/analytics/next'
 import { cn } from '@/utilities/ui'
 
 import { ZenKakuGothicNew } from '@/lib/fonts'
@@ -48,7 +47,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </main>
           <Footer />
         </Providers>
-        <Analytics />
       </body>
     </html>
   )

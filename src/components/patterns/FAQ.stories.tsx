@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { FAQStack } from './FAQ'
 
 const meta: Meta<typeof FAQStack> = {
@@ -33,6 +33,12 @@ export default meta
 
 type Story = StoryObj<typeof FAQStack>
 
+/**
+ * Accordion-style FAQ stack with expandable questions.
+ * Use for frequently-asked-questions sections that need a compact collapsed state.
+ *
+ * @summary expandable accordion FAQ list
+ */
 export const Accordion: Story = {
   name: 'Accordion preset',
 }

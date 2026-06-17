@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { PricingCard } from './Patterns'
 
 const meta: Meta = {
@@ -16,6 +16,12 @@ const features = [
   'Bilingual support window',
 ]
 
+/**
+ * Five pricing cards across lime, sora, amber, rose, and purple tones.
+ * The purple card is marked as featured. Use for plan comparison grids.
+ *
+ * @summary multi-tone pricing card comparison
+ */
 export const MultiTone: Story = {
   name: 'Multi-tone',
   render: () => (

@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { NumberBadge } from './NumberBadge'
 
 const meta: Meta<typeof NumberBadge> = {
-  title: 'Primitives/NumberBadge',
+  title: 'Atoms/NumberBadge',
   component: NumberBadge,
   parameters: { layout: 'padded' },
   args: {
@@ -27,6 +27,12 @@ export default meta
 
 type Story = StoryObj<typeof NumberBadge>
 
+/**
+ * NumberBadge placed inline with a step heading and description.
+ * Use this layout when numbering steps in a vertical process list.
+ *
+ * @summary inline badge with step heading
+ */
 export const StepRow: Story = {
   name: 'Step row',
   args: { value: '01' },
@@ -43,6 +49,12 @@ export const StepRow: Story = {
   ),
 }
 
+/**
+ * A horizontal row of sequential badges from 01 to 05.
+ * Use to preview all badges at once in a stepper or numbered list.
+ *
+ * @summary sequenced badge row 01–05
+ */
 export const Sequence: Story = {
   name: 'Sequenced 01–05',
   render: (args) => (
@@ -54,6 +66,12 @@ export const Sequence: Story = {
   ),
 }
 
+/**
+ * All available badge shapes (square, chamfered, circle) compared side-by-side.
+ * Use to choose the right shape for your layout context.
+ *
+ * @summary shape comparison gallery
+ */
 export const ShapeGallery: Story = {
   name: 'Shape gallery',
   render: (args) => (

@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
-import { buildChamferSvgPath } from '@/components/ui/chamfer'
+import { buildChamferClipPath } from '@/components/ui/chamfer'
 
 import {
   Bullet,
@@ -29,15 +29,16 @@ afterEach(() => {
 })
 
 describe('pattern component contracts', () => {
-  it('renders DiagonalBand with an SVG trapezoid instead of clip-path', () => {
+  it('renders DiagonalBand with a CSS clip-path trapezoid', () => {
     const { container } = render(<DiagonalBand ariaLabel="Operations accent" />)
-    const svg = container.querySelector('svg')
-    expect(svg).not.toBeNull()
-    const path = svg!.querySelector('path')
-    expect(path).not.toBeNull()
-    expect(path!.getAttribute('fill')).toBeTruthy()
-    expect(path!.getAttribute('d')).toContain('L')
-    expect(path!.getAttribute('d')).toContain('Z')
+    const band = container.querySelector('[data-chamfer]')
+    expect(band).not.toBeNull()
+    const style = band!.getAttribute('style') || ''
+    expect(style).toContain('--cf-clip')
+    expect(style).toContain('polygon')
+    expect(style).toContain('--cf-fill')
+    expect(style).toContain('--cf-stroke')
+    expect(style).toContain('background: transparent')
   })
 
   it('renders primitive BulletList rows with shaped bullets', () => {
@@ -89,32 +90,25 @@ describe('pattern component contracts', () => {
     )
   })
 
-  it('renders ChamferedCard with an SVG path for symmetric depth', () => {
+  it('renders ChamferedCard with a CSS clip-path polygon for symmetric depth', () => {
     const { container } = render(
       <ChamferedCard corner="bottom-right" chamferDepth={4}>
         <p>Depth-only chamfer</p>
       </ChamferedCard>,
     )
 
-    const svg = container.querySelector('svg')
-    expect(svg).not.toBeNull()
-    expect(svg!.getAttribute('viewBox')).toBe('0 0 100 100')
-    expect(svg!.getAttribute('preserveAspectRatio')).toBe('none')
+    const el = container.querySelector('[data-chamfer]')
+    expect(el).not.toBeNull()
+    const style = el!.getAttribute('style') || ''
 
-    const path = svg!.querySelector('path')
-    expect(path).not.toBeNull()
-    expect(path!.getAttribute('d')).toBe(
-      buildChamferSvgPath({
-        width: 100,
-        height: 100,
-        topLeft: { x: 0, y: 0 },
-        topRight: { x: 0, y: 0 },
-        bottomRight: { x: 4, y: 4 },
-        bottomLeft: { x: 0, y: 0 },
-      }),
-    )
-    expect(path!.getAttribute('fill')).toBe('var(--card)')
-    expect(path!.getAttribute('stroke')).toBe('var(--border)')
+    // Symmetric depth=4 → 1rem per tailwind unit
+    expect(style).toContain('--cf-clip')
+    expect(style).toContain('polygon')
+    expect(style).toContain('calc(100% - 1rem)')
+    expect(style).toContain('--cf-fill: var(--card)')
+    expect(style).toContain('--cf-stroke: var(--border)')
+    expect(style).toContain('--cf-inset: 1px')
+    expect(style).toContain('background: transparent')
   })
 
   it('falls back to asymmetric x/y when depth is 0', () => {
@@ -124,17 +118,11 @@ describe('pattern component contracts', () => {
       </ChamferedCard>,
     )
 
-    const path = container.querySelector('svg path')!
-    expect(path.getAttribute('d')).toBe(
-      buildChamferSvgPath({
-        width: 100,
-        height: 100,
-        topLeft: { x: 0, y: 0 },
-        topRight: { x: 0, y: 0 },
-        bottomRight: { x: 3, y: 6 },
-        bottomLeft: { x: 0, y: 0 },
-      }),
-    )
+    const el = container.querySelector('[data-chamfer]')
+    expect(el).not.toBeNull()
+    const style = el!.getAttribute('style') || ''
+    // x:3 → 0.75rem, y:6 → 1.5rem
+    expect(style).toContain(buildChamferClipPath([{ corner: 'bottom-right', x: 3, y: 6 }])!)
   })
 
   it('renders ChamferedCard with an opposite asymmetric chamfer', () => {
@@ -152,16 +140,14 @@ describe('pattern component contracts', () => {
       </ChamferedCard>,
     )
 
-    const path = container.querySelector('svg path')!
-    expect(path.getAttribute('d')).toBe(
-      buildChamferSvgPath({
-        width: 100,
-        height: 100,
-        topLeft: { x: 0, y: 0 },
-        topRight: { x: 3, y: 2 },
-        bottomRight: { x: 0, y: 0 },
-        bottomLeft: { x: 2, y: 4 },
-      }),
+    const el = container.querySelector('[data-chamfer]')
+    expect(el).not.toBeNull()
+    const style = el!.getAttribute('style') || ''
+    expect(style).toContain(
+      buildChamferClipPath([
+        { corner: 'top-right', x: 3, y: 2 },
+        { corner: 'bottom-left', x: 2, y: 4 },
+      ])!,
     )
   })
 
@@ -172,16 +158,14 @@ describe('pattern component contracts', () => {
       </ChamferedCard>,
     )
 
-    const path = container.querySelector('svg path')!
-    expect(path.getAttribute('d')).toBe(
-      buildChamferSvgPath({
-        width: 100,
-        height: 100,
-        topLeft: { x: 0, y: 0 },
-        topRight: { x: 3, y: 3 },
-        bottomRight: { x: 0, y: 0 },
-        bottomLeft: { x: 6, y: 6 },
-      }),
+    const el = container.querySelector('[data-chamfer]')
+    expect(el).not.toBeNull()
+    const style = el!.getAttribute('style') || ''
+    expect(style).toContain(
+      buildChamferClipPath([
+        { corner: 'top-right', x: 3, y: 3 },
+        { corner: 'bottom-left', x: 6, y: 6 },
+      ])!,
     )
   })
 

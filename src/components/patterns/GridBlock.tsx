@@ -1,3 +1,10 @@
+/**
+ * GridBlock renders items in a responsive CSS grid (1–4 columns).
+ * Each item is rendered via GridBlockItem with configurable border radius
+ * and accent tone. Use for service listings, feature grids, or card catalogs.
+ *
+ * @summary responsive feature grid
+ */
 import { cn } from '@/utilities/ui'
 import * as React from 'react'
 import { GridBlockItem } from './GridBlockItem'

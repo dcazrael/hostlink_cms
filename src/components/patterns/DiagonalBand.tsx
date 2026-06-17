@@ -23,15 +23,15 @@ const toneTextClass: Record<DiagonalBandTone, string> = {
 }
 
 /**
- * Build the trapezoid path for the band, expressed in viewBox units
- * (0–100). For `right`, the top-left corner is cut; for `left`, the
- * top-right corner is cut. The cut slope is controlled by `tilt`.
+ * Build a CSS `clip-path: polygon(...)` for the diagonal trapezoid.
+ * For `right` the top-left edge is sloped; for `left` the top-right edge.
+ * `tilt` is the horizontal offset in *px* for the sloped edge.
  */
-function buildBandPath(orientation: DiagonalBandOrientation, tilt: number): string {
+function buildBandClipPath(orientation: DiagonalBandOrientation, tilt: number): string {
   if (orientation === 'right') {
-    return `M ${tilt} 0 L 100 0 L 100 100 L 0 100 Z`
+    return `polygon(${tilt}px 0%, 100% 0%, 100% 100%, 0% 100%)`
   }
-  return `M 0 0 L ${100 - tilt} 0 L 100 100 L 0 100 Z`
+  return `polygon(0% 0%, calc(100% - ${tilt}px) 0%, 100% 100%, 0% 100%)`
 }
 
 /**
@@ -74,7 +74,7 @@ export const DiagonalBand: React.FC<{
   ariaLabel,
 }) => {
   const tilt = children == null ? 12 : 36
-  const path = buildBandPath(orientation, tilt)
+  const clipPath = buildBandClipPath(orientation, tilt)
 
   // Decorative only when there is no label AND no children to announce.
   const isDecorative = !ariaLabel && children == null
@@ -83,25 +83,24 @@ export const DiagonalBand: React.FC<{
     <div
       aria-hidden={isDecorative || undefined}
       aria-label={ariaLabel}
+      data-chamfer
       className={cn('relative w-full overflow-hidden', className)}
       data-pattern-diagonal-surface
+      style={
+        {
+          '--cf-fill': toneFill[tone],
+          '--cf-stroke': 'transparent',
+          '--cf-inset': '0px',
+          '--cf-clip': clipPath,
+          background: 'transparent',
+        } as React.CSSProperties & Record<string, string>
+      }
     >
-      <svg
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 size-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
-        <path d={path} fill={toneFill[tone]} />
-      </svg>
-      <div aria-hidden className={cn('relative z-10 block w-full', heightClassName)} />
+      <div aria-hidden className={cn('relative block w-full', heightClassName)} />
       {children ? (
         <div
           className={cn(
-            // Intrinsic padding (not negative margin) so the label strip
-            // occupies visible space below the bar and is never clipped
-            // by the parent or hidden under the bar's painted pixels.
-            'relative z-10 px-4 pb-3 pt-1 text-xs font-mono uppercase tracking-widest',
+            'relative px-4 pb-3 pt-1 text-xs font-mono uppercase tracking-widest',
             toneTextClass[tone],
           )}
         >

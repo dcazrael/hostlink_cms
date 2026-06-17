@@ -16,6 +16,8 @@ export type CompanyInfoTableProps = {
  * Fixed label/value table that mirrors the hostlink company-info
  * pattern. Layout, colors, and chip styling are part of the
  * pattern contract and are not exposed as controls.
+ *
+ * @summary company-information label/value table
  */
 export const CompanyInfoTable: React.FC<CompanyInfoTableProps> = ({
   items,
@@ -23,10 +25,7 @@ export const CompanyInfoTable: React.FC<CompanyInfoTableProps> = ({
   valueHeader = '内容',
   className,
 }) => (
-  <div
-    className={className ?? 'max-w-md bg-card p-2'}
-    data-testid="pattern-company-info-table"
-  >
+  <div className={className ?? 'max-w-md bg-card p-2'} data-testid="pattern-company-info-table">
     <table className="w-full border-separate border-spacing-x-4 border-spacing-y-2 text-sm text-(--heading)">
       <thead>
         <tr>
@@ -41,10 +40,7 @@ export const CompanyInfoTable: React.FC<CompanyInfoTableProps> = ({
       <tbody>
         {items.map((item) => (
           <tr key={item.label}>
-            <th
-              scope="row"
-              className="text-center align-middle font-medium tracking-wide"
-            >
+            <th scope="row" className="text-center align-middle font-medium tracking-wide">
               <span className="inline-block w-full bg-accent px-3 py-1.5 text-accent-foreground">
                 {item.label}
               </span>

@@ -3,11 +3,17 @@ import * as React from 'react'
 import { Button } from '../ui/button'
 import { BulletList, FeatureList, type BulletShape } from './BulletList'
 import { ChamferedCard, type ChamferedCardCorner } from './ChamferedCard'
-import type { ChamferSizing } from '@/components/ui/chamfer'
 import { DiagonalBand } from './DiagonalBand'
 import { SectionFrame } from './SectionFrame'
 import { ShapeMask } from './ShapeMask'
 
+/**
+ * Card is a content container with an eyebrow label, title, and body slot.
+ * Wraps ChamferedCard with chamfer controls. Use for feature cards,
+ * process steps, or any card-based layout.
+ *
+ * @summary chamfered content card
+ */
 export const Card: React.FC<{
   eyebrow?: string
   title: string
@@ -21,7 +27,7 @@ export const Card: React.FC<{
   oppositeChamferDepth?: number
   oppositeChamferX?: number
   oppositeChamferY?: number
-  sizing?: ChamferSizing
+  /** Stroke width of the chamfered outline in pixels. Defaults to 1. */
   strokeWidth?: number
   className?: string
 }> = ({
@@ -37,7 +43,6 @@ export const Card: React.FC<{
   oppositeChamferDepth,
   oppositeChamferX,
   oppositeChamferY,
-  sizing,
   strokeWidth,
   className,
 }) => (
@@ -51,7 +56,6 @@ export const Card: React.FC<{
     oppositeChamferDepth={oppositeChamferDepth}
     oppositeChamferX={oppositeChamferX}
     oppositeChamferY={oppositeChamferY}
-    sizing={sizing}
     strokeWidth={strokeWidth}
     className={className}
   >
@@ -117,6 +121,12 @@ export const PricingCard: React.FC<{
   )
 }
 
+/**
+ * FlowSteps renders a horizontal process row with DiagonalBand accents
+ * and Card containers. Use for 3-step process overviews (audit → build → launch).
+ *
+ * @summary horizontal process step row
+ */
 export const FlowSteps: React.FC<{
   steps: Array<{ title: string; body: string }>
 }> = ({ steps }) => (
@@ -135,6 +145,12 @@ export const FlowSteps: React.FC<{
   </ol>
 )
 
+/**
+ * ContactPanel renders a Card-wrapped inquiry form with name, email,
+ * and message fields. Use for contact or consultation request sections.
+ *
+ * @summary inquiry contact form panel
+ */
 export const ContactPanel: React.FC<{ className?: string }> = ({ className }) => (
   <Card className={className} eyebrow="Contact" title="Start a managed workspace" tone="navy">
     <form className="grid gap-4">
@@ -155,6 +171,13 @@ export const ContactPanel: React.FC<{ className?: string }> = ({ className }) =>
   </Card>
 )
 
+/**
+ * ImageFrame renders a decorative placeholder visual with ShapeMask
+ * diagonal geometry and an optional caption. Use as a visual container
+ * for abstract or hero-section imagery.
+ *
+ * @summary decorative image placeholder with caption
+ */
 export const ImageFrame: React.FC<{
   alt: string
   caption?: string
@@ -174,6 +197,13 @@ export const ImageFrame: React.FC<{
 
 export type SectionShapeVariant = 'corner-mask' | 'diagonal-bands' | 'stepped-field' | 'half-field'
 
+/**
+ * SectionShape renders a decorative background geometry for pamphlet sections.
+ * Four variants available: diagonal-bands, stepped-field, half-field, corner-mask.
+ * Each uses CSS clip-path for the shape.
+ *
+ * @summary decorative section background shape
+ */
 export const SectionShape: React.FC<{
   variant?: SectionShapeVariant
   tone?: 'navy' | 'mint' | 'subtle'

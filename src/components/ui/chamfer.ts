@@ -178,20 +178,80 @@ export const chamferCardToneMap: Record<
   },
 }
 
+/**
+ * Build a CSS `clip-path: polygon(...)` string for chamfered rectangles,
+ * using percentage values (0–100) for each cut axis. Useful for
+ * proportional chamfers (e.g. NumberBadge) where the cut should scale
+ * with the element's size.
+ */
+export function buildChamferClipPathPct(
+  cuts: Array<{
+    corner: ChamferCorner
+    xPct: number
+    yPct: number
+  }>,
+): string {
+  const cutMap = new Map<ChamferCorner, { xPct: number; yPct: number }>()
+  for (const cut of cuts) {
+    cutMap.set(cut.corner, cut)
+  }
+
+  const tl = cutMap.get('top-left')
+  const tr = cutMap.get('top-right')
+  const br = cutMap.get('bottom-right')
+  const bl = cutMap.get('bottom-left')
+
+  const pts: string[] = []
+
+  // Top-left corner
+  if (tl) {
+    pts.push(`0% ${tl.yPct}%`)
+    pts.push(`${tl.xPct}% 0%`)
+  } else {
+    pts.push('0% 0%')
+  }
+
+  // Top-right corner
+  if (tr) {
+    pts.push(`calc(100% - ${tr.xPct}%) 0%`)
+    pts.push(`100% ${tr.yPct}%`)
+  } else {
+    pts.push('100% 0%')
+  }
+
+  // Bottom-right corner
+  if (br) {
+    pts.push(`100% calc(100% - ${br.yPct}%)`)
+    pts.push(`calc(100% - ${br.xPct}%) 100%`)
+  } else {
+    pts.push('100% 100%')
+  }
+
+  // Bottom-left corner
+  if (bl) {
+    pts.push(`${bl.xPct}% 100%`)
+    pts.push(`0% calc(100% - ${bl.yPct}%)`)
+  } else {
+    pts.push('0% 100%')
+  }
+
+  return `polygon(${pts.join(', ')})`
+}
+
 export const chamferButtonToneMap: Record<
   ChamferedButtonVariant,
   { fill: string; stroke: string }
 > = {
   default: {
-    fill: 'transparent',
-    stroke: 'var(--primary)',
+    fill: 'var(--primary)',
+    stroke: 'var(--border)',
   },
   outline: {
     fill: 'transparent',
     stroke: 'var(--border)',
   },
   secondary: {
-    fill: 'transparent',
+    fill: 'var(--secondary)',
     stroke: 'var(--border)',
   },
   ghost: {
@@ -199,7 +259,7 @@ export const chamferButtonToneMap: Record<
     stroke: 'var(--border)',
   },
   destructive: {
-    fill: 'transparent',
+    fill: 'var(--destructive)',
     stroke: 'var(--border)',
   },
   link: {

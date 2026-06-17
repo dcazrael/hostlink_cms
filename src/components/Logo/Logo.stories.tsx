@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { expect } from 'storybook/test'
 import { Logo } from './Logo'
 
@@ -10,6 +10,12 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+/**
+ * Default Hostlink logo asset rendered as a 300px image.
+ * Use to preview the brand mark at its default size.
+ *
+ * @summary default brand logo
+ */
 export const Default: Story = {
   play: async ({ canvas }) => {
     const img = canvas.getByRole('img', { name: /hostlink logo/i })

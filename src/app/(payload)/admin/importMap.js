@@ -36,6 +36,7 @@ import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/component
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
+/** @type import('payload').ImportMap */
 export const importMap = {
   "@/components/admin/frontend-copy/FrontendCopyWorkbench#default": default_8f0035a419346eaf69c15cc333a1d099,
   "@/components/admin/frontend-copy/FrontendCopyGroupNavigator#FrontendCopyGroupNavigator": FrontendCopyGroupNavigator_27542506559c23e5bebf8dfc6b764ea8,

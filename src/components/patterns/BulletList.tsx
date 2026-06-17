@@ -11,6 +11,12 @@ const BULLET_SHAPE_CLASSES: Record<BulletShape, string> = {
   bar: 'h-5 w-2',
 }
 
+/**
+ * Bullet is a single marker shape for list items. Renders an inline
+ * accent-coloured shape (square, diamond, polygon, circle, or bar).
+ *
+ * @summary single list marker shape
+ */
 export const Bullet: React.FC<{
   shape?: BulletShape
   sizeClassName?: string
@@ -35,8 +41,16 @@ export const Bullet: React.FC<{
   )
 }
 
+/**
+ * BulletList renders an array of items as a vertical list with shape markers.
+ * Accepts any React nodes as items (text, JSX, components).
+ *
+ * @summary vertical list with shaped markers
+ */
 export const BulletList: React.FC<{
+  /** Each item rendered as a list entry with a leading shape marker. */
   items: React.ReactNode[]
+  /** Shape of the bullet marker. Defaults to `square`. */
   shape?: BulletShape
   className?: string
   itemClassName?: string
@@ -53,6 +67,12 @@ export const BulletList: React.FC<{
   </ul>
 )
 
+/**
+ * FeatureList renders an array of items each with a title and optional
+ * supporting text, displayed with leading shape markers.
+ *
+ * @summary titled list items with optional supporting text
+ */
 export const FeatureList: React.FC<{
   items: Array<{ title: string; text?: React.ReactNode }>
   shape?: BulletShape

@@ -11,35 +11,42 @@ describe('Button component contract', () => {
     expect(styleAttr).not.toMatch(/function/i)
   })
 
-  it('wraps children in a relative span when chamferDepth > 0', () => {
+  it('sets data-chamfer and clip-path style when chamferDepth > 0', () => {
     const { container } = render(<Button chamferDepth={4}>Chamfered</Button>)
     const button = container.querySelector('button')!
-    const span = button.querySelector('span')
-    expect(span).not.toBeNull()
-    expect(span!.className).toContain('z-10')
+    expect(button.getAttribute('data-chamfer')).not.toBeNull()
+    const style = button.getAttribute('style') || ''
+    expect(style).toContain('--cf-clip')
+    expect(style).toContain('polygon')
+    expect(style).toContain('--cf-fill')
+    expect(style).toContain('--cf-stroke')
+    expect(style).toContain('--cf-inset')
+    expect(style).toContain('background: transparent')
   })
 
-  it('does not add a z-10 wrapper span when chamferDepth is 0', () => {
+  it('omits data-chamfer when chamferDepth is 0', () => {
     const { container } = render(<Button chamferDepth={0}>Plain</Button>)
     const button = container.querySelector('button')!
-    const innerSpans = button.querySelectorAll(':scope > span')
-    // Should not add an extra SVG-aware wrapper
-    expect(innerSpans.length).toBe(0)
+    expect(button.getAttribute('data-chamfer')).toBeNull()
+    const style = button.getAttribute('style') || ''
+    expect(style).not.toContain('--cf-clip')
   })
 
   it('clamps chamferDepth to maximum of 5 without crashing', () => {
     const { container } = render(<Button chamferDepth={20}>Clamped</Button>)
-    expect(container.querySelector('button')).not.toBeNull()
+    const button = container.querySelector('button')!
+    expect(button).not.toBeNull()
+    // data-chamfer is present (depth clamped to 5 > 0)
+    expect(button.getAttribute('data-chamfer')).not.toBeNull()
   })
 
-  it('does not render SVG for link variant even with chamferDepth', () => {
+  it('does not set data-chamfer for link variant even with chamferDepth', () => {
     const { container } = render(
       <Button variant="link" chamferDepth={4}>
         Link
       </Button>,
     )
     const button = container.querySelector('button')!
-    const svg = button.querySelector('svg')
-    expect(svg).toBeNull()
+    expect(button.getAttribute('data-chamfer')).toBeNull()
   })
 })

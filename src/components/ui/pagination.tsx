@@ -1,3 +1,10 @@
+/**
+ * Pagination provides navigation controls for multi-page lists.
+ * Compose with PaginationContent, PaginationItem, PaginationLink,
+ * PaginationEllipsis, PaginationPrevious, and PaginationNext.
+ *
+ * @summary multi-page list navigation
+ */
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'

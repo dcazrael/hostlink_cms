@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { VerticalAccent } from './VerticalAccent'
 
 const meta: Meta<typeof VerticalAccent> = {
@@ -23,6 +23,12 @@ export default meta
 
 type Story = StoryObj<typeof VerticalAccent>
 
+/**
+ * Mint skewed vertical accent alongside a pull-quote layout.
+ * Use to add a decorative vertical stroke beside quoted text or sidebar content.
+ *
+ * @summary mint skewed accent with pull-quote
+ */
 export const MintSkew: Story = {
   name: 'Mint · skewed',
   render: (args) => (
@@ -44,6 +50,12 @@ export const MintSkew: Story = {
   ),
 }
 
+/**
+ * All four tones (mint, navy, border, muted) shown in a grid.
+ * Use to compare tone options for the vertical accent bar.
+ *
+ * @summary tone comparison gallery
+ */
 export const ToneGallery: Story = {
   name: 'Tone gallery',
   render: (args) => (

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 import {
   Pagination,
@@ -20,6 +20,12 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+/**
+ * Three-page pagination with previous/next and an ellipsis.
+ * Use for typical list views where the total number of pages is small.
+ *
+ * @summary standard pagination for small page sets
+ */
 export const Default: Story = {
   render: () => (
     <Pagination>
@@ -47,6 +53,12 @@ export const Default: Story = {
   ),
 }
 
+/**
+ * Single-page pagination — only one page link.
+ * Use when the result set fits on one page, as a boundary case.
+ *
+ * @summary single-page boundary case
+ */
 export const SinglePage: Story = {
   render: () => (
     <Pagination>
@@ -59,6 +71,12 @@ export const SinglePage: Story = {
   ),
 }
 
+/**
+ * Five-page pagination with ellipsis and navigation.
+ * Use for larger result sets where users need to jump across many pages.
+ *
+ * @summary multi-page pagination with ellipsis
+ */
 export const ManyPages: Story = {
   render: () => (
     <Pagination>

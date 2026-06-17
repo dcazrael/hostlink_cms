@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ImageFrame } from './Patterns'
 
 const meta: Meta = {
@@ -10,6 +10,12 @@ export default meta
 
 type Story = StoryObj
 
+/**
+ * Two image frames side-by-side, one with a subtle background.
+ * Use to preview placeholder visuals and caption placement in a grid.
+ *
+ * @summary image frame pair with and without background
+ */
 export const Default: Story = {
   render: () => (
     <div className="grid gap-6 md:grid-cols-2">

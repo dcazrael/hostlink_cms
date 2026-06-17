@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { DiagonalBand } from './DiagonalBand'
 
 const meta: Meta<typeof DiagonalBand> = {
@@ -23,6 +23,12 @@ export default meta
 
 type Story = StoryObj<typeof DiagonalBand>
 
+/**
+ * Navy diagonal band at default thickness above a section eyebrow.
+ * Use as a slim decorative accent above content blocks.
+ *
+ * @summary default navy decorative band
+ */
 export const Navy: Story = {
   name: 'Navy band · default thickness',
   render: (args) => (
@@ -36,18 +42,36 @@ export const Navy: Story = {
   ),
 }
 
+/**
+ * Mint diagonal band with right orientation and aria-label.
+ * Use as an accent stroke in mint tone with a known direction.
+ *
+ * @summary mint right-oriented band with label
+ */
 export const Mint: Story = {
   name: 'Mint band · right orientation',
   args: { tone: 'mint', orientation: 'right' },
   render: (args) => <DiagonalBand {...args} ariaLabel="Section accent" />,
 }
 
+/**
+ * Diagonal band containing child text (an aria-announced label).
+ * Use when the band doubles as a decorative section divider and label holder.
+ *
+ * @summary band with announced child label
+ */
 export const LabelStrip: Story = {
   name: 'With children · announced label',
   args: { tone: 'navy', orientation: 'left' },
   render: (args) => <DiagonalBand {...args}>Operations</DiagonalBand>,
 }
 
+/**
+ * All five tones (navy, mint, subtle, card, border) shown in a vertical stack.
+ * Use to compare tone options before choosing one for a section.
+ *
+ * @summary tone comparison gallery
+ */
 export const LabelStripAllTones: Story = {
   name: 'Label strip · all tones',
   render: (args) => (

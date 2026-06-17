@@ -1,3 +1,9 @@
+/**
+ * Table renders a bordered data grid with tone-controlled header background.
+ * Accepts column headers and row arrays for tabular feature comparisons.
+ *
+ * @summary tone-controlled data table
+ */
 import { cn } from '@/utilities/ui'
 import * as React from 'react'
 import { PATTERN_TONE_CLASSES, type PatternTone } from './tones'
@@ -21,10 +27,7 @@ export const Table: React.FC<TableProps> = ({ columns, rows, tone = 'card', clas
         <thead className={cn('text-sm font-semibold', toneClass.background, toneClass.text)}>
           <tr>
             {columns.map((column) => (
-              <th
-                key={column}
-                className="px-4 py-3 font-mono text-xs uppercase tracking-widest"
-              >
+              <th key={column} className="px-4 py-3 font-mono text-xs uppercase tracking-widest">
                 {column}
               </th>
             ))}

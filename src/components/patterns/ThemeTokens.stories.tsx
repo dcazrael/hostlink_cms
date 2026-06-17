@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 /**
  * Single swatch tile used by the grid. Renders a token name, the
@@ -161,8 +161,20 @@ export default meta
 
 type Story = StoryObj<typeof ThemeTokensGrid>
 
+/**
+ * Visual swatch grid for light-theme design tokens.
+ * Use to preview token colors, names, and Tailwind class references.
+ *
+ * @summary light-theme token swatch grid
+ */
 export const Light: Story = {}
 
+/**
+ * Raw token list rendering each token name alongside its bg utility class.
+ * Use as a reference table for which utility to reach for in code.
+ *
+ * @summary token name to utility class reference
+ */
 export const TokensList: Story = {
   name: 'Tokens (raw list)',
   render: () => (

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { GridBlock, type GridBlockColumns, type GridBlockProps } from './GridBlock'
 import {
   type GridBlockItemAccentTone,
@@ -24,7 +24,7 @@ const ACCENT_OPTIONS = [
 ] satisfies GridBlockItemAccentTone[]
 
 const meta: Meta<GridBlockStoryArgs> = {
-  title: 'Patterns/GridBlock',
+  title: 'Components/GridBlock',
   component: GridBlock as unknown as React.ComponentType<GridBlockStoryArgs>,
   parameters: { layout: 'padded' },
   args: {
@@ -103,6 +103,12 @@ const buildGridItems = (count: 2 | 3 | 4, args: GridBlockStoryArgs): GridBlockIt
     accentTone: args.accentTone,
   }))
 
+/**
+ * Two-column compact grid with small border radius.
+ * Use for concise feature listings with icons and short descriptions.
+ *
+ * @summary two-column compact feature grid
+ */
 export const GridTwoItems: Story = {
   name: 'Grid · 2 items',
   args: {
@@ -120,6 +126,12 @@ export const GridTwoItems: Story = {
   ),
 }
 
+/**
+ * Three-column compact grid.
+ * Use to show three services or features in a balanced row.
+ *
+ * @summary three-column compact feature grid
+ */
 export const GridThreeItems: Story = {
   name: 'Grid · 3 items',
   args: {
@@ -136,6 +148,12 @@ export const GridThreeItems: Story = {
   ),
 }
 
+/**
+ * Four-column grid with large border radius and primary accent tone.
+ * Use for denser content layouts like service catalogs or support categories.
+ *
+ * @summary four-column grid with primary accent
+ */
 export const GridFourItems: Story = {
   name: 'Grid · 4 items',
   args: {

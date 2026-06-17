@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { SectionWithImage } from './Patterns'
 
 const meta: Meta = {
@@ -16,6 +16,12 @@ const features = [
   'Bilingual support window',
 ]
 
+/**
+ * Section with image — eyebrow, title, description, and bar-shaped bullet list.
+ * Use for hero sections or feature overviews that pair copy with a visual placeholder.
+ *
+ * @summary hero section with image frame and bullets
+ */
 export const Default: Story = {
   name: 'Section with image',
   render: () => (

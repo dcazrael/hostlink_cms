@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Card } from './Patterns'
 
 const chamferArgTypes = {
@@ -26,6 +26,12 @@ export default meta
 
 type Story = StoryObj
 
+/**
+ * Three-column layout showing Card in three tones (default, mint, navy).
+ * Use to preview how Cards look as a grid with varied eyebrow and title content.
+ *
+ * @summary three-card grid in default, mint, navy tones
+ */
 export const Default: Story = {
   args: {
     corner: 'top-right',
@@ -53,6 +59,12 @@ export const Default: Story = {
   ),
 }
 
+/**
+ * Four cards showing each chamfer corner (top-right, top-left, bottom-right, bottom-left).
+ * Use to compare corner placement before choosing one for a design.
+ *
+ * @summary chamfer corner comparison grid
+ */
 export const AllCorners: Story = {
   argTypes: chamferArgTypes,
   render: (args) => (
@@ -73,27 +85,32 @@ export const AllCorners: Story = {
   ),
 }
 
-export const FixedSizing: Story = {
+/**
+ * Chamfer rendered via CSS clip-path with narrow and wide containers.
+ * Demonstrates that the chamfer depth is independent of card width.
+ *
+ * @summary CSS clip-path across varying widths
+ */
+export const CSSClipPath: Story = {
   args: {
     corner: 'top-right',
     chamferDepth: 4,
     hasOppositeCorner: false,
-    sizing: 'fixed',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Uses `sizing="fixed"` for pixel-precise chamfer depths via ResizeObserver.',
+        story: 'Chamfer rendered via CSS `clip-path` on `::after` — no ResizeObserver needed.',
       },
     },
   },
   render: (args) => (
     <div className="flex flex-wrap gap-6">
       <Card eyebrow="Width" title="Narrow" {...args} className="w-48">
-        Fixed chamfer at 16px regardless of width.
+        Chamfer depth is 1rem regardless of width.
       </Card>
       <Card eyebrow="Width" title="Wide" {...args} className="w-96">
-        Same 16px chamfer even on a wider card.
+        Same 1rem chamfer on a wider card.
       </Card>
     </div>
   ),

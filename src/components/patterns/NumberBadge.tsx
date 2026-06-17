@@ -1,29 +1,27 @@
 import * as React from 'react'
-import { buildChamferSvgPath } from '@/components/ui/chamfer'
+import { buildChamferClipPathPct } from '@/components/ui/chamfer'
 import { cn } from '@/utilities/ui'
 
 export type NumberBadgeTone = 'navy' | 'mint' | 'card' | 'subtle' | 'border'
 
 export type NumberBadgeShape = 'square' | 'chamfered' | 'circle'
 
-const CHAMFER_PATH = buildChamferSvgPath({
-  width: 100,
-  height: 100,
-  topLeft: { x: 0, y: 0 },
-  topRight: { x: 30, y: 30 },
-  bottomRight: { x: 0, y: 0 },
-  bottomLeft: { x: 0, y: 0 },
-})
+const CHAMFER_CLIP_PATH = buildChamferClipPathPct([{ corner: 'top-right', xPct: 30, yPct: 30 }])
 
-const toneFill: Record<NumberBadgeTone, string> = {
-  navy: 'transparent',
-  mint: 'transparent',
-  card: 'transparent',
-  subtle: 'transparent',
-  border: 'transparent',
+/**
+ * Tone-fill CSS variable reference that matches the bg-colour the
+ * tone class would have set (which is overridden to `transparent`
+ * when chamfered).
+ */
+const toneFillVar: Record<NumberBadgeTone, string> = {
+  navy: 'var(--secondary)',
+  mint: 'var(--accent)',
+  card: 'var(--card)',
+  subtle: 'var(--subtle-background)',
+  border: 'var(--background)',
 }
 
-const toneStroke: Record<NumberBadgeTone, string> = {
+const toneStrokeVar: Record<NumberBadgeTone, string> = {
   navy: 'var(--border)',
   mint: 'var(--border)',
   card: 'var(--border)',
@@ -72,31 +70,31 @@ export const NumberBadge: React.FC<{
     <span
       role="img"
       aria-label={`Step ${value}`}
+      data-chamfer={isChamfered ? '' : undefined}
       className={cn(
-        'relative inline-flex items-center justify-center border font-mono text-xs font-semibold tabular-nums',
+        'relative inline-flex items-center justify-center font-mono text-xs font-semibold tabular-nums',
+        // Border is only on square/circle — the chamfered shape renders its
+        // own stroke via the `::before` pseudo-element, so the parent's
+        // 1px border would show as a square outline around the chamfer.
+        isChamfered ? null : 'border',
         sizeClassName,
         shapeClass,
         toneClass[tone],
         className,
       )}
+      style={
+        isChamfered
+          ? ({
+              '--cf-fill': toneFillVar[tone],
+              '--cf-stroke': toneStrokeVar[tone],
+              '--cf-inset': '1px',
+              '--cf-clip': CHAMFER_CLIP_PATH,
+              background: 'transparent',
+            } as React.CSSProperties & Record<string, string>)
+          : undefined
+      }
     >
-      {isChamfered && (
-        <svg
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-        >
-          <path
-            d={CHAMFER_PATH}
-            fill={toneFill[tone]}
-            stroke={toneStroke[tone]}
-            strokeWidth={1}
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-      )}
-      <span className={cn(isChamfered && 'relative z-10', textClassName)}>{value}</span>
+      <span className={cn(textClassName)}>{value}</span>
     </span>
   )
 }

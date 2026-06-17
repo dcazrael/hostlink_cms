@@ -1,12 +1,12 @@
 import type { Decorator, Preview } from '@storybook/react'
-import React, { useLayoutEffect } from 'react'
+import { useLayoutEffect } from 'react'
 
 import './preview.css'
 
-import { initialize, mswLoader } from 'msw-storybook-addon'
 import MockDate from 'mockdate'
-import { ThemeProvider } from '../src/providers/Theme'
+import { initialize, mswLoader } from 'msw-storybook-addon'
 import { HeaderThemeProvider } from '../src/providers/HeaderTheme'
+import { ThemeProvider } from '../src/providers/Theme'
 import { mswHandlers } from './msw-handlers'
 
 initialize({ onUnhandledRequest: 'bypass' })
@@ -46,6 +46,7 @@ const withProviders: Decorator = (Story) => {
 
 const preview: Preview = {
   decorators: [withFrontendCanvas, withProviders],
+  tags: ['autodocs'],
   loaders: [mswLoader],
   parameters: {
     msw: {

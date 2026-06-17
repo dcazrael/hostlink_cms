@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { SectionFrame } from './SectionFrame'
 
 const meta: Meta<typeof SectionFrame> = {
@@ -27,6 +27,12 @@ export default meta
 
 type Story = StoryObj<typeof SectionFrame>
 
+/**
+ * Default section frame with accent rule, eyebrow, title, and description.
+ * Use as the standard editorial wrapper for pamphlet sections.
+ *
+ * @summary standard editorial section wrapper
+ */
 export const Default: Story = {
   name: 'Default · with accent rule',
   render: (args) => (
@@ -38,6 +44,12 @@ export const Default: Story = {
   ),
 }
 
+/**
+ * Section frame with subtle background tone.
+ * Use to visually alternate sections on a page while keeping the frame structure.
+ *
+ * @summary alternate section using subtle background
+ */
 export const SubtleBackground: Story = {
   name: 'Subtle background tone',
   args: { tone: 'subtle' },
@@ -51,6 +63,12 @@ export const SubtleBackground: Story = {
   ),
 }
 
+/**
+ * Section frame without the mint accent rule.
+ * Use when the section sits on a busy background where the rule would compete.
+ *
+ * @summary section frame with accent rule hidden
+ */
 export const NoAccentRule: Story = {
   name: 'No accent rule',
   args: { showAccentRule: false, eyebrow: 'Proof', title: 'Trusted by' },

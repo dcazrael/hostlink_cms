@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { PATTERN_TONES } from './tones'
 import { Table } from './Table'
 
@@ -30,6 +30,12 @@ export default meta
 
 type Story = StoryObj<typeof Table>
 
+/**
+ * Table with tone-controlled header background.
+ * Use for data grids or feature comparison tables where column headers must stand out.
+ *
+ * @summary table with themed header row
+ */
 export const HeaderTone: Story = {
   name: 'Tone-controlled header',
 }

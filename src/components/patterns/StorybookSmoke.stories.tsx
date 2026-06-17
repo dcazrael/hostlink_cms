@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 /**
  * Minimal smoke story used to validate the Storybook foundation.
@@ -49,4 +49,12 @@ export default meta
 
 type Story = StoryObj<typeof PamphletTokenSwatch>
 
+/**
+ * Smoke test for Storybook — renders the Tailwind v4 design tokens declared
+ * in globals.css (background, foreground, card, primary, accent, border).
+ * Use to verify the Storybook pipeline is wired correctly before adding
+ * more components.
+ *
+ * @summary design-token smoke test
+ */
 export const Smoke: Story = {}
