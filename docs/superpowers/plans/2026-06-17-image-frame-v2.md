@@ -24,59 +24,113 @@ The current placeholder `ImageFrame` in `Patterns.tsx` is removed. The only cons
 
 ---
 
-## Path Data (Placeholder Polygon Coordinates)
+## Path Data (from user's cleaned SVG exports)
 
-The exact polygon data for each variant must be derived from the user's Inkscape SVG exports. Until the user provides viewBox-space coordinates, the implementation uses the **placeholder polygon data below**. Each task notes which variant's data must be replaced with the user's actual geometry.
+The user provided cleaned SVG exports (via svgomg) for all three variants. Path data below is **already in viewBox-space coordinates** (no transform applied). Each variant has its own viewBox, so each has its own aspect ratio.
 
-**Placeholder polygon data (replace with user-provided values during implementation Task 3):**
+### `hero-stripe` (viewBox 0 0 736.7 1022.4)
 
-```ts
-// ViewBox-space coordinates for the combined SVG (viewBox="0 0 736.7 1022.4")
-// Replace with the user's actual exported path data.
+User SVG:
 
-const PLACEHOLDER_VARIANTS = {
-  "hero-stripe": {
-    mint: [
-      // Subpath 1: upper-left wedge
-      "M 4 311 H 62 V 359 L 25 455 H 4 Z",
-      // Subpath 2: small lower-left accent
-      "M 4 480 H 25 V 510 L 4 530 Z",
-    ],
-    photoClip: "polygon(0% 0%, 100% 0%, 100% 100%, 30% 100%, 0% 50%)",
-    navy: [
-      // Thick diagonal stripe in the upper-right
-      "M 500 0 H 736.7 V 200 L 500 350 Z",
-    ],
-    navyOpacity: 1.0,
-  },
-  "stacked-bands": {
-    mint: [
-      // Top wedge
-      "M 0 0 H 736.7 V 150 L 400 280 H 0 Z",
-    ],
-    photoClip: "polygon(0% 30%, 100% 30%, 100% 100%, 0% 100%)",
-    navy: [
-      // Diagonal stripe through middle
-      "M 200 450 H 736.7 V 600 L 200 750 Z",
-    ],
-    navyOpacity: 0.6,
-  },
-  "framed-overlay": {
-    mint: [
-      // Tiny bottom-left corner
-      "M 0 950 H 80 V 1022.4 H 0 Z",
-    ],
-    photoClip: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-    navy: [
-      // Full-frame overlay (placeholder — will be replaced with semi-transparent fill
-      // applied to the same viewBox via fill-opacity, not a polygon)
-    ],
-    navyOpacity: 0.4,
-  },
-} as const;
+```svg
+<svg viewBox="0 0 736.7 1022.4">
+  <path fill="#87bfb3" d="m666 1083-664 4V311l60 48v96l548 380h56z"/>
+  <path fill="#253956" d="M666 835h-56L62 455v-96l604 420z"/>
+  <path fill="#87bfb3" d="m782 479-20-16v-64L302 63V35l480 348z"/>
+  <path fill="#253956" d="M762 463 302 123V55l460 344z"/>
+  <path fill="#83b75b" fill-opacity=".2" d="M762 835H610L62 455V3h168l532 396"/>
+</svg>
 ```
 
-These placeholder polygons render sensible-looking compositions but **do not match the user's references**. Task 3 (Pin Exact Path Data) replaces them with the user's actual SVG exports.
+Parsed:
+
+- **mint paths** (2): `m666 1083-664 4V311l60 48v96l548 380h56z` and `m782 479-20-16v-64L302 63V35l480 348z`
+- **navy paths** (2): `M666 835h-56L62 455v-96l604 420z` and `M762 463 302 123V55l460 344z`
+- **photo clip-path** (1, the `#83b75b` reference): `M762 835H610L62 455V3h168l532 396`
+- **navy opacity**: 1.0 (fully opaque, fill-opacity removed)
+
+### `stacked-bands` (viewBox 0 0 623.6 827.7)
+
+User SVG:
+
+```svg
+<svg viewBox="0 0 623.6 827.7">
+  <path fill="#80b558" fill-opacity=".2" d="M624 828H499L57 480V45h264l303 206"/>
+  <path fill="#87bfb3" d="M0 828V347l57 39v94l434 340h57v8"/>
+  <path fill="#253956" fill-opacity=".5" d="M548 820h-57L57 480v-94l491 370"/>
+  <path fill="#87bfb3" d="M560 215 297 38V0l283 189v26"/>
+</svg>
+```
+
+Parsed:
+
+- **mint paths** (2): `M0 828V347l57 39v94l434 340h57v8` and `M560 215 297 38V0l283 189v26`
+- **navy paths** (1): `M548 820h-57L57 480v-94l491 370`
+- **photo clip-path** (1, the `#80b558` reference): `M624 828H499L57 480V45h264l303 206`
+- **navy opacity**: 0.5
+
+### `framed-overlay` (viewBox 0 0 453.5 328.8)
+
+User SVG:
+
+```svg
+<svg viewBox="0 0 453.5 328.8">
+  <path fill="#80b558" fill-opacity=".2" d="m57 228 139 101h258V132L246 0H57"/>
+  <path fill="#87bfb3" d="M107 265H0V57l57 39v132z"/>
+  <path fill="#253956" fill-opacity=".5" d="M291 265H108l-51-37V96z"/>
+</svg>
+```
+
+Parsed:
+
+- **mint paths** (1): `M107 265H0V57l57 39v132z`
+- **navy paths** (1): `M291 265H108l-51-37V96z`
+- **photo clip-path** (1, the `#80b558` reference): `m57 228 139 101h258V132L246 0H57`
+- **navy opacity**: 0.5
+
+### Photo clip-path polygon (CSS percentages)
+
+CSS `clip-path: polygon(...)` uses percentages of the element's bounding box. Since each variant's figure aspect ratio matches its viewBox aspect ratio, viewBox percentages map directly to figure-box percentages:
+
+`percentX = (x / viewBoxW) * 100`
+`percentY = (y / viewBoxH) * 100`
+
+Computed values (rounded to 2 decimals):
+
+**`hero-stripe`** photo clip-path polygon:
+
+```
+(762/736.7, 835/1022.4) = (103.43%, 81.67%)
+(610/736.7, 835/1022.4) = (82.80%, 81.67%)
+(62/736.7, 455/1022.4) = (8.42%, 44.50%)
+(62/736.7, 3/1022.4) = (8.42%, 0.29%)
+(230/736.7, 3/1022.4) = (31.22%, 0.29%)
+(762/736.7, 399/1022.4) = (103.43%, 39.02%)
+```
+
+**`stacked-bands`** photo clip-path polygon:
+
+```
+(624/623.6, 828/827.7) = (100.06%, 100.04%)
+(499/623.6, 828/827.7) = (80.02%, 100.04%)
+(57/623.6, 480/827.7) = (9.14%, 57.99%)
+(57/623.6, 45/827.7) = (9.14%, 5.44%)
+(321/623.6, 45/827.7) = (51.48%, 5.44%)
+(624/623.6, 251/827.7) = (100.06%, 30.32%)
+```
+
+**`framed-overlay`** photo clip-path polygon:
+
+```
+(57/453.5, 228/328.8) = (12.57%, 69.34%)
+(196/453.5, 329/328.8) = (43.22%, 100.06%)
+(454/453.5, 329/328.8) = (100.11%, 100.06%)
+(454/453.5, 132/328.8) = (100.11%, 40.15%)
+(246/453.5, 0/328.8) = (54.24%, 0%)
+(57/453.5, 0/328.8) = (12.57%, 0%)
+```
+
+Percentages > 100% are intentional — they push the polygon edge slightly beyond the figure box, ensuring clean corners where the user's reference shows the polygon extending past the viewBox. CSS clips to the element bounds.
 
 ---
 
@@ -116,9 +170,29 @@ describe("ImageFrame component contract", () => {
     );
     const figure = container.querySelector("figure");
     expect(figure).not.toBeNull();
-    expect(figure?.className).toMatch(/aspect-video/);
+    // hero-stripe uses viewBox 736.7 × 1022.4 — aspect ratio is set inline
     expect(figure?.className).toMatch(/relative/);
     expect(figure?.className).toMatch(/overflow-hidden/);
+    const style = figure?.getAttribute("style") || "";
+    expect(style).toMatch(/aspect-ratio/i);
+    expect(style).toContain("736.7");
+    expect(style).toContain("1022.4");
+  });
+
+  it("uses each variant\u2019s own viewBox aspect ratio", () => {
+    const { container: c1 } = render(
+      <ImageFrame variant="stacked-bands" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
+    );
+    const f1 = c1.querySelector("figure");
+    expect(f1?.getAttribute("style")).toContain("623.6");
+    expect(f1?.getAttribute("style")).toContain("827.7");
+
+    const { container: c2 } = render(
+      <ImageFrame variant="framed-overlay" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
+    );
+    const f2 = c2.querySelector("figure");
+    expect(f2?.getAttribute("style")).toContain("453.5");
+    expect(f2?.getAttribute("style")).toContain("328.8");
   });
 
   it("renders decorative mint and navy SVG layers with aria-hidden", () => {
@@ -231,13 +305,13 @@ Expected: FAIL with "Cannot find module '@/components/patterns/ImageFrame'" or s
 
 ---
 
-### Task 2: Implement `ImageFrame` component with placeholder geometry
+### Task 2: Implement `ImageFrame` component with user's SVG data
 
 **Files:**
 
 - Create: `src/components/patterns/ImageFrame.tsx`
 
-- [ ] **Step 1: Create the component file with placeholder data**
+- [ ] **Step 1: Create the component file with the user's exact SVG data**
 
 Create `src/components/patterns/ImageFrame.tsx`:
 
@@ -252,55 +326,66 @@ import { cn } from "@/utilities/ui";
  * Each variant specifies three independent polygons (mint, photo clip-path,
  * navy) — they do not tile the frame. Outside the photo's clip-path,
  * the parent figure's background shows through.
+ *
+ * Variant geometry was exported from Inkscape as SVG, cleaned with svgomg,
+ * and embedded in `VARIANTS` below. Each variant has its own viewBox, so
+ * each has its own aspect ratio.
  */
 export type ImageFrameVariant =
   | "hero-stripe"
   | "stacked-bands"
   | "framed-overlay";
 
-const VIEWBOX_WIDTH = 736.7;
-const VIEWBOX_HEIGHT = 1022.4;
-
 /**
- * Placeholder polygon data. Replace with the user's actual SVG exports
- * during Task 3.
- *
- * Each variant defines:
- *   - mint: SVG path strings for the mint polygon(s), drawn first (bottom).
- *   - photoClip: CSS clip-path polygon for the photo (percentage vertices
- *     relative to the photo's bounding box).
- *   - navy: SVG path strings for the navy polygon(s), drawn last (top).
- *   - navyOpacity: 0–1, applied via fill-opacity on the navy path(s).
+ * Geometry for a single variant. Each variant has its own viewBox so
+ * the photo's clip-path polygon (CSS percentages) aligns with the
+ * mint and navy SVG paths (viewBox units).
  */
-const VARIANTS: Record<
-  ImageFrameVariant,
-  {
-    mint: string[];
-    photoClip: string;
-    navy: string[];
-    navyOpacity: number;
-  }
-> = {
+type VariantGeometry = {
+  /** SVG viewBox width and height for the mint and navy layers. */
+  viewBox: { width: number; height: number };
+  /** CSS clip-path polygon for the photo (percentage vertices). */
+  photoClip: string;
+  /** SVG path strings for the mint polygon(s), drawn first (bottom). */
+  mint: string[];
+  /** SVG path strings for the navy polygon(s), drawn last (top). */
+  navy: string[];
+  /** Default navy overlay opacity (0–1). */
+  navyOpacity: number;
+};
+
+const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
+  // Reference: living-room photo with navy diagonal stripe + mint wedge.
   "hero-stripe": {
-    mint: ["M 4 311 H 62 V 359 L 25 455 H 4 Z", "M 4 480 H 25 V 510 L 4 530 Z"],
-    photoClip: "polygon(0% 0%, 100% 0%, 100% 100%, 30% 100%, 0% 50%)",
-    navy: ["M 500 0 H 736.7 V 200 L 500 350 Z"],
+    viewBox: { width: 736.7, height: 1022.4 },
+    photoClip:
+      "polygon(103.43% 81.67%, 82.80% 81.67%, 8.42% 44.50%, 8.42% 0.29%, 31.22% 0.29%, 103.43% 39.02%)",
+    mint: [
+      "m666 1083-664 4V311l60 48v96l548 380h56z",
+      "m782 479-20-16v-64L302 63V35l480 348z",
+    ],
+    navy: ["M666 835h-56L62 455v-96l604 420z", "M762 463 302 123V55l460 344z"],
     navyOpacity: 1.0,
   },
+  // Reference: photo of two people with mint top + navy stripe + photo.
   "stacked-bands": {
-    mint: ["M 0 0 H 736.7 V 150 L 400 280 H 0 Z"],
-    photoClip: "polygon(0% 30%, 100% 30%, 100% 100%, 0% 100%)",
-    navy: ["M 200 450 H 736.7 V 600 L 200 750 Z"],
-    navyOpacity: 0.6,
+    viewBox: { width: 623.6, height: 827.7 },
+    photoClip:
+      "polygon(100.06% 100.04%, 80.02% 100.04%, 9.14% 57.99%, 9.14% 5.44%, 51.48% 5.44%, 100.06% 30.32%)",
+    mint: ["M0 828V347l57 39v94l434 340h57v8", "M560 215 297 38V0l283 189v26"],
+    navy: ["M548 820h-57L57 480v-94l491 370"],
+    navyOpacity: 0.5,
   },
+  // Reference: hands photo with tiny mint corner + semi-transparent navy overlay.
   "framed-overlay": {
-    mint: ["M 0 950 H 80 V 1022.4 H 0 Z"],
-    photoClip: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-    // Full-frame overlay: a single rectangle path with viewBox dimensions.
-    navy: [`M 0 0 H ${VIEWBOX_WIDTH} V ${VIEWBOX_HEIGHT} H 0 Z`],
-    navyOpacity: 0.4,
+    viewBox: { width: 453.5, height: 328.8 },
+    photoClip:
+      "polygon(12.57% 69.34%, 43.22% 100.06%, 100.11% 100.06%, 100.11% 40.15%, 54.24% 0%, 12.57% 0%)",
+    mint: ["M107 265H0V57l57 39v132z"],
+    navy: ["M291 265H108l-51-37V96z"],
+    navyOpacity: 0.5,
   },
-} as const;
+};
 
 /**
  * `ImageFrame` renders a real photograph surrounded by decorative mint and
@@ -342,20 +427,25 @@ export const ImageFrame: React.FC<{
   className,
 }) => {
   const {
-    mint,
+    viewBox,
     photoClip,
+    mint,
     navy,
     navyOpacity: defaultNavyOpacity,
   } = VARIANTS[variant];
   const opacity = navyOpacity ?? defaultNavyOpacity;
+  const viewBoxAttr = `0 0 ${viewBox.width} ${viewBox.height}`;
 
   return (
-    <figure className={cn("relative aspect-video overflow-hidden", className)}>
+    <figure
+      className={cn("relative overflow-hidden", className)}
+      style={{ aspectRatio: `${viewBox.width} / ${viewBox.height}` }}
+    >
       {/* Layer 1: Mint polygon (bottom) */}
       <svg
         aria-hidden="true"
         className="absolute inset-0 size-full"
-        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+        viewBox={viewBoxAttr}
         preserveAspectRatio="xMidYMid slice"
       >
         {mint.map((d, index) => (
@@ -375,7 +465,7 @@ export const ImageFrame: React.FC<{
       <svg
         aria-hidden="true"
         className="absolute inset-0 size-full"
-        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+        viewBox={viewBoxAttr}
         preserveAspectRatio="xMidYMid slice"
       >
         {navy.map((d, index) => (
@@ -405,7 +495,7 @@ export default ImageFrame;
 
 Run: `npx vitest run tests/int/image-frame.int.spec.tsx`
 
-Expected: PASS (all 11 tests). The placeholder polygons render correctly with the test assertions.
+Expected: PASS (all 12 tests). The actual SVG path data renders correctly with the test assertions.
 
 - [ ] **Step 3: Run TypeScript check**
 
@@ -422,58 +512,37 @@ git commit -m "feat(image-frame): add layered ImageFrame v2 with placeholder pol
 
 ---
 
-### Task 3: Pin exact polygon data from the user's SVG exports
+### Task 3: Verify visual fidelity in Storybook
 
 **Files:**
 
-- Modify: `src/components/patterns/ImageFrame.tsx` (replace `VARIANTS` values)
+- No file changes — verification only.
 
-This task is **manual data entry**, not automated. It converts the user's Inkscape SVG exports into viewBox-space polygon coordinates and replaces the placeholder values.
+- [ ] **Step 1: Start Storybook if not running**
 
-- [ ] **Step 1: Confirm SVG exports from the user**
+Run: `pnpm storybook -p 6007` (if not already running in another terminal)
 
-Ask the user to provide the Inkscape SVG files for each of the three variants. Each variant needs:
+- [ ] **Step 2: Open each variant URL and verify against the user's references**
 
-- Mint polygon's SVG path data, transformed to viewBox space.
-- Photo clip-path polygon's vertex coordinates (in % of the photo's bounding box).
-- Navy polygon's SVG path data, transformed to viewBox space.
+Open these URLs in a browser and visually compare against the user's reference images:
 
-If the user has already shared viewBox-space coordinates during brainstorming, use those. Otherwise, convert each path's local coordinates to viewBox-space by applying the SVG's `transform` attribute (e.g., `matrix(4 0 0 4 -38 -57)` multiplies x by 4 then subtracts 38, same for y).
+- `http://localhost:6007/?path=/story/components-imageframe--hero-stripe`
+- `http://localhost:6007/?path=/story/components-imageframe--stacked-bands`
+- `http://localhost:6007/?path=/story/components-imageframe--framed-overlay`
 
-- [ ] **Step 2: Replace placeholder polygon data**
+For each variant verify:
 
-In `src/components/patterns/ImageFrame.tsx`, replace the three placeholder polygon sets in `VARIANTS`:
+- Mint polygon is visible in the correct region (matches reference).
+- Photo is visible in the polygon defined by `photoClip`.
+- Navy polygon sits on top of the photo with the expected opacity.
 
-- `'hero-stripe'.mint`, `'hero-stripe'.photoClip`, `'hero-stripe'.navy`
-- `'stacked-bands'.mint`, `'stacked-bands'.photoClip`, `'stacked-bands'.navy`
-- `'framed-overlay'.mint`, `'framed-overlay'.photoClip`, `'framed-overlay'.navy`
+If polygons look wrong, check the path data in `VARIANTS` against the user's reference SVG and re-derive if needed.
 
-Use the actual user-provided viewBox-space path data.
-
-- [ ] **Step 3: Verify visual fidelity in Storybook**
-
-Run: `pnpm storybook -p 6007`
-
-Open `http://localhost:6007/?path=/story/components-imageframes--hero-stripe` in a browser. Verify:
-
-- The mint polygon is visible in the correct region.
-- The photo is visible in the polygon defined by `photoClip`.
-- The navy polygon sits on top of the photo with the expected opacity.
-
-If the polygons look wrong, re-derive the coordinates and re-run.
-
-- [ ] **Step 4: Run tests**
+- [ ] **Step 3: Run tests to verify nothing regressed**
 
 Run: `npx vitest run tests/int/image-frame.int.spec.tsx`
 
 Expected: PASS (the contract tests check structure, not exact polygon coordinates).
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add src/components/patterns/ImageFrame.tsx
-git commit -m "feat(image-frame): pin exact polygon data from user SVG exports"
-```
 
 ---
 
@@ -683,7 +752,7 @@ Expected: `components-imageframes--docs` and `components-imageframes--default`.
 
 Run: `npx vitest run`
 
-Expected: All previously-passing tests still pass. The new `image-frame.int.spec.tsx` adds 11 new passing tests.
+Expected: All previously-passing tests still pass. The new `image-frame.int.spec.tsx` adds 12 new passing tests.
 
 - [ ] **Step 6: Commit**
 
@@ -710,7 +779,7 @@ Expected: clean.
 
 Run: `npx vitest run`
 
-Expected: All tests pass (existing + 11 new ImageFrame tests).
+Expected: All tests pass (existing + 12 new ImageFrame tests).
 
 - [ ] **Step 3: Run Storybook build**
 
@@ -737,7 +806,7 @@ Verify the polygons match the user's reference images (mint, photo, navy in corr
 After all tasks complete:
 
 - `tsc --noEmit`: clean.
-- `vitest run`: 89 existing tests + 11 new ImageFrame tests, all pass.
+- `vitest run`: 89 existing tests + 12 new ImageFrame tests, all pass.
 - `storybook build`: succeeds.
 - Live Storybook at `http://localhost:6007/?path=/story/components-imageframe--*` renders all three variants.
 - `Patterns.tsx` no longer exports `ImageFrame` (cleaned up).
