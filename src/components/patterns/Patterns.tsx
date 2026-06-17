@@ -171,30 +171,6 @@ export const ContactPanel: React.FC<{ className?: string }> = ({ className }) =>
   </Card>
 )
 
-/**
- * ImageFrame renders a decorative placeholder visual with ShapeMask
- * diagonal geometry and an optional caption. Use as a visual container
- * for abstract or hero-section imagery.
- *
- * @summary decorative image placeholder with caption
- */
-export const ImageFrame: React.FC<{
-  alt: string
-  caption?: string
-  className?: string
-}> = ({ alt, caption, className }) => (
-  <figure className={cn('relative border border-border bg-card p-3', className)}>
-    <div className="aspect-video bg-(--subtle-background)">
-      <ShapeMask ariaLabel={alt} className="h-full" tone="mint" direction="top-right" />
-    </div>
-    {caption ? (
-      <figcaption className="mt-3 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-        {caption}
-      </figcaption>
-    ) : null}
-  </figure>
-)
-
 export type SectionShapeVariant = 'corner-mask' | 'diagonal-bands' | 'stepped-field' | 'half-field'
 
 /**
@@ -273,7 +249,6 @@ export const SectionWithImage: React.FC<{
   <SectionFrame eyebrow={eyebrow} title={title} description={description} tone="subtle">
     <div className="grid gap-8 md:grid-cols-2 md:items-center">
       <div>{bullets.length ? <FeatureList items={bullets} shape={bulletShape} /> : null}</div>
-      <ImageFrame alt={title} caption="Visual slot placeholder" />
     </div>
   </SectionFrame>
 )
