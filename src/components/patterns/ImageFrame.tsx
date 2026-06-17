@@ -2,6 +2,12 @@ import * as React from 'react'
 import { cn } from '@/utilities/ui'
 
 /**
+ * Clamp a numeric value to the [0, 1] range. Used to defensively guard
+ * the `navyOpacity` prop against out-of-range values.
+ */
+const clampOpacity = (value: number): number => Math.max(0, Math.min(1, value))
+
+/**
  * Pre-composed image-frame variants that match the three hostlink
  * pamphlet photo compositions (mint wedge, photo, navy stripe).
  *
@@ -65,11 +71,13 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
 
 /**
  * `ImageFrame` renders a real photograph surrounded by decorative mint and
- * navy polygons. The three layers stack:
+ * navy polygons. The layers stack as follows:
  *
  * 1. **Mint polygon** (bottom): opaque mint fill drawn as an SVG path.
  * 2. **Photo** (middle): `<img>` clip-pathed to a CSS polygon.
  * 3. **Navy polygon** (top): SVG path, optionally semi-transparent.
+ * 4. **Caption** (optional, bottom of figure): rendered as `<figcaption>`
+ *    when the `caption` prop is provided.
  *
  * Use `objectPosition` to set the photo's focus point inside its
  * clip-path (e.g., `"70% 30%"` keeps the upper-right of the photo visible
@@ -78,13 +86,28 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
  * @summary layered photo with mint wedge and navy overlay
  */
 export const ImageFrame: React.FC<{
+  /**
+   * Which pre-composed variant to render. Each variant has its own
+   * mint/navy geometry, photo clip-path, and default navy opacity.
+   */
   variant: ImageFrameVariant
+  /**
+   * Image source URL passed to the underlying `<img>` element.
+   */
   src: string
+  /**
+   * Alt text for the photo. Required for accessibility — the photo
+   * carries the meaning of the composition.
+   */
   alt: string
+  /**
+   * Optional caption rendered as a `<figcaption>` inside the figure.
+   * When omitted, no caption element is rendered.
+   */
   caption?: string
   /**
-   * Override the variant's default navy overlay opacity. 0 = invisible,
-   * 1 = fully opaque.
+   * Override the variant's default navy overlay opacity.
+   * 0 = invisible, 1 = fully opaque. Values outside this range are clamped.
    */
   navyOpacity?: number
   /**
@@ -92,10 +115,13 @@ export const ImageFrame: React.FC<{
    * Controls which part of the photo survives the clip-path crop.
    */
   objectPosition?: string
+  /**
+   * Additional classes appended to the root `<figure>` element.
+   */
   className?: string
 }> = ({ variant, src, alt, caption, navyOpacity, objectPosition = '50% 50%', className }) => {
   const { viewBox, photoClip, mint, navy, navyOpacity: defaultNavyOpacity } = VARIANTS[variant]
-  const opacity = navyOpacity ?? defaultNavyOpacity
+  const opacity = clampOpacity(navyOpacity ?? defaultNavyOpacity)
   const viewBoxAttr = `0 0 ${viewBox.width} ${viewBox.height}`
 
   return (
