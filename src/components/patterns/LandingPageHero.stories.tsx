@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ImageFrame } from './ImageFrame'
 import { LandingPageHero, type LandingPageHeroVariant } from './LandingPageHero'
+import { ChatMock } from '@/components/homepage/ChatMock'
+import type { TranslateFn } from '@/i18n/createTranslator'
 import type { Media as MediaType } from '@/payload-types'
 
 const SAMPLE_MEDIA: MediaType = {
@@ -60,13 +62,13 @@ const meta: Meta<typeof LandingPageHero> = {
     className: { table: { disable: true } },
   },
   render: ({ primaryCta, secondaryCta, ...rest }) => {
+    const identityT: TranslateFn = (key, fallback) => fallback ?? key
+
     const slot =
       rest.variant === 'image' ? (
         <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} />
       ) : (
-        <div className="flex aspect-[16/9] items-center justify-center border border-dashed border-border bg-card text-sm text-muted-foreground">
-          Component slot
-        </div>
+        <ChatMock t={identityT} />
       )
     return (
       <LandingPageHero
