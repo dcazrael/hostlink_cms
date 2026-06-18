@@ -1,8 +1,42 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ImageFrame } from './ImageFrame'
+import type { Media as MediaType } from '@/payload-types'
 
 const SAMPLE_SRC = '/sample-photo.jpg'
 const SAMPLE_ALT = 'A sample photograph for the hostlink image frame'
+
+const SAMPLE_MEDIA: MediaType = {
+  id: 1,
+  alt: 'Living room with beige sofas, kitchen in background, warm pendant lamp',
+  url: SAMPLE_SRC,
+  filename: 'sample-photo.jpg',
+  mimeType: 'image/jpeg',
+  filesize: 3936260,
+  width: 7360,
+  height: 4912,
+  focalX: 60,
+  focalY: 30,
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  sizes: {
+    thumbnail: {
+      url: '/sample-photo-300x200.jpg',
+      width: 300,
+      height: 200,
+      mimeType: 'image/jpeg',
+      filesize: 30000,
+      filename: 'sample-photo-300x200.jpg',
+    },
+    large: {
+      url: '/sample-photo-1400x933.jpg',
+      width: 1400,
+      height: 933,
+      mimeType: 'image/jpeg',
+      filesize: 200000,
+      filename: 'sample-photo-1400x933.jpg',
+    },
+  },
+}
 
 const toObjectPosition = (x: number, y: number) => `${x}% ${y}%`
 
@@ -100,4 +134,16 @@ export const NoCaption: Story = {
  */
 export const CustomOpacity: Story = {
   args: { variant: 'hero-stripe', navyOpacity: 0.25 },
+}
+
+/**
+ * Hero-stripe variant with a Payload Media object — uses the Media's
+ * `focalX`/`focalY` as the photo's `objectPosition` and the `large` size
+ * URL from `media.sizes`. The sample Media's size URLs 404 in the
+ * browser, but the story still demonstrates the focal-point wiring.
+ *
+ * @summary hero-stripe with Payload Media focal point
+ */
+export const WithMediaFocalPoint: Story = {
+  args: { variant: 'hero-stripe', media: SAMPLE_MEDIA },
 }

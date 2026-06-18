@@ -1,5 +1,13 @@
 import * as React from 'react'
 import { cn } from '@/utilities/ui'
+import type { Media as MediaType } from '@/payload-types'
+
+/**
+ * Pre-generated size names from the Payload `Media` collection's
+ * `imageSizes` config (see `src/collections/Media.ts`). Each name maps
+ * to a server-rendered derivative in `media.sizes[name].url`.
+ */
+export type ImageSize = 'thumbnail' | 'square' | 'small' | 'medium' | 'large' | 'xlarge' | 'og'
 
 /**
  * Clamp a numeric value to the [0, 1] range. Used to defensively guard
@@ -107,14 +115,22 @@ export const ImageFrame: React.FC<{
    */
   variant: ImageFrameVariant
   /**
-   * Image source URL passed to the underlying `<img>` element.
+   * Image source: a Payload `Media` object (with focal point and
+   * pre-generated sizes) OR a plain URL string. When a Media object is
+   * provided, the focal point (`focalX`/`focalY`) and the size URL are
+   * auto-extracted unless overridden via `objectPosition` or `size`.
    */
-  src: string
+  media?: MediaType | string | null
   /**
-   * Alt text for the photo. Required for accessibility — the photo
-   * carries the meaning of the composition.
+   * Plain URL fallback. Used when `media` is a string or null. For new
+   * code, prefer passing the Media object via `media`.
    */
-  alt: string
+  src?: string
+  /**
+   * Alt text. Required for accessibility. Falls back to `media.alt` when
+   * `media` is a Media object and `alt` is not explicitly provided.
+   */
+  alt?: string
   /**
    * Optional caption rendered as a `<figcaption>` inside the figure.
    * When omitted, no caption element is rendered.
@@ -126,37 +142,68 @@ export const ImageFrame: React.FC<{
    */
   navyOpacity?: number
   /**
-   * `object-position` for the photo inside its clip-path. Controls which
-   * part of the photo survives the clip-path crop.
-   *
-   * The photo is rendered at its natural size with `object-fit: none`, so
-   * `objectPosition` works in both X and Y axes. The photo MUST be larger
-   * than the figure box in both dimensions; otherwise the photo will
-   * appear smaller than the box with whitespace around it.
-   *
-   * Accepts any valid CSS `object-position` value:
-   *   - "50% 50%"      (default — centered)
-   *   - "70% 30%"      (upper-right focus)
-   *   - "left bottom"  (keyword form)
-   *
-   * @summary focal point for the photo (X% Y% or keyword)
+   * CSS `object-position` for the photo inside its clip-path. Controls
+   * which part of the photo survives the clip-path crop. Overrides the
+   * focal point from a Media object's `focalX`/`focalY`.
    */
   objectPosition?: string
+  /**
+   * Which pre-generated Payload size to use. Only applies when `media` is
+   * a Media object. Default: 'large'. Each variant of `sizes` is generated
+   * server-side by Payload based on `src/collections/Media.ts`.
+   */
+  size?: ImageSize
   /**
    * Additional classes appended to the root `<figure>` element.
    */
   className?: string
-}> = ({ variant, src, alt, caption, navyOpacity, objectPosition, className }) => {
+}> = ({
+  variant,
+  media,
+  src,
+  alt,
+  caption,
+  navyOpacity,
+  objectPosition,
+  size = 'large',
+  className,
+}) => {
+  // Resolve source: prefer the Media object's pre-generated size URL,
+  // then the Media's original URL, then a string `media`, then the `src` prop.
+  const isMediaObject = typeof media === 'object' && media !== null && !Array.isArray(media)
+
+  const resolvedSrc: string | undefined = isMediaObject
+    ? (media.sizes?.[size]?.url ?? media.url ?? undefined)
+    : typeof media === 'string'
+      ? media
+      : src
+
+  // Resolve alt: explicit `alt` prop wins, then `media.alt`, then fall
+  // back to `src` so the rendered img always has an `alt` attribute.
+  const resolvedAlt: string | undefined = alt ?? (isMediaObject ? media.alt : undefined) ?? src
+
+  // Resolve focal point: explicit `objectPosition` prop wins, then the
+  // Media object's `focalX`/`focalY` (as percentages).
+  const resolvedFocal: string | undefined =
+    objectPosition ??
+    (isMediaObject && media.focalX != null && media.focalY != null
+      ? `${media.focalX}% ${media.focalY}%`
+      : undefined)
+
   const {
     viewBox,
     photoClip,
     mint,
     navy,
     navyOpacity: defaultNavyOpacity,
-    objectPosition: defaultObjectPosition,
+    objectPosition: variantDefaultObjectPosition,
   } = VARIANTS[variant]
   const opacity = clampOpacity(navyOpacity ?? defaultNavyOpacity)
-  const focusPoint = objectPosition ?? defaultObjectPosition
+  // Resolution order for the photo's object-position:
+  //   1. Explicit `objectPosition` prop
+  //   2. Media focal point (`focalX`/`focalY`)
+  //   3. Variant default
+  const focusPoint = resolvedFocal ?? variantDefaultObjectPosition
   const viewBoxAttr = `0 0 ${viewBox.width} ${viewBox.height}`
 
   return (
@@ -178,8 +225,8 @@ export const ImageFrame: React.FC<{
 
       {/* Layer 2: Photo (middle, clip-pathed) */}
       <img
-        src={src}
-        alt={alt}
+        src={resolvedSrc}
+        alt={resolvedAlt ?? ''}
         className="absolute inset-0 size-full object-none"
         style={{ clipPath: photoClip, objectPosition: focusPoint }}
       />
