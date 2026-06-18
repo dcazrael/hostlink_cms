@@ -91,20 +91,22 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
  * navy polygons. The three layers stack:
  *
  * 1. **Mint polygon** (bottom): opaque mint fill drawn as an SVG path.
- * 2. **Photo** (middle): `<img>` rendered at its natural size, clip-pathed
- *    to a CSS polygon. `object-fit: none` so the photo's natural
- *    dimensions fill the box, and `objectPosition` can move the focal
- *    point in both X and Y axes.
+ * 2. **Photo** (middle): `<img>` rendered with `object-fit: cover` so it
+ *    scales to fill the figure. The `objectPosition` (driven by the
+ *    Media's focal point or the variant default) controls which part of
+ *    the photo is visible. The `zoom` prop applies a `transform: scale()`
+ *    on top of cover, allowing the user to zoom in/out around the focal
+ *    point.
  * 3. **Navy polygon** (top): SVG path, optionally semi-transparent.
  * 4. (Optional) `<figcaption>` overlay.
  *
- * The photo MUST be larger than the figure box in both dimensions for the
- * `objectPosition` focal point to work. The sample photo at
- * `/sample-photo.jpg` (7360×4912) is large enough for all variants.
+ * The figure's aspect ratio is set per-variant from the variant's viewBox.
  *
  * Use `objectPosition` to set the photo's focal point inside its
  * clip-path (e.g., `"70% 30%"` keeps the upper-right of the photo visible
- * when the clip-path crops the rest).
+ * when the clip-path crops the rest). Use `zoom` to scale the image
+ * around the focal point (e.g., `zoom={1.5}` zooms 1.5x toward the focal
+ * point).
  *
  * @summary layered photo with mint wedge and navy overlay
  */
@@ -148,6 +150,19 @@ export const ImageFrame: React.FC<{
    */
   objectPosition?: string
   /**
+   * Zoom factor for the photo. 1.0 = natural size relative to the figure
+   * (via `object-fit: cover`). Values > 1.0 zoom in (giving the focal
+   * point more room to move in both axes). Values < 1.0 zoom out.
+   *
+   * Applied as `transform: scale(zoom)` on the image, with `transform-origin`
+   * set to the focal point. The focal point stays fixed as the image scales.
+   *
+   * Clamped to [0.5, 3.0] to prevent extreme values.
+   *
+   * @summary photo zoom factor
+   */
+  zoom?: number
+  /**
    * Which pre-generated Payload size to use. Only applies when `media` is
    * a Media object. Default: 'large'. Each variant of `sizes` is generated
    * server-side by Payload based on `src/collections/Media.ts`.
@@ -165,6 +180,7 @@ export const ImageFrame: React.FC<{
   caption,
   navyOpacity,
   objectPosition,
+  zoom = 1,
   size = 'large',
   className,
 }) => {
@@ -205,6 +221,11 @@ export const ImageFrame: React.FC<{
   //   3. Variant default
   const focusPoint = resolvedFocal ?? variantDefaultObjectPosition
   const viewBoxAttr = `0 0 ${viewBox.width} ${viewBox.height}`
+  // Clamp zoom to a sensible range so users can't break the layout by
+  // accidentally zooming 1000x. Scale happens around the focal point
+  // (see img style below), so the focal point stays anchored as the
+  // image scales.
+  const clampedZoom = Math.max(0.5, Math.min(3, zoom))
 
   return (
     <figure
@@ -227,8 +248,13 @@ export const ImageFrame: React.FC<{
       <img
         src={resolvedSrc}
         alt={resolvedAlt ?? ''}
-        className="absolute inset-0 size-full object-none"
-        style={{ clipPath: photoClip, objectPosition: focusPoint }}
+        className="absolute inset-0 size-full object-cover"
+        style={{
+          clipPath: photoClip,
+          objectPosition: focusPoint,
+          transform: `scale(${clampedZoom})`,
+          transformOrigin: focusPoint,
+        }}
       />
 
       {/* Layer 3: Navy polygon (top) */}

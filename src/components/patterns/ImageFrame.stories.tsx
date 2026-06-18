@@ -94,6 +94,7 @@ const meta: Meta<ImageFrameStoryArgs> = {
     alt: SAMPLE_ALT,
     objectPositionX: 50,
     objectPositionY: 50,
+    zoom: 1,
   },
   argTypes: {
     variant: {
@@ -109,9 +110,19 @@ const meta: Meta<ImageFrameStoryArgs> = {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       description: 'Vertical focal point (%). 0 = top, 100 = bottom.',
     },
+    zoom: {
+      control: { type: 'range', min: 0.5, max: 3, step: 0.1 },
+      description: 'Photo zoom factor. 1.0 = natural cover. > 1.0 zooms in around the focal point.',
+    },
   },
-  render: ({ objectPositionX, objectPositionY, ...rest }) => (
-    <ImageFrame {...rest} objectPosition={toObjectPosition(objectPositionX, objectPositionY)} />
+  render: ({ objectPositionX, objectPositionY, zoom, ...rest }) => (
+    <div className="mx-auto max-w-2xl">
+      <ImageFrame
+        {...rest}
+        objectPosition={toObjectPosition(objectPositionX, objectPositionY)}
+        zoom={zoom}
+      />
+    </div>
   ),
 }
 
@@ -188,4 +199,15 @@ export const CustomOpacity: Story = {
  */
 export const WithMediaFocalPoint: Story = {
   args: { variant: 'hero-stripe', media: SAMPLE_MEDIA },
+}
+
+/**
+ * Hero-stripe variant with a higher zoom — demonstrates the `zoom` prop
+ * scaling the image around the focal point. Use the X/Y range sliders
+ * and the Zoom slider to compose the photo.
+ *
+ * @summary hero-stripe with zoom applied
+ */
+export const ZoomedIn: Story = {
+  args: { variant: 'hero-stripe', zoom: 1.5 },
 }
