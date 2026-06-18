@@ -37,6 +37,12 @@ type VariantGeometry = {
   navy: string[]
   /** Default navy overlay opacity (0–1). */
   navyOpacity: number
+  /**
+   * Default `object-position` for the photo inside its clip-path.
+   * The `objectPosition` prop overrides this. All three variants use
+   * `50% 50%` for now; per-variant focal points can be tuned later.
+   */
+  objectPosition: string
 }
 
 const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
@@ -48,6 +54,7 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
     mint: ['m666 1083-664 4V311l60 48v96l548 380h56z', 'm782 479-20-16v-64L302 63V35l480 348z'],
     navy: ['M666 835h-56L62 455v-96l604 420z', 'M762 463 302 123V55l460 344z'],
     navyOpacity: 1.0,
+    objectPosition: '50% 50%',
   },
   // Reference: photo of two people with mint top + navy stripe + photo.
   'stacked-bands': {
@@ -57,6 +64,7 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
     mint: ['M0 828V347l57 39v94l434 340h57v8', 'M560 215 297 38V0l283 189v26'],
     navy: ['M548 820h-57L57 480v-94l491 370'],
     navyOpacity: 0.5,
+    objectPosition: '50% 50%',
   },
   // Reference: hands photo with tiny mint corner + semi-transparent navy overlay.
   'framed-overlay': {
@@ -66,6 +74,7 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
     mint: ['M107 265H0V57l57 39v132z'],
     navy: ['M291 265H108l-51-37V96z'],
     navyOpacity: 0.5,
+    objectPosition: '50% 50%',
   },
 }
 
@@ -119,9 +128,17 @@ export const ImageFrame: React.FC<{
    * Additional classes appended to the root `<figure>` element.
    */
   className?: string
-}> = ({ variant, src, alt, caption, navyOpacity, objectPosition = '50% 50%', className }) => {
-  const { viewBox, photoClip, mint, navy, navyOpacity: defaultNavyOpacity } = VARIANTS[variant]
+}> = ({ variant, src, alt, caption, navyOpacity, objectPosition, className }) => {
+  const {
+    viewBox,
+    photoClip,
+    mint,
+    navy,
+    navyOpacity: defaultNavyOpacity,
+    objectPosition: defaultObjectPosition,
+  } = VARIANTS[variant]
   const opacity = clampOpacity(navyOpacity ?? defaultNavyOpacity)
+  const focusPoint = objectPosition ?? defaultObjectPosition
   const viewBoxAttr = `0 0 ${viewBox.width} ${viewBox.height}`
 
   return (
@@ -146,7 +163,7 @@ export const ImageFrame: React.FC<{
         src={src}
         alt={alt}
         className="absolute inset-0 size-full object-cover"
-        style={{ clipPath: photoClip, objectPosition }}
+        style={{ clipPath: photoClip, objectPosition: focusPoint }}
       />
 
       {/* Layer 3: Navy polygon (top) */}

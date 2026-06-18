@@ -90,6 +90,24 @@ describe('ImageFrame component contract', () => {
     expect(img?.style.objectPosition).toBe('50% 50%')
   })
 
+  it('uses the variant default objectPosition when no prop is provided', () => {
+    // hero-stripe default
+    const { container: c1 } = render(
+      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
+    )
+    expect(c1.querySelector('img')?.style.objectPosition).toBe('50% 50%')
+  })
+
+  it("uses each variant's own default objectPosition when no prop is provided", () => {
+    const variants = ['hero-stripe', 'stacked-bands', 'framed-overlay'] as const
+    variants.forEach((variant) => {
+      const { container } = render(
+        <ImageFrame variant={variant} src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
+      )
+      expect(container.querySelector('img')?.style.objectPosition).toBe('50% 50%')
+    })
+  })
+
   it('applies the navy overlay opacity from the variant default', () => {
     const { container } = render(
       <ImageFrame variant="stacked-bands" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
