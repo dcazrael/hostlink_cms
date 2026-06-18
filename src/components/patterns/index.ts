@@ -30,8 +30,9 @@ export {
   PricingCard,
   SectionShape,
   type SectionShapeVariant,
-  SectionWithImage,
 } from './Patterns'
+export { ContentPageHero } from './ContentPageHero'
+export { LandingPageHero, type LandingPageHeroVariant } from './LandingPageHero'
 export { ImageFrame } from './ImageFrame'
 export { SectionFrame, type SectionFrameTone } from './SectionFrame'
 export {

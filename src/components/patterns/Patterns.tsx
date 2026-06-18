@@ -1,10 +1,9 @@
 import { cn } from '@/utilities/ui'
 import * as React from 'react'
 import { Button } from '../ui/button'
-import { BulletList, FeatureList, type BulletShape } from './BulletList'
+import { BulletList } from './BulletList'
 import { ChamferedCard, type ChamferedCardCorner } from './ChamferedCard'
 import { DiagonalBand } from './DiagonalBand'
-import { SectionFrame } from './SectionFrame'
 import { ShapeMask } from './ShapeMask'
 
 /**
@@ -238,17 +237,3 @@ export const SectionShape: React.FC<{
     </div>
   )
 }
-
-export const SectionWithImage: React.FC<{
-  eyebrow?: string
-  title: string
-  description: string
-  bullets?: Array<{ title: string; text?: string }>
-  bulletShape?: BulletShape
-}> = ({ eyebrow, title, description, bullets = [], bulletShape = 'square' }) => (
-  <SectionFrame eyebrow={eyebrow} title={title} description={description} tone="subtle">
-    <div className="grid gap-8 md:grid-cols-2 md:items-center">
-      <div>{bullets.length ? <FeatureList items={bullets} shape={bulletShape} /> : null}</div>
-    </div>
-  </SectionFrame>
-)

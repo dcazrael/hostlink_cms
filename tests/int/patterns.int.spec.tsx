@@ -19,7 +19,6 @@ import {
   PricingCard,
   SectionFrame,
   SectionShape,
-  SectionWithImage,
   Table,
   type PatternTone,
 } from '@/components/patterns'
@@ -324,7 +323,6 @@ describe('pattern component contracts', () => {
     expect(FeatureList).toBeTypeOf('function')
     expect(ImageFrame).toBeTypeOf('function')
     expect(SectionShape).toBeTypeOf('function')
-    expect(SectionWithImage).toBeTypeOf('function')
     expect(Bullet).toBeTypeOf('function')
   })
 })
