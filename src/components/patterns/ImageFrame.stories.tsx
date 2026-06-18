@@ -29,6 +29,7 @@ type Story = StoryObj<typeof meta>
 /**
  * Hero-stripe variant — small mint wedge in the upper-left, photo
  * filling the diagonal complement, navy diagonal stripe across the upper-right.
+ * Uses the sample photo at `/sample-photo.jpg` (served from `public/`).
  *
  * @summary navy diagonal stripe with mint accent
  */
@@ -39,6 +40,7 @@ export const HeroStripe: Story = {
 /**
  * Stacked-bands variant — mint wedge on top, photo extending downward,
  * navy diagonal stripe through the middle (semi-transparent).
+ * Uses the sample photo at `/sample-photo.jpg` (served from `public/`).
  *
  * @summary mint top + navy stripe + photo
  */
@@ -49,6 +51,7 @@ export const StackedBands: Story = {
 /**
  * Framed-overlay variant — tiny mint corner, photo covering almost the
  * full frame, semi-transparent navy overlay on top.
+ * Uses the sample photo at `/sample-photo.jpg` (served from `public/`).
  *
  * @summary mint corner + navy overlay
  */
