@@ -4,13 +4,22 @@ import { ImageFrame } from './ImageFrame'
 const SAMPLE_SRC = '/sample-photo.jpg'
 const SAMPLE_ALT = 'A sample photograph for the hostlink image frame'
 
-const meta: Meta<typeof ImageFrame> = {
+const toObjectPosition = (x: number, y: number) => `${x}% ${y}%`
+
+type ImageFrameStoryArgs = React.ComponentProps<typeof ImageFrame> & {
+  objectPositionX: number
+  objectPositionY: number
+}
+
+const meta: Meta<ImageFrameStoryArgs> = {
   title: 'Components/ImageFrame',
   component: ImageFrame,
   parameters: { layout: 'padded' },
   args: {
     src: SAMPLE_SRC,
     alt: SAMPLE_ALT,
+    objectPositionX: 50,
+    objectPositionY: 50,
   },
   argTypes: {
     variant: {
@@ -18,8 +27,18 @@ const meta: Meta<typeof ImageFrame> = {
       options: ['hero-stripe', 'stacked-bands', 'framed-overlay'],
     },
     navyOpacity: { control: { type: 'range', min: 0, max: 1, step: 0.05 } },
-    objectPosition: { control: 'text' },
+    objectPositionX: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      description: 'Horizontal focal point (%). 0 = left, 100 = right.',
+    },
+    objectPositionY: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      description: 'Vertical focal point (%). 0 = top, 100 = bottom.',
+    },
   },
+  render: ({ objectPositionX, objectPositionY, ...rest }) => (
+    <ImageFrame {...rest} objectPosition={toObjectPosition(objectPositionX, objectPositionY)} />
+  ),
 }
 
 export default meta
@@ -34,7 +53,12 @@ type Story = StoryObj<typeof meta>
  * @summary navy diagonal stripe with mint accent
  */
 export const HeroStripe: Story = {
-  args: { variant: 'hero-stripe' },
+  args: {
+    variant: 'hero-stripe',
+    navyOpacity: 0.75,
+    objectPositionX: 50,
+    objectPositionY: 30,
+  },
 }
 
 /**
