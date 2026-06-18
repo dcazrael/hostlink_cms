@@ -14,22 +14,38 @@ export { DiagonalBand, type DiagonalBandOrientation, type DiagonalBandTone } fro
 export { NumberBadge, type NumberBadgeShape, type NumberBadgeTone } from './NumberBadge'
 export { FAQStack, type FAQItem, type FAQStackProps } from './FAQ'
 export { GridBlock, type GridBlockColumns, type GridBlockProps } from './GridBlock'
-export { GridBlockItem, type GridBlockItemAccentTone, type GridBlockItemData, type GridBlockItemProps, type GridBlockItemRadius, type GridBlockItemVariant } from './GridBlockItem'
+export {
+  GridBlockItem,
+  type GridBlockItemAccentTone,
+  type GridBlockItemData,
+  type GridBlockItemProps,
+  type GridBlockItemRadius,
+  type GridBlockItemVariant,
+} from './GridBlockItem'
 
 export {
   Card,
   ContactPanel,
   FlowSteps,
-  ImageFrame,
   PricingCard,
   SectionShape,
   type SectionShapeVariant,
   SectionWithImage,
 } from './Patterns'
+export { ImageFrame } from './ImageFrame'
 export { SectionFrame, type SectionFrameTone } from './SectionFrame'
-export { CompanyInfoTable, type CompanyInfoItem, type CompanyInfoTableProps } from './CompanyInfoTable'
+export {
+  CompanyInfoTable,
+  type CompanyInfoItem,
+  type CompanyInfoTableProps,
+} from './CompanyInfoTable'
 export { Table, type TableProps } from './Table'
-export { PATTERN_TONES, PATTERN_TONE_CLASSES, type PatternTone, type PatternToneClasses } from './tones'
+export {
+  PATTERN_TONES,
+  PATTERN_TONE_CLASSES,
+  type PatternTone,
+  type PatternToneClasses,
+} from './tones'
 export { ShapeMask, type ShapeMaskDirection, type ShapeMaskTone } from './ShapeMask'
 export { VerticalAccent, type VerticalAccentTone } from './VerticalAccent'
 
