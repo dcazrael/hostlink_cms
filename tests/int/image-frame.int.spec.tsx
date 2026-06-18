@@ -160,4 +160,16 @@ describe('ImageFrame component contract', () => {
     const figure = container.querySelector('figure')
     expect(figure?.className).toContain('custom-class')
   })
+
+  it('uses object-fit: none so objectPosition works in both axes', () => {
+    const { container } = render(
+      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
+    )
+    const img = container.querySelector('img')
+    // Tailwind v4's `object-none` class sets `object-fit: none`.
+    // With `object-fit: cover`, the Y axis of object-position is invisible
+    // when the photo is wider than the box (only X axis overflows).
+    expect(img?.className).toContain('object-none')
+    expect(img?.className).not.toContain('object-cover')
+  })
 })

@@ -80,15 +80,21 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
 
 /**
  * `ImageFrame` renders a real photograph surrounded by decorative mint and
- * navy polygons. The layers stack as follows:
+ * navy polygons. The three layers stack:
  *
  * 1. **Mint polygon** (bottom): opaque mint fill drawn as an SVG path.
- * 2. **Photo** (middle): `<img>` clip-pathed to a CSS polygon.
+ * 2. **Photo** (middle): `<img>` rendered at its natural size, clip-pathed
+ *    to a CSS polygon. `object-fit: none` so the photo's natural
+ *    dimensions fill the box, and `objectPosition` can move the focal
+ *    point in both X and Y axes.
  * 3. **Navy polygon** (top): SVG path, optionally semi-transparent.
- * 4. **Caption** (optional, bottom of figure): rendered as `<figcaption>`
- *    when the `caption` prop is provided.
+ * 4. (Optional) `<figcaption>` overlay.
  *
- * Use `objectPosition` to set the photo's focus point inside its
+ * The photo MUST be larger than the figure box in both dimensions for the
+ * `objectPosition` focal point to work. The sample photo at
+ * `/sample-photo.jpg` (7360×4912) is large enough for all variants.
+ *
+ * Use `objectPosition` to set the photo's focal point inside its
  * clip-path (e.g., `"70% 30%"` keeps the upper-right of the photo visible
  * when the clip-path crops the rest).
  *
@@ -120,8 +126,20 @@ export const ImageFrame: React.FC<{
    */
   navyOpacity?: number
   /**
-   * CSS `object-position` for the photo inside its clip-path.
-   * Controls which part of the photo survives the clip-path crop.
+   * `object-position` for the photo inside its clip-path. Controls which
+   * part of the photo survives the clip-path crop.
+   *
+   * The photo is rendered at its natural size with `object-fit: none`, so
+   * `objectPosition` works in both X and Y axes. The photo MUST be larger
+   * than the figure box in both dimensions; otherwise the photo will
+   * appear smaller than the box with whitespace around it.
+   *
+   * Accepts any valid CSS `object-position` value:
+   *   - "50% 50%"      (default — centered)
+   *   - "70% 30%"      (upper-right focus)
+   *   - "left bottom"  (keyword form)
+   *
+   * @summary focal point for the photo (X% Y% or keyword)
    */
   objectPosition?: string
   /**
@@ -162,7 +180,7 @@ export const ImageFrame: React.FC<{
       <img
         src={src}
         alt={alt}
-        className="absolute inset-0 size-full object-cover"
+        className="absolute inset-0 size-full object-none"
         style={{ clipPath: photoClip, objectPosition: focusPoint }}
       />
 
