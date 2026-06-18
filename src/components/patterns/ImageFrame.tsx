@@ -269,11 +269,28 @@ export const ImageFrame: React.FC<{
   //   3. Variant default
   const focusPoint = resolvedFocal ?? variantDefaultObjectPosition
   const viewBoxAttr = `0 0 ${viewBox.width} ${viewBox.height}`
-  // Clamp zoom to a sensible range so users can't break the layout by
-  // accidentally zooming 1000x. Scale happens around the focal point
-  // (see img style below), so the focal point stays anchored as the
-  // image scales.
-  const clampedZoom = Math.max(0.3, Math.min(1.5, zoom))
+
+  // Measure the figure's pixel size so we can compute a min-zoom that
+  // always covers the clip-path. Without this, a low user zoom (e.g. 0.3)
+  // can leave the photo smaller than the figure, exposing whitespace
+  // around the variant's geometry.
+  const figureRef = React.useRef<HTMLElement>(null)
+  const [figureSize, setFigureSize] = React.useState<{
+    width: number
+    height: number
+  } | null>(null)
+
+  React.useLayoutEffect(() => {
+    if (!figureRef.current) return
+    const measure = () => {
+      const rect = figureRef.current!.getBoundingClientRect()
+      setFigureSize({ width: rect.width, height: rect.height })
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(figureRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   // Determine the natural size from the Media object (best) or fall back
   // to the requested size's width/height (less accurate but works for
@@ -286,8 +303,28 @@ export const ImageFrame: React.FC<{
         : null
     : null // unknown for string URLs
 
+  // Min-zoom needed to cover the figure with the photo at its natural
+  // size. Falls back to the user min (0.3) when either measurement is
+  // unavailable (no Media, or jsdom where getBoundingClientRect returns 0).
+  const minZoom = React.useMemo(() => {
+    if (!figureSize || !naturalSize) return 0.3
+    if (!figureSize.width || !figureSize.height) return 0.3
+    return Math.max(
+      figureSize.width / naturalSize.width,
+      figureSize.height / naturalSize.height,
+      0.3,
+    )
+  }, [figureSize, naturalSize])
+
+  // Clamp zoom to a sensible range so users can't break the layout by
+  // accidentally zooming 1000x. The lower bound is the higher of the user
+  // min (0.3) and the figure-cover min computed above, so the photo
+  // always covers the clip-path.
+  const effectiveZoom = Math.max(minZoom, Math.min(1.5, zoom))
+
   return (
     <figure
+      ref={figureRef}
       className={cn('relative overflow-hidden', className)}
       style={{ aspectRatio: `${viewBox.width} / ${viewBox.height}` }}
     >
@@ -317,7 +354,7 @@ export const ImageFrame: React.FC<{
             src={resolvedSrc}
             alt={resolvedAlt ?? ''}
             className="absolute max-w-none"
-            style={getImageStyle(resolvedSrc, focusPoint, clampedZoom, naturalSize)}
+            style={getImageStyle(resolvedSrc, focusPoint, effectiveZoom, naturalSize)}
           />
         ) : null}
       </div>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/react'
 import { ImageFrame } from '@/components/patterns/ImageFrame'
 import type { Media as MediaType } from '@/payload-types'
@@ -262,6 +262,42 @@ describe('ImageFrame component contract', () => {
       <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} zoom={0.1} />,
     )
     expect(c2.querySelector('img')?.style.width).toBe('420px') // 1400 * 0.3
+  })
+
+  it('clamps the effective zoom to at least cover the figure when the figure exceeds the natural size', () => {
+    // Min-zoom safety: when the figure is larger than the photo's natural
+    // size, the user-passed zoom (even at 0.1) is ignored and the image is
+    // rendered at the zoom needed to fill the figure. This prevents
+    // whitespace around the variant's clip-path geometry.
+    //
+    // In jsdom, getBoundingClientRect returns 0,0 by default, so we spy
+    // on the prototype to simulate a figure larger than the natural
+    // image (2000×1500 vs. natural 1400×1050).
+    const spy = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      width: 2000,
+      height: 1500,
+      top: 0,
+      left: 0,
+      right: 2000,
+      bottom: 1500,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    })
+    try {
+      const { container } = render(
+        <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} zoom={0.1} />,
+      )
+      const img = container.querySelector('img')
+      // minForWidth = 2000/1400 ≈ 1.43, minForHeight = 1500/1050 ≈ 1.43
+      // minZoom = max(1.43, 1.43, 0.3) = 1.43
+      // effectiveZoom = max(1.43, min(1.5, 0.1)) = 1.43
+      // img width = 1400 * 1.43 ≈ 2002
+      const imgWidth = parseFloat(img?.style.width || '0')
+      expect(imgWidth).toBeGreaterThan(1400 * 1.0)
+    } finally {
+      spy.mockRestore()
+    }
   })
 })
 
