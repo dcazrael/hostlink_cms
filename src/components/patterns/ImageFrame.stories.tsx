@@ -7,33 +7,73 @@ const SAMPLE_ALT = 'A sample photograph for the hostlink image frame'
 
 const SAMPLE_MEDIA: MediaType = {
   id: 1,
-  alt: 'Living room with beige sofas, kitchen in background, warm pendant lamp',
-  url: SAMPLE_SRC,
-  filename: 'sample-photo.jpg',
+  alt: 'Loft-style luxury living room with built-in bookshelf and modern seating',
+  url: '/media/loft-luxury-living-room-with-bookshelf-1.jpg',
+  filename: 'loft-luxury-living-room-with-bookshelf-1.jpg',
   mimeType: 'image/jpeg',
-  filesize: 3936260,
-  width: 7360,
-  height: 4912,
-  focalX: 60,
-  focalY: 30,
+  filesize: 647199,
+  width: 2560,
+  height: 1440,
+  focalX: 50,
+  focalY: 50,
   updatedAt: '2026-01-01T00:00:00.000Z',
   createdAt: '2026-01-01T00:00:00.000Z',
   sizes: {
     thumbnail: {
-      url: '/sample-photo-300x200.jpg',
+      url: '/media/loft-luxury-living-room-with-bookshelf-1-300x169.jpg',
       width: 300,
-      height: 200,
+      height: 169,
       mimeType: 'image/jpeg',
-      filesize: 30000,
-      filename: 'sample-photo-300x200.jpg',
+      filesize: 13561,
+      filename: 'loft-luxury-living-room-with-bookshelf-1-300x169.jpg',
+    },
+    square: {
+      url: '/media/loft-luxury-living-room-with-bookshelf-1-500x500.jpg',
+      width: 500,
+      height: 500,
+      mimeType: 'image/jpeg',
+      filesize: 48749,
+      filename: 'loft-luxury-living-room-with-bookshelf-1-500x500.jpg',
+    },
+    small: {
+      url: '/media/loft-luxury-living-room-with-bookshelf-1-600x338.jpg',
+      width: 600,
+      height: 338,
+      mimeType: 'image/jpeg',
+      filesize: 43750,
+      filename: 'loft-luxury-living-room-with-bookshelf-1-600x338.jpg',
+    },
+    medium: {
+      url: '/media/loft-luxury-living-room-with-bookshelf-1-900x506.jpg',
+      width: 900,
+      height: 506,
+      mimeType: 'image/jpeg',
+      filesize: 89165,
+      filename: 'loft-luxury-living-room-with-bookshelf-1-900x506.jpg',
     },
     large: {
-      url: '/sample-photo-1400x933.jpg',
+      url: '/media/loft-luxury-living-room-with-bookshelf-1-1400x788.jpg',
       width: 1400,
-      height: 933,
+      height: 788,
       mimeType: 'image/jpeg',
-      filesize: 200000,
-      filename: 'sample-photo-1400x933.jpg',
+      filesize: 198818,
+      filename: 'loft-luxury-living-room-with-bookshelf-1-1400x788.jpg',
+    },
+    xlarge: {
+      url: '/media/loft-luxury-living-room-with-bookshelf-1-1920x1080.jpg',
+      width: 1920,
+      height: 1080,
+      mimeType: 'image/jpeg',
+      filesize: 364177,
+      filename: 'loft-luxury-living-room-with-bookshelf-1-1920x1080.jpg',
+    },
+    og: {
+      url: '/media/loft-luxury-living-room-with-bookshelf-1-1200x630.jpg',
+      width: 1200,
+      height: 630,
+      mimeType: 'image/jpeg',
+      filesize: 141607,
+      filename: 'loft-luxury-living-room-with-bookshelf-1-1200x630.jpg',
     },
   },
 }
@@ -90,8 +130,9 @@ export const HeroStripe: Story = {
   args: {
     variant: 'hero-stripe',
     navyOpacity: 0.75,
-    objectPositionX: 50,
-    objectPositionY: 30,
+    objectPositionX: 39,
+    objectPositionY: 70,
+    src: '/loft-luxury-living-room-with-bookshelf-1',
   },
 }
 
@@ -139,8 +180,9 @@ export const CustomOpacity: Story = {
 /**
  * Hero-stripe variant with a Payload Media object — uses the Media's
  * `focalX`/`focalY` as the photo's `objectPosition` and the `large` size
- * URL from `media.sizes`. The sample Media's size URLs 404 in the
- * browser, but the story still demonstrates the focal-point wiring.
+ * URL from `media.sizes`. The sample Media points at a real
+ * PayloadCMS-generated image under `public/media/`, so the story
+ * renders the actual photo in the browser.
  *
  * @summary hero-stripe with Payload Media focal point
  */
