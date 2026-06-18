@@ -42,7 +42,7 @@ const defaultArgs = {
 }
 
 const meta: Meta<typeof LandingPageHero> = {
-  title: 'Components/LandingPageHero',
+  title: 'Compositions/Heroes/LandingPageHero',
   component: LandingPageHero,
   parameters: { layout: 'fullscreen' },
   args: {
@@ -71,12 +71,14 @@ const meta: Meta<typeof LandingPageHero> = {
         <ChatMock t={identityT} />
       )
     return (
-      <LandingPageHero
-        {...rest}
-        slot={slot}
-        primaryCta={primaryCta ?? defaultArgs.primaryCta}
-        secondaryCta={secondaryCta ?? defaultArgs.secondaryCta}
-      />
+      <div className="mx-auto max-w-2xl">
+        <LandingPageHero
+          {...rest}
+          slot={slot}
+          primaryCta={primaryCta ?? defaultArgs.primaryCta}
+          secondaryCta={secondaryCta ?? defaultArgs.secondaryCta}
+        />
+      </div>
     )
   },
 }

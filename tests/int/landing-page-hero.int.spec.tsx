@@ -87,4 +87,19 @@ describe('LandingPageHero', () => {
     expect(ul).not.toBeNull()
     expect(ul?.className).toMatch(/flex-row/)
   })
+
+  it('CTA container stacks on mobile and sits side-by-side on >=sm (sm:flex-row)', () => {
+    const { container } = render(
+      <LandingPageHero
+        {...baseProps}
+        secondaryCta={{ label: 'Secondary CTA', href: '#secondary' }}
+      />,
+    )
+
+    const buttons = screen.getAllByRole('button')
+    const ctaContainer = buttons[0].parentElement
+    expect(ctaContainer).not.toBeNull()
+    expect(ctaContainer?.className).toContain('flex-col')
+    expect(ctaContainer?.className).toContain('sm:flex-row')
+  })
 })

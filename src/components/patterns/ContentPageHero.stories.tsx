@@ -28,7 +28,7 @@ const SAMPLE_MEDIA: MediaType = {
 }
 
 const meta: Meta<typeof ContentPageHero> = {
-  title: 'Components/ContentPageHero',
+  title: 'Compositions/Heroes/ContentPageHero',
   component: ContentPageHero,
   parameters: { layout: 'fullscreen' },
   args: {
@@ -40,6 +40,11 @@ const meta: Meta<typeof ContentPageHero> = {
     media: { table: { disable: true } },
     className: { table: { disable: true } },
   },
+  render: (args) => (
+    <div className="mx-auto max-w-2xl">
+      <ContentPageHero {...args} />
+    </div>
+  ),
 }
 
 export default meta

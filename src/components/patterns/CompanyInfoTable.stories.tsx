@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { CompanyInfoTable } from './CompanyInfoTable'
 
 const meta: Meta<typeof CompanyInfoTable> = {
-  title: 'Components/CompanyInfoTable',
+  title: 'Components/Tables/CompanyInfoTable',
   component: CompanyInfoTable,
   parameters: { layout: 'padded' },
   args: {

@@ -3,7 +3,7 @@ import { PATTERN_TONES } from './tones'
 import { Table } from './Table'
 
 const meta: Meta<typeof Table> = {
-  title: 'Components/Table',
+  title: 'Components/Tables/Table',
   component: Table,
   parameters: { layout: 'padded' },
   args: {

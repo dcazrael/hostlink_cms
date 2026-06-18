@@ -78,4 +78,23 @@ describe('ContentPageHero', () => {
     expect(divider?.className).toContain('h-px')
     expect(divider?.className).toContain('bg-white')
   })
+
+  it('positions the text container with a 2rem offset from the bottom (bottom-8)', () => {
+    const { container } = render(
+      <ContentPageHero
+        title="Test Hero Title"
+        subtitle="Test hero subtitle copy"
+        media={SAMPLE_MEDIA}
+      />,
+    )
+
+    // The text container is the absolute-positioned div that holds the
+    // title, divider, and subtitle. Find it as the ancestor of the title
+    // heading that is `absolute`.
+    const title = screen.getByText('Test Hero Title')
+    const textContainer = title.parentElement
+    expect(textContainer).not.toBeNull()
+    expect(textContainer?.className).toContain('absolute')
+    expect(textContainer?.className).toContain('bottom-8')
+  })
 })

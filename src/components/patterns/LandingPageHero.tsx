@@ -59,7 +59,7 @@ export const LandingPageHero: React.FC<{
         <p className="max-w-2xl whitespace-pre-line text-sm text-(--heading)/75 md:text-base">
           {description}
         </p>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Button variant="default">
             <LocalizedLink href={primaryCta.href}>{primaryCta.label}</LocalizedLink>
           </Button>

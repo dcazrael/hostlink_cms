@@ -1,5 +1,5 @@
-import * as React from 'react'
 import type { Media as MediaType } from '@/payload-types'
+import * as React from 'react'
 import { ImageFrame } from './ImageFrame'
 
 /**
@@ -24,19 +24,19 @@ export const ContentPageHero: React.FC<{
   <section className={className}>
     <div className="relative">
       <ImageFrame variant="hero-stripe" media={media} className="w-full" />
-      <div
-        className="absolute flex flex-col gap-3 p-6 md:p-10"
-        style={{ top: '42.7%', left: '0%', width: '91.7%', bottom: '0%' }}
-      >
-        <h1 className="whitespace-pre-line text-4xl font-bold text-white drop-shadow-lg md:text-5xl">
+      <div className="absolute flex flex-col gap-3 p-6 md:p-8 xl:p-10 bottom-8">
+        <h1
+          className="whitespace-pre-line text-4xl font-bold text-white drop-shadow-lg md:text-5xl
+        max-w-[20ch]"
+        >
           {title}
         </h1>
         <div
           aria-hidden
           data-testid="content-page-hero-divider"
-          className="h-px w-36 bg-white drop-shadow"
+          className="h-1 rounded-xs w-36 bg-white drop-shadow"
         />
-        <p className="text-base whitespace-pre-line text-white/90 drop-shadow md:text-lg">
+        <p className="text-base whitespace-pre-line text-white/90 drop-shadow md:text-lg max-w-[80ch]">
           {subtitle}
         </p>
       </div>
