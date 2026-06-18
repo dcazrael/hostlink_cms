@@ -244,18 +244,28 @@ export const ImageFrame: React.FC<{
         ))}
       </svg>
 
-      {/* Layer 2: Photo (middle, clip-pathed) */}
-      <img
-        src={resolvedSrc}
-        alt={resolvedAlt ?? ''}
-        className="absolute inset-0 size-full object-cover"
-        style={{
-          clipPath: photoClip,
-          objectPosition: focusPoint,
-          transform: `scale(${clampedZoom})`,
-          transformOrigin: focusPoint,
-        }}
-      />
+      {/* Layer 2: Photo (middle, clip-pathed)
+       *
+       * The clip-path lives on a wrapper div (not the img) because CSS
+       * transforms also transform an element's clip-path. With both
+       * `transform: scale(zoom)` and `clip-path` on the same element, the
+       * clip-path would be scaled too, distorting the variant geometry.
+       * Splitting them onto nested elements keeps the clip-path in
+       * figure coordinates (unaffected by transform) while the img's
+       * transform scales only the image around the focal point.
+       */}
+      <div className="absolute inset-0" style={{ clipPath: photoClip }}>
+        <img
+          src={resolvedSrc}
+          alt={resolvedAlt ?? ''}
+          className="absolute inset-0 size-full object-cover"
+          style={{
+            objectPosition: focusPoint,
+            transform: `scale(${clampedZoom})`,
+            transformOrigin: focusPoint,
+          }}
+        />
+      </div>
 
       {/* Layer 3: Navy polygon (top) */}
       <svg

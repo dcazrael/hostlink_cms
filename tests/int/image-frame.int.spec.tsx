@@ -90,12 +90,16 @@ describe('ImageFrame component contract', () => {
     })
   })
 
-  it('applies a CSS clip-path to the photo img', () => {
+  it('applies a CSS clip-path to the photo wrapper', () => {
     const { container } = render(
       <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
     )
-    const img = container.querySelector('img')
-    const style = img?.getAttribute('style') || ''
+    // The clip-path lives on a wrapper div, not the img — this keeps
+    // the variant geometry stable while the img's transform: scale()
+    // handles zoom around the focal point.
+    const wrapper = container.querySelector('div[style*="clip-path"]')
+    expect(wrapper).not.toBeNull()
+    const style = wrapper?.getAttribute('style') || ''
     expect(style).toContain('clip-path')
     expect(style).toContain('polygon')
   })
