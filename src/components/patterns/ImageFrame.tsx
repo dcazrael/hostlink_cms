@@ -56,21 +56,21 @@ type VariantGeometry = {
 const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
   // Reference: living-room photo with navy diagonal stripe + mint wedge.
   'hero-stripe': {
-    viewBox: { width: 736.7, height: 1022.4 },
+    viewBox: { width: 1043.2, height: 632.2 },
     photoClip:
-      'polygon(103.43% 81.67%, 82.80% 81.67%, 8.42% 44.50%, 8.42% 0.29%, 31.22% 0.29%, 103.43% 39.02%)',
-    mint: ['m666 1083-664 4V311l60 48v96l548 380h56z', 'm782 479-20-16v-64L302 63V35l480 348z'],
-    navy: ['M666 835h-56L62 455v-96l604 420z', 'M762 463 302 123V55l460 344z'],
+      'polygon(99.21% 89.37%, 87.52% 89.37%, 8.24% 52.51%, 8.24% 0%, 31.35% 0%, 99.21% 33.37%)',
+    mint: ['M957 631 0 632V270l86 27v35l827 233h44z', 'm1043 238-8 12v-39L431 36V19l612 183z'],
+    navy: ['M957 565h-44L86 332v-35l871 246z', 'M1035 250 431 71V31l604 180z'],
     navyOpacity: 1.0,
     objectPosition: '50% 50%',
   },
   // Reference: photo of two people with mint top + navy stripe + photo.
   'stacked-bands': {
-    viewBox: { width: 623.6, height: 827.7 },
+    viewBox: { width: 1122.5, height: 631.4 },
     photoClip:
-      'polygon(100.06% 100.04%, 80.02% 100.04%, 9.14% 57.99%, 9.14% 5.44%, 51.48% 5.44%, 100.06% 30.32%)',
-    mint: ['M0 828V347l57 39v94l434 340h57v8', 'M560 215 297 38V0l283 189v26'],
-    navy: ['M548 820h-57L57 480v-94l491 370'],
+      'polygon(100.04% 99.94%, 80.00% 99.94%, 9.09% 57.97%, 9.09% 5.54%, 51.49% 5.54%, 100.04% 30.41%)',
+    mint: ['M0 631V296l102 30v40l782 260h102v5', 'M1008 164 534 29V0l511 144v20'],
+    navy: ['M986 626H884L102 366v-40l884 282'],
     navyOpacity: 0.5,
     objectPosition: '50% 50%',
   },
@@ -205,7 +205,7 @@ export const ImageFrame: React.FC<{
    * Applied as `transform: scale(zoom)` on the image, with `transform-origin`
    * set to the focal point. The focal point stays fixed as the image scales.
    *
-   * Clamped to [0.5, 3.0] to prevent extreme values.
+   * Clamped to [0.3, 1.5] to prevent extreme values.
    *
    * @summary photo zoom factor
    */
@@ -273,7 +273,7 @@ export const ImageFrame: React.FC<{
   // accidentally zooming 1000x. Scale happens around the focal point
   // (see img style below), so the focal point stays anchored as the
   // image scales.
-  const clampedZoom = Math.max(0.5, Math.min(3, zoom))
+  const clampedZoom = Math.max(0.3, Math.min(1.5, zoom))
 
   // Determine the natural size from the Media object (best) or fall back
   // to the requested size's width/height (less accurate but works for

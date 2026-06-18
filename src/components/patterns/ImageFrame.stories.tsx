@@ -2,9 +2,6 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ImageFrame } from './ImageFrame'
 import type { Media as MediaType } from '@/payload-types'
 
-const SAMPLE_SRC = '/sample-photo.jpg'
-const SAMPLE_ALT = 'A sample photograph for the hostlink image frame'
-
 const SAMPLE_MEDIA: MediaType = {
   id: 1,
   alt: 'Loft-style luxury living room with built-in bookshelf and modern seating',
@@ -90,18 +87,17 @@ const meta: Meta<ImageFrameStoryArgs> = {
   component: ImageFrame,
   parameters: { layout: 'padded' },
   args: {
-    src: SAMPLE_SRC,
-    alt: SAMPLE_ALT,
+    variant: 'hero-stripe',
     objectPositionX: 50,
     objectPositionY: 50,
     zoom: 1,
+    media: SAMPLE_MEDIA,
   },
   argTypes: {
     variant: {
       control: 'inline-radio',
       options: ['hero-stripe', 'stacked-bands', 'framed-overlay'],
     },
-    navyOpacity: { control: { type: 'range', min: 0, max: 1, step: 0.05 } },
     objectPositionX: {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       description: 'Horizontal focal point (%). 0 = left, 100 = right.',
@@ -111,9 +107,17 @@ const meta: Meta<ImageFrameStoryArgs> = {
       description: 'Vertical focal point (%). 0 = top, 100 = bottom.',
     },
     zoom: {
-      control: { type: 'range', min: 0.5, max: 3, step: 0.1 },
+      control: { type: 'range', min: 0.3, max: 1.5, step: 0.01 },
       description: 'Photo zoom factor. 1.0 = natural cover. > 1.0 zooms in around the focal point.',
     },
+    navyOpacity: { control: { type: 'range', min: 0, max: 1, step: 0.05 } },
+    alt: { table: { disable: true } },
+    src: { table: { disable: true } },
+    media: { table: { disable: true } },
+    size: { table: { disable: true } },
+    className: { table: { disable: true } },
+    caption: { table: { disable: true } },
+    objectPosition: { table: { disable: true } },
   },
   render: ({ objectPositionX, objectPositionY, zoom, ...rest }) => (
     <div className="mx-auto max-w-2xl">
@@ -131,83 +135,8 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * Hero-stripe variant — small mint wedge in the upper-left, photo
- * filling the diagonal complement, navy diagonal stripe across the upper-right.
- * Uses the sample photo at `/sample-photo.jpg` (served from `public/`).
+ * Default story — switch variant, drag focal point sliders, set zoom.
  *
- * @summary navy diagonal stripe with mint accent
+ * @summary switch variant, drag focal point sliders, set zoom
  */
-export const HeroStripe: Story = {
-  args: {
-    variant: 'hero-stripe',
-    navyOpacity: 0.75,
-    objectPositionX: 39,
-    objectPositionY: 70,
-    src: '/loft-luxury-living-room-with-bookshelf-1',
-  },
-}
-
-/**
- * Stacked-bands variant — mint wedge on top, photo extending downward,
- * navy diagonal stripe through the middle (semi-transparent).
- * Uses the sample photo at `/sample-photo.jpg` (served from `public/`).
- *
- * @summary mint top + navy stripe + photo
- */
-export const StackedBands: Story = {
-  args: { variant: 'stacked-bands' },
-}
-
-/**
- * Framed-overlay variant — tiny mint corner, photo covering almost the
- * full frame, semi-transparent navy overlay on top.
- * Uses the sample photo at `/sample-photo.jpg` (served from `public/`).
- *
- * @summary mint corner + navy overlay
- */
-export const FramedOverlay: Story = {
-  args: { variant: 'framed-overlay' },
-}
-
-/**
- * No-caption variant — confirms the figcaption is absent when not provided.
- *
- * @summary without figcaption
- */
-export const NoCaption: Story = {
-  args: { variant: 'hero-stripe', caption: undefined },
-}
-
-/**
- * Custom-opacity variant — overrides the variant's default navy opacity.
- * Demonstrates the `navyOpacity` prop.
- *
- * @summary with overridden navy opacity
- */
-export const CustomOpacity: Story = {
-  args: { variant: 'hero-stripe', navyOpacity: 0.25 },
-}
-
-/**
- * Hero-stripe variant with a Payload Media object — uses the Media's
- * `focalX`/`focalY` as the photo's `objectPosition` and the `large` size
- * URL from `media.sizes`. The sample Media points at a real
- * PayloadCMS-generated image under `public/media/`, so the story
- * renders the actual photo in the browser.
- *
- * @summary hero-stripe with Payload Media focal point
- */
-export const WithMediaFocalPoint: Story = {
-  args: { variant: 'hero-stripe', media: SAMPLE_MEDIA },
-}
-
-/**
- * Hero-stripe variant with a higher zoom — demonstrates the `zoom` prop
- * scaling the image around the focal point. Use the X/Y range sliders
- * and the Zoom slider to compose the photo.
- *
- * @summary hero-stripe with zoom applied
- */
-export const ZoomedIn: Story = {
-  args: { variant: 'hero-stripe', zoom: 1.5 },
-}
+export const Default: Story = {}

@@ -54,13 +54,13 @@ describe('ImageFrame component contract', () => {
     )
     const figure = container.querySelector('figure')
     expect(figure).not.toBeNull()
-    // hero-stripe uses viewBox 736.7 × 1022.4 — aspect ratio is set inline
+    // hero-stripe uses viewBox 1043.2 × 632.2 — aspect ratio is set inline
     expect(figure?.className).toMatch(/relative/)
     expect(figure?.className).toMatch(/overflow-hidden/)
     const style = figure?.getAttribute('style') || ''
     expect(style).toMatch(/aspect-ratio/i)
-    expect(style).toContain('736.7')
-    expect(style).toContain('1022.4')
+    expect(style).toContain('1043.2')
+    expect(style).toContain('632.2')
   })
 
   it("uses each variant's own viewBox aspect ratio", () => {
@@ -68,8 +68,8 @@ describe('ImageFrame component contract', () => {
       <ImageFrame variant="stacked-bands" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
     )
     const f1 = c1.querySelector('figure')
-    expect(f1?.getAttribute('style')).toContain('623.6')
-    expect(f1?.getAttribute('style')).toContain('827.7')
+    expect(f1?.getAttribute('style')).toContain('1122.5')
+    expect(f1?.getAttribute('style')).toContain('631.4')
 
     const { container: c2 } = render(
       <ImageFrame variant="framed-overlay" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
@@ -252,16 +252,16 @@ describe('ImageFrame component contract', () => {
     expect(img?.style.inset).toBe('0px')
   })
 
-  it('clamps zoom to the [0.5, 3] range', () => {
+  it('clamps zoom to the [0.3, 1.5] range', () => {
     const { container: c1 } = render(
       <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} zoom={10} />,
     )
-    expect(c1.querySelector('img')?.style.width).toBe('4200px') // 1400 * 3
+    expect(c1.querySelector('img')?.style.width).toBe('2100px') // 1400 * 1.5
 
     const { container: c2 } = render(
       <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} zoom={0.1} />,
     )
-    expect(c2.querySelector('img')?.style.width).toBe('700px') // 1400 * 0.5
+    expect(c2.querySelector('img')?.style.width).toBe('420px') // 1400 * 0.3
   })
 })
 
