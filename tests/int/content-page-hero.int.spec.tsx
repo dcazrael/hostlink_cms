@@ -72,10 +72,10 @@ describe('ContentPageHero', () => {
     )
 
     // The divider is a thin horizontal white rule between the title and
-    // the subtitle (h-px w-36 bg-white in the implementation).
+    // the subtitle (h-1 w-36 bg-white in the implementation).
     const divider = container.querySelector('[data-testid="content-page-hero-divider"]')
     expect(divider).not.toBeNull()
-    expect(divider?.className).toContain('h-px')
+    expect(divider?.className).toContain('h-1')
     expect(divider?.className).toContain('bg-white')
   })
 
