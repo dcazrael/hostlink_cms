@@ -110,6 +110,54 @@ const VARIANTS: Record<ImageFrameVariant, VariantGeometry> = {
  *
  * @summary layered photo with mint wedge and navy overlay
  */
+
+/**
+ * Compute the image's width/height/left/top so the focal point sits
+ * at the wrapper's center. The image is rendered at its natural size
+ * scaled by `zoom`, positioned so the focal point is anchored to the
+ * wrapper's center.
+ *
+ * Without this, `object-fit: cover` constrains the image to the wrapper
+ * box and `transform: scale()` distorts the clip-path. Sizing the image
+ * explicitly gives full 2D control.
+ */
+const getImageStyle = (
+  src: string,
+  focalPoint: string,
+  zoom: number,
+  naturalSize: { width: number; height: number } | null,
+): React.CSSProperties => {
+  // If we don't know the natural size, fall back to 100% (won't have
+  // 2D focal control, but at least renders)
+  if (!naturalSize) {
+    return {
+      width: '100%',
+      height: '100%',
+      inset: '0px',
+      objectPosition: focalPoint,
+    }
+  }
+
+  const [fxPct, fyPct] = focalPoint.split(' ').map((s) => parseFloat(s) || 0)
+  // Round to integers to avoid floating-point noise in the rendered
+  // style (e.g. 1400 * 0.7 = 979.9999999999999 in JS). CSS subpixel
+  // precision is invisible in practice.
+  const displayW = Math.round(naturalSize.width * zoom)
+  const displayH = Math.round(naturalSize.height * zoom)
+  const offsetX = Math.round(displayW * (fxPct / 100))
+  const offsetY = Math.round(displayH * (fyPct / 100))
+
+  return {
+    width: `${displayW}px`,
+    height: `${displayH}px`,
+    // Center the focal point in the wrapper
+    left: `calc(50% - ${offsetX}px)`,
+    top: `calc(50% - ${offsetY}px)`,
+    objectPosition: focalPoint,
+    maxWidth: 'none', // override the class default
+  }
+}
+
 export const ImageFrame: React.FC<{
   /**
    * Which pre-composed variant to render. Each variant has its own
@@ -227,6 +275,17 @@ export const ImageFrame: React.FC<{
   // image scales.
   const clampedZoom = Math.max(0.5, Math.min(3, zoom))
 
+  // Determine the natural size from the Media object (best) or fall back
+  // to the requested size's width/height (less accurate but works for
+  // string URLs where we don't know the source).
+  const naturalSize: { width: number; height: number } | null = isMediaObject
+    ? media.sizes?.[size]?.width && media.sizes?.[size]?.height
+      ? { width: media.sizes[size].width!, height: media.sizes[size].height! }
+      : media.width && media.height
+        ? { width: media.width, height: media.height }
+        : null
+    : null // unknown for string URLs
+
   return (
     <figure
       className={cn('relative overflow-hidden', className)}
@@ -246,25 +305,21 @@ export const ImageFrame: React.FC<{
 
       {/* Layer 2: Photo (middle, clip-pathed)
        *
-       * The clip-path lives on a wrapper div (not the img) because CSS
-       * transforms also transform an element's clip-path. With both
-       * `transform: scale(zoom)` and `clip-path` on the same element, the
-       * clip-path would be scaled too, distorting the variant geometry.
-       * Splitting them onto nested elements keeps the clip-path in
-       * figure coordinates (unaffected by transform) while the img's
-       * transform scales only the image around the focal point.
+       * The wrapper holds the clip-path in figure coordinates. The inner
+       * image is rendered at a calculated size and position so the focal
+       * point sits at the wrapper's center. The wrapper's overflow + clip-path
+       * then crop the result. No transform is used (transform would also
+       * scale the clip-path, breaking the variant geometry).
        */}
       <div className="absolute inset-0" style={{ clipPath: photoClip }}>
-        <img
-          src={resolvedSrc}
-          alt={resolvedAlt ?? ''}
-          className="absolute inset-0 size-full object-cover"
-          style={{
-            objectPosition: focusPoint,
-            transform: `scale(${clampedZoom})`,
-            transformOrigin: focusPoint,
-          }}
-        />
+        {resolvedSrc ? (
+          <img
+            src={resolvedSrc}
+            alt={resolvedAlt ?? ''}
+            className="absolute max-w-none"
+            style={getImageStyle(resolvedSrc, focusPoint, clampedZoom, naturalSize)}
+          />
+        ) : null}
       </div>
 
       {/* Layer 3: Navy polygon (top) */}

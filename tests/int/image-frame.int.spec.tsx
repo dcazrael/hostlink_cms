@@ -196,69 +196,72 @@ describe('ImageFrame component contract', () => {
     expect(figure?.className).toContain('custom-class')
   })
 
-  it('uses object-fit: cover so the image scales with the figure', () => {
+  it('renders the inner image as absolutely positioned with explicit sizing', () => {
     const { container } = render(
       <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
     )
     const img = container.querySelector('img')
-    // `object-cover` scales the image to fill the figure and crops the
-    // overflow. Combined with `transform: scale(zoom)` on top, this
-    // gives both responsive scaling and Y-axis focal point control.
-    expect(img?.className).toContain('object-cover')
-    expect(img?.className).not.toContain('object-none')
+    // The image is absolutely positioned and sized via inline style, not
+    // via object-fit: cover. The wrapper's clip-path + overflow:hidden
+    // crop the result. No transform is used (transform would scale the
+    // clip-path and distort the variant geometry).
+    expect(img?.className).toContain('absolute')
+    expect(img?.className).not.toContain('object-cover')
   })
 
-  it('applies no-op transform: scale(1) when zoom is at the default 1.0', () => {
+  it('sizes the image to its natural dimensions times zoom (when Media is provided)', () => {
+    // Use a Media object so we know the natural size.
     const { container } = render(
-      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} />,
+      <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} zoom={1.5} />,
     )
     const img = container.querySelector('img')
-    // scale(1) is a no-op visually but is applied unconditionally so
-    // downstream consumers can read `transform` and `transformOrigin`.
-    expect(img?.style.transform).toBe('scale(1)')
+    // SAMPLE_MEDIA.large has width 1400, height 1050
+    expect(img?.style.width).toBe('2100px') // 1400 * 1.5
+    expect(img?.style.height).toBe('1575px') // 1050 * 1.5
   })
 
-  it('applies transform: scale(zoom) when zoom is provided', () => {
+  it('centers the focal point at 50%/50% with default zoom', () => {
     const { container } = render(
-      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} zoom={1.5} />,
+      <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} objectPosition="50% 50%" />,
     )
     const img = container.querySelector('img')
-    expect(img?.style.transform).toBe('scale(1.5)')
+    // 1400 wide × 0.5 = 700, 1050 tall × 0.5 = 525; focal 50%/50%
+    expect(img?.style.left).toBe('calc(50% - 700px)')
+    expect(img?.style.top).toBe('calc(50% - 525px)')
+  })
+
+  it('offsets the focal point when objectPosition is set', () => {
+    const { container } = render(
+      <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} objectPosition="70% 30%" />,
+    )
+    const img = container.querySelector('img')
+    // 1400 * 0.7 = 980 (focal X)
+    // 1050 * 0.3 = 315 (focal Y)
+    expect(img?.style.left).toBe('calc(50% - 980px)')
+    expect(img?.style.top).toBe('calc(50% - 315px)')
+  })
+
+  it('falls back to 100%/100% when natural size is unknown', () => {
+    const { container } = render(
+      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} zoom={2} />,
+    )
+    const img = container.querySelector('img')
+    // No Media → no natural size → falls back to inset:0 + 100%
+    expect(img?.style.width).toBe('100%')
+    expect(img?.style.height).toBe('100%')
+    expect(img?.style.inset).toBe('0px')
   })
 
   it('clamps zoom to the [0.5, 3] range', () => {
     const { container: c1 } = render(
-      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} zoom={10} />,
+      <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} zoom={10} />,
     )
-    expect(c1.querySelector('img')?.style.transform).toBe('scale(3)')
+    expect(c1.querySelector('img')?.style.width).toBe('4200px') // 1400 * 3
 
     const { container: c2 } = render(
-      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} zoom={0.1} />,
+      <ImageFrame variant="hero-stripe" media={SAMPLE_MEDIA} zoom={0.1} />,
     )
-    expect(c2.querySelector('img')?.style.transform).toBe('scale(0.5)')
-  })
-
-  it('sets transform-origin to the focal point', () => {
-    const { container } = render(
-      <ImageFrame
-        variant="hero-stripe"
-        src={SAMPLE_SRC}
-        alt={SAMPLE_ALT}
-        objectPosition="70% 30%"
-        zoom={1.5}
-      />,
-    )
-    const img = container.querySelector('img')
-    expect(img?.style.transformOrigin).toBe('70% 30%')
-  })
-
-  it('uses the variant default objectPosition as transform-origin when no prop', () => {
-    const { container } = render(
-      <ImageFrame variant="hero-stripe" src={SAMPLE_SRC} alt={SAMPLE_ALT} zoom={1.5} />,
-    )
-    const img = container.querySelector('img')
-    // hero-stripe variant default is '50% 50%'
-    expect(img?.style.transformOrigin).toBe('50% 50%')
+    expect(c2.querySelector('img')?.style.width).toBe('700px') // 1400 * 0.5
   })
 })
 
