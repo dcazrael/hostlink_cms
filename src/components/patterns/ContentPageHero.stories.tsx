@@ -1,6 +1,6 @@
+import type { Media as MediaType } from '@/payload-types'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ContentPageHero } from './ContentPageHero'
-import type { Media as MediaType } from '@/payload-types'
 
 const SAMPLE_MEDIA: MediaType = {
   id: 1,
@@ -40,11 +40,7 @@ const meta: Meta<typeof ContentPageHero> = {
     media: { table: { disable: true } },
     className: { table: { disable: true } },
   },
-  render: (args) => (
-    <div className="mx-auto max-w-2xl">
-      <ContentPageHero {...args} />
-    </div>
-  ),
+  render: (args) => <ContentPageHero {...args} />,
 }
 
 export default meta

@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { ImageFrame } from './ImageFrame'
-import { LandingPageHero, type LandingPageHeroVariant } from './LandingPageHero'
 import { ChatMock } from '@/components/homepage/ChatMock'
 import type { TranslateFn } from '@/i18n/createTranslator'
 import type { Media as MediaType } from '@/payload-types'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { ImageFrame } from './ImageFrame'
+import { LandingPageHero, type LandingPageHeroVariant } from './LandingPageHero'
 
 const SAMPLE_MEDIA: MediaType = {
   id: 1,
@@ -71,14 +71,12 @@ const meta: Meta<typeof LandingPageHero> = {
         <ChatMock t={identityT} />
       )
     return (
-      <div className="mx-auto max-w-2xl">
-        <LandingPageHero
-          {...rest}
-          slot={slot}
-          primaryCta={primaryCta ?? defaultArgs.primaryCta}
-          secondaryCta={secondaryCta ?? defaultArgs.secondaryCta}
-        />
-      </div>
+      <LandingPageHero
+        {...rest}
+        slot={slot}
+        primaryCta={primaryCta ?? defaultArgs.primaryCta}
+        secondaryCta={secondaryCta ?? defaultArgs.secondaryCta}
+      />
     )
   },
 }
