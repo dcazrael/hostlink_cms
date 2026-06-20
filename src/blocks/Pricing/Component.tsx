@@ -1,8 +1,32 @@
 import React from 'react'
 
 import { PricingPlanCard } from '@/components/pricing/PricingPlanCard'
+import {
+  appendQueryParamsToHomepageHref,
+  resolveHomepageLinkHref,
+} from '@/components/homepage/utils'
 import type { PricingComponentBlock } from '@/payload-types'
 import { cn } from '@/utilities/ui'
+
+const resolvePricingPlanCta = (
+  cta: PricingComponentBlock['plans'][number]['cta'] | null | undefined,
+  planName: string,
+) => {
+  if (!cta) return null
+
+  const href = resolveHomepageLinkHref(cta)
+  const hrefWithQuery = href ? appendQueryParamsToHomepageHref(href, { plan: planName }) : href
+
+  if (!hrefWithQuery || !cta.label) return null
+
+  return {
+    href: hrefWithQuery,
+    label: cta.label,
+    variant: cta.variant,
+    icon: cta.icon,
+    withIcon: cta.withIcon,
+  }
+}
 
 type Props = {
   block: PricingComponentBlock
@@ -23,7 +47,7 @@ export const PricingBlockComponent: React.FC<Props> = ({ block }) => {
       >
         {plans.map((plan, planIndex) => (
           <PricingPlanCard
-            cta={plan.cta}
+            cta={resolvePricingPlanCta(plan.cta, plan.planName)}
             contents={plan.contents}
             planName={plan.planName}
             planSub={plan.planSub}
