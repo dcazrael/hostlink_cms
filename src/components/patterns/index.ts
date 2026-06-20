@@ -23,14 +23,7 @@ export {
   type GridBlockItemVariant,
 } from './GridBlockItem'
 
-export {
-  Card,
-  ContactPanel,
-  FlowSteps,
-  PricingCard,
-  SectionShape,
-  type SectionShapeVariant,
-} from './Patterns'
+export { Card, ContactPanel, FlowSteps, SectionShape, type SectionShapeVariant } from './Patterns'
 export { ContentPageHero } from './ContentPageHero'
 export { LandingPageHero, type LandingPageHeroVariant } from './LandingPageHero'
 export { ImageFrame } from './ImageFrame'

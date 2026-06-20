@@ -16,7 +16,6 @@ import {
   GridBlock,
   GridBlockItem,
   ImageFrame,
-  PricingCard,
   SectionFrame,
   SectionShape,
   Table,
@@ -310,7 +309,6 @@ describe('pattern component contracts', () => {
   })
 
   it('exports the second-pass pattern components', () => {
-    expect(PricingCard).toBeTypeOf('function')
     expect(GridBlock).toBeTypeOf('function')
     expect(GridBlockItem).toBeTypeOf('function')
     expect(FlowSteps).toBeTypeOf('function')
