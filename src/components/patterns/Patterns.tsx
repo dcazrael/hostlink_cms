@@ -1,4 +1,3 @@
-import { cn } from '@/utilities/ui'
 import * as React from 'react'
 import { Button } from '../ui/button'
 import { BulletList } from './BulletList'
@@ -65,60 +64,6 @@ export const Card: React.FC<{
     <div className="mt-3 text-sm leading-6 text-current/75">{children}</div>
   </ChamferedCard>
 )
-
-export type PricingCardTone = 'lime' | 'sora' | 'rose' | 'amber' | 'purple'
-
-/**
- * Named accent hues that match the `--lime` / `--sora` / `--rose` /
- * `--amber-shade` / `--purple` tokens in globals.css.
- * All share the same lightness (0.7492) and chroma (0.1353) — only
- * the hue angle changes.
- */
-const PRICING_TONES: Record<PricingCardTone, number> = {
-  lime: 131.08,
-  sora: 257.62,
-  rose: 24,
-  amber: 82,
-  purple: 306,
-}
-
-export const PricingCard: React.FC<{
-  name: string
-  price: string
-  description: string
-  features: string[]
-  featured?: boolean
-  tone?: PricingCardTone
-}> = ({ name, price, description, features, featured = false, tone = 'lime' }) => {
-  const hue = PRICING_TONES[tone]
-  const accentColor = `oklch(0.7492 0.1353 ${hue})`
-
-  return (
-    <article
-      className="relative flex flex-col rounded-3xl border border-border bg-card shadow-sm"
-      style={{ '--pricing-hue': hue } as React.CSSProperties}
-    >
-      <div className="h-1.5 w-full rounded-t-3xl" style={{ backgroundColor: accentColor }} />
-
-      <div className="flex flex-1 flex-col p-6 md:p-8">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-          {featured ? 'Featured plan' : 'Plan'}
-        </p>
-        <h3 className="mt-1 text-xl font-semibold tracking-tight" style={{ color: accentColor }}>
-          {name}
-        </h3>
-        <p className="mt-2 font-mono text-3xl font-semibold tracking-tight text-foreground">
-          {price}
-        </p>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-        <BulletList className="mt-5" items={features} shape="diamond" />
-        <Button className="mt-6" variant="default">
-          Request quote
-        </Button>
-      </div>
-    </article>
-  )
-}
 
 /**
  * FlowSteps renders a horizontal process row with DiagonalBand accents

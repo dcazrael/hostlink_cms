@@ -1,5 +1,71 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { PricingCard } from './Patterns'
+import { PricingPlanCard } from '@/components/pricing/PricingPlanCard'
+
+const realPlans = [
+  {
+    planName: '24時間電話対応プラン',
+    planSub: '24時間電話対応をサポートします。',
+    price: 3000,
+    priceDisclaimer: '価格は税抜きです',
+    stylePreset: 'style4' as const,
+    contents: [
+      { text: '24時間電話対応（近隣含む）' },
+      { text: 'ゲストからの緊急電話対応' },
+      { text: 'トラブル発生時の一次対応' },
+      { text: '必要に応じたホスト様への連絡' },
+    ],
+    cta: {
+      label: '見積り相談する',
+      href: '/contact',
+      variant: 'primary' as const,
+      icon: 'arrowRight' as const,
+    },
+  },
+  {
+    planName: '電話+夜間プラン',
+    planSub: '夜間の対応をお任せいただけます。',
+    price: 13000,
+    priceDisclaimer: '価格は税抜きです',
+    stylePreset: 'style3' as const,
+    contents: [
+      { text: '21:00〜翌06:00' },
+      { text: '24時間電話対応（近隣含む）' },
+      { text: '滞在中トラブル一次対応' },
+      { text: 'ホスト様へのエスカレーション' },
+      { text: 'レビューサポート' },
+      { text: '運営改善アドバイス' },
+    ],
+    cta: {
+      label: '見積り相談する',
+      href: '/contact',
+      variant: 'primary' as const,
+      icon: 'arrowRight' as const,
+    },
+  },
+  {
+    planName: '電話 + メッセージ\nフルサポートプラン',
+    planSub: 'ゲスト対応をトータルでサポートします。',
+    price: 18000,
+    priceDisclaimer: '価格は税抜きです',
+    recommended: true,
+    stylePreset: 'style2' as const,
+    contents: [
+      { text: '24時間電話対応（近隣含む）' },
+      { text: '24時間メッセージ返信' },
+      { text: 'チェックインサポート' },
+      { text: '滞在中トラブル一次対応' },
+      { text: 'ホスト様へのエスカレーション' },
+      { text: 'レビューサポート' },
+      { text: '運営改善アドバイス' },
+    ],
+    cta: {
+      label: '今すぐ無料で相談する',
+      href: '/contact',
+      variant: 'primary' as const,
+      icon: 'arrowRight' as const,
+    },
+  },
+]
 
 const meta: Meta = {
   title: 'Compositions/PricingCards',
@@ -10,58 +76,20 @@ export default meta
 
 type Story = StoryObj
 
-const features = [
-  'Dedicated production workspace',
-  'Managed Payload and Next.js deploys',
-  'Bilingual support window',
-]
-
 /**
- * Five pricing cards across lime, sora, amber, rose, and purple tones.
- * The purple card is marked as featured. Use for plan comparison grids.
+ * Real Japanese pricing plans using the same pricing-card system as the website.
+ * Use this story to review the actual hierarchy, chip placement, spacing, and CTA treatment.
  *
- * @summary multi-tone pricing card comparison
+ * @summary real website pricing plans using shared pricing card system
  */
-export const MultiTone: Story = {
-  name: 'Multi-tone',
+export const RealPlans: Story = {
   render: () => (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
-      <PricingCard
-        name="Lime"
-        price="¥80k"
-        tone="lime"
-        description="Lime base — default CTA hue."
-        features={features}
-      />
-      <PricingCard
-        name="Sora"
-        price="¥120k"
-        tone="sora"
-        description="Blue-cool variant for alternate plans."
-        features={features}
-      />
-      <PricingCard
-        name="Amber"
-        price="¥140k"
-        tone="amber"
-        description="Warm amber for mid-tier positioning."
-        features={features}
-      />
-      <PricingCard
-        name="Rose"
-        price="¥180k"
-        tone="rose"
-        description="Rose accent for premium positioning."
-        features={features}
-      />
-      <PricingCard
-        featured
-        name="Purple"
-        price="Custom"
-        tone="purple"
-        description="Purple variant for featured plans."
-        features={features}
-      />
+    <div className="pricing-section">
+      <div className="pricing-section__grid pricing-section__grid--multi">
+        {realPlans.map((plan, index) => (
+          <PricingPlanCard key={index} {...plan} />
+        ))}
+      </div>
     </div>
   ),
 }
