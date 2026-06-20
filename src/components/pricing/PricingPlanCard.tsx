@@ -44,7 +44,7 @@ const linkIconMap = {
   phone: Phone,
 } as const
 
-const resolveCtaVariant = (value: string | undefined) => {
+const resolveCtaVariant = (value: PricingPlanCardCTA['variant']) => {
   if (value === 'secondary' || value === 'outline' || value === 'ghost') return value
   return 'primary'
 }
@@ -63,17 +63,11 @@ const formatPrice = (price: number): string =>
 
 const PricingPlanCTAButton: React.FC<{
   link?: PricingPlanCardCTA | null
-  planName: string
-}> = ({ link, planName }) => {
+}> = ({ link }) => {
   if (!link?.href || !link.label) return null
 
-  const variant = resolveCtaVariant(link.variant || undefined)
-  const Icon =
-    link.withIcon === false
-      ? null
-      : link.icon
-        ? linkIconMap[link.icon as keyof typeof linkIconMap]
-        : ArrowRight
+  const variant = resolveCtaVariant(link.variant)
+  const Icon = link.withIcon === false ? null : link.icon ? linkIconMap[link.icon] : ArrowRight
 
   return (
     <LocalizedLink
@@ -172,7 +166,7 @@ export const PricingPlanCard: React.FC<PricingPlanCardProps> = ({
           ) : null}
         </div>
       </div>
-      <PricingPlanCTAButton link={cta} planName={planName} />
+      <PricingPlanCTAButton link={cta} />
     </div>
   )
 }
