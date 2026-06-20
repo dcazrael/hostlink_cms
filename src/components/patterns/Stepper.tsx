@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { cn } from '@/utilities/ui'
 import { BulletList } from './BulletList'
+import { NumberBadge } from './NumberBadge'
 
 /**
  * A single step in the stepper. Mirrors the CMS `FlowComponentBlock` step
@@ -20,15 +21,65 @@ export type StepperStep = {
 export type StepperVariant = 'interactive' | 'auto'
 
 /**
- * Clip-path for the step indicators — same 30% top-right chamfer cut used
- * by `NumberBadge`, so all chamfered elements share the same visual language.
- *
- * All three states (upcoming / active / completed) use the **same** polygon.
- * This means there is no shape jump between states — only smooth colour
- * transitions on `--cf-fill` and `--cf-stroke`, handled by the CSS transition
- * on `[data-chamfer]::before` / `::after`.
+ * Clip-path for the active-step detail card — same 30% top-right
+ * chamfer cut used by `NumberBadge`, so all chamfered elements share
+ * the same visual language.
  */
 const CHAMFER_CLIP = 'polygon(0% 0%, calc(100% - 30%) 0%, 100% 30%, 100% 100%, 0% 100%)'
+
+/**
+ * Inline checkmark used by the completed-state badge. Sized at 12×12
+ * to fit inside the 28px (size-7) NumberBadge. Inherits `currentColor`
+ * so the badge's text colour controls the stroke.
+ */
+const Checkmark: React.FC = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M20 6L9 17l-5-5" />
+  </svg>
+)
+
+/**
+ * State → NumberBadge config map. Shape and content are fixed by
+ * state (no caller-controlled `indicatorShape` prop) so all steppers
+ * look the same: upcoming = circle, active = chamfered, completed =
+ * chamfered + checkmark.
+ *
+ * The NumberBadge's `style` override is what gives the completed
+ * state its primary fill (since NumberBadge has no `primary` tone)
+ * and the upcoming state its transparent fill.
+ */
+type IndicatorState = 'upcoming' | 'active' | 'completed'
+
+const INDICATOR_STATE_STYLE: Record<IndicatorState, React.CSSProperties> = {
+  upcoming: {
+    '--cf-fill': 'transparent',
+    '--cf-stroke': 'var(--border)',
+  } as React.CSSProperties,
+  active: {
+    '--cf-fill': 'var(--accent)',
+    '--cf-stroke': 'var(--accent)',
+  } as React.CSSProperties,
+  completed: {
+    '--cf-fill': 'var(--primary)',
+    '--cf-stroke': 'var(--primary)',
+  } as React.CSSProperties,
+}
+
+const INDICATOR_STATE_CLASS: Record<IndicatorState, string> = {
+  upcoming: 'text-muted-foreground',
+  active: '',
+  completed: 'text-primary-foreground',
+}
 
 /**
  * `Stepper` renders a vertical sequence of numbered steps with connector
@@ -135,6 +186,7 @@ export const Stepper: React.FC<{
             const active = isActive(index)
             const upcoming = isUpcoming(index)
             const next = hasNext(index)
+            const state: IndicatorState = completed ? 'completed' : active ? 'active' : 'upcoming'
 
             return (
               <li
@@ -154,52 +206,17 @@ export const Stepper: React.FC<{
               >
                 {/* ── Step indicator column ─────────────── */}
                 <div className="flex shrink-0 flex-col items-center">
-                  {/* All three states use the same chamfer clip-path for
-                      smooth morphing; only fill/stroke colours change. */}
-                  <span
-                    data-chamfer
-                    className={cn(
-                      'relative flex size-7 items-center justify-center bg-transparent text-[10px] font-bold transition-all duration-300',
-                      completed && 'text-primary-foreground',
-                      active && 'text-accent-foreground',
-                      upcoming && 'text-muted-foreground',
-                    )}
-                    style={
-                      {
-                        '--cf-fill': completed
-                          ? 'var(--primary)'
-                          : active
-                            ? 'var(--accent)'
-                            : 'transparent',
-                        '--cf-stroke': completed
-                          ? 'var(--primary)'
-                          : active
-                            ? 'var(--accent)'
-                            : 'var(--border)',
-                        '--cf-inset': '1px',
-                        '--cf-clip': CHAMFER_CLIP,
-                        background: 'transparent',
-                      } as React.CSSProperties
-                    }
+                  <NumberBadge
+                    value={step.step}
+                    shape={state === 'upcoming' ? 'circle' : 'chamfered'}
+                    tone={state === 'active' ? 'mint' : 'border'}
+                    sizeClassName="size-7"
+                    textClassName="text-[10px] font-bold"
+                    className={cn('transition-colors duration-300', INDICATOR_STATE_CLASS[state])}
+                    style={INDICATOR_STATE_STYLE[state]}
                   >
-                    {completed ? (
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    ) : (
-                      step.step
-                    )}
-                  </span>
+                    {completed ? <Checkmark /> : null}
+                  </NumberBadge>
 
                   {/* Connector line */}
                   {next && (

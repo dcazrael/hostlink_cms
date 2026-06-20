@@ -453,7 +453,9 @@ html[data-theme="light"] {
   background: var(--cf-stroke);
   clip-path: var(--cf-clip);
   pointer-events: none;
-  transition: background 0.3s ease;
+  transition:
+    background 0.3s ease,
+    clip-path 0.3s ease;
 }
 
 /* Fill layer — inset by stroke width so stroke shows through on all edges,
@@ -467,7 +469,9 @@ html[data-theme="light"] {
   background: var(--cf-fill);
   clip-path: var(--cf-clip);
   pointer-events: none;
-  transition: background 0.3s ease;
+  transition:
+    background 0.3s ease,
+    clip-path 0.3s ease;
 }
 
 .prose
