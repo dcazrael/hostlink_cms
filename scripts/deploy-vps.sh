@@ -134,7 +134,7 @@ if [[ "$skip_db_migrate" != "true" ]]; then
     --project-name "$project_name" \
     --env-file "$env_file" \
     -f "$compose_file" \
-    run --rm migrator pnpm payload migrate
+    run --rm migrator pnpm run payload:container migrate
 fi
 
 website_image="${project_name}-app:latest"
