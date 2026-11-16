@@ -19,7 +19,7 @@ describe('deploy-vps script surface', () => {
     const script = readFileSync(resolve(process.cwd(), 'scripts/deploy-vps.sh'), 'utf8')
 
     expect(script).not.toContain('./scripts/vps-db-migrate.sh')
-    expect(script).toContain('pnpm payload migrate')
+    expect(script).toContain('pnpm run payload:container migrate')
     expect(script).toContain('./scripts/create-db-restore-point.sh')
   })
 })
