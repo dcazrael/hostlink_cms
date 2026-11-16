@@ -125,12 +125,18 @@ describe('landing section read-more links', () => {
 
   it('resolves page and post read-more targets', () => {
     expect(resolveReadMoreHref({ relationTo: 'pages', value: pageWithSlug('home') })).toBe('/')
-    expect(resolveReadMoreHref({ relationTo: 'pages', value: pageWithSlug('about') })).toBe(
-      '/about',
-    )
-    expect(resolveReadMoreHref({ relationTo: 'posts', value: postWithSlug('news-update') })).toBe(
-      '/posts/news-update',
-    )
+    expect(
+      resolveReadMoreHref({
+        relationTo: 'pages',
+        value: pageWithSlug('about'),
+      }),
+    ).toBe('/about')
+    expect(
+      resolveReadMoreHref({
+        relationTo: 'posts',
+        value: postWithSlug('news-update'),
+      }),
+    ).toBe('/posts/news-update')
   })
 
   it('returns undefined for empty, unpopulated, or malformed targets', () => {
@@ -143,9 +149,12 @@ describe('landing section read-more links', () => {
   it('normalizes existing homepage link URLs defensively', () => {
     expect(resolveHomepageLinkHref({ type: 'anchor', anchor: ' pricing ' })).toBe('#pricing')
     expect(resolveHomepageLinkHref({ type: 'external', url: '   ' })).toBeUndefined()
-    expect(resolveHomepageLinkHref({ type: 'external', url: ' https://example.com ' })).toBe(
-      'https://example.com',
-    )
+    expect(
+      resolveHomepageLinkHref({
+        type: 'external',
+        url: ' https://example.com ',
+      }),
+    ).toBe('https://example.com')
     expect(
       resolveHomepageLinkHref({
         type: 'internal',
@@ -158,7 +167,10 @@ describe('landing section read-more links', () => {
     render(
       React.createElement(SectionWrapper, {
         anchor: 'services',
-        block: sectionBlockWithReadMoreTarget({ relationTo: 'posts', value: postWithSlug('news') }),
+        block: sectionBlockWithReadMoreTarget({
+          relationTo: 'posts',
+          value: postWithSlug('news'),
+        }),
         sectionIndex: 1,
         t: (key) => (key === 'homepage.section.readmore' ? 'もっと読む' : key),
       }),
@@ -167,16 +179,22 @@ describe('landing section read-more links', () => {
     const link = screen.getByRole('link', { name: 'もっと読む' })
 
     expect(link.getAttribute('href')).toBe('/posts/news')
-    expect(link.getAttribute('data-slot')).toBe('button')
-    expect(link.className).toContain('border')
-    expect(link.className).toContain('h-9')
+
+    const button = link.parentElement
+
+    expect(button?.getAttribute('data-slot')).toBe('button')
+    expect(button?.className).toContain('border')
+    expect(button?.className).toContain('h-9')
   })
 
   it('does not render a read-more button without a valid target', () => {
     render(
       React.createElement(SectionWrapper, {
         anchor: 'services',
-        block: sectionBlockWithReadMoreTarget({ relationTo: 'posts', value: postWithSlug('') }),
+        block: sectionBlockWithReadMoreTarget({
+          relationTo: 'posts',
+          value: postWithSlug(''),
+        }),
         sectionIndex: 1,
         t: (key) => (key === 'homepage.section.readmore' ? 'もっと読む' : key),
       }),

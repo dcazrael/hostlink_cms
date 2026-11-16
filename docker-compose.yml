@@ -6,7 +6,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - '3000:3000'
+      - "3000:3000"
     volumes:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
@@ -17,7 +17,7 @@ services:
         rm -rf .next &&
         pnpm config set store-dir /pnpm/store &&
         pnpm install --frozen-lockfile --prefer-offline &&
-        pnpm dev
+        pnpm dev:container
       "
     depends_on:
       - postgres
@@ -34,7 +34,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
+      - "5432:5432"
 
 volumes:
   pgdata:

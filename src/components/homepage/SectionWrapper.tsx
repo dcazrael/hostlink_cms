@@ -54,7 +54,7 @@ export const SectionWrapper: React.FC<{
       </div>
 
       {readMoreHref ? (
-        <Button asChild className="mt-6" size="sm" variant="outline">
+        <Button className="mt-6" size="sm" variant="outline">
           <LocalizedLink href={readMoreHref}>
             {t('homepage.section.readmore', '続きを読む')}
           </LocalizedLink>

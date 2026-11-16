@@ -1,0 +1,5 @@
+[     131ms] [LOG] %cDocumentation: %chttps://mswjs.io/docs font-weight:bold font-weight:normal @ http://127.0.0.1:6007/assets/iframe-CRNG9NLQ.js:1143
+[     131ms] [LOG] Found an issue? https://github.com/mswjs/msw/issues @ http://127.0.0.1:6007/assets/iframe-CRNG9NLQ.js:1143
+[     131ms] [LOG] Worker script URL: http://127.0.0.1:6007/mockServiceWorker.js @ http://127.0.0.1:6007/assets/iframe-CRNG9NLQ.js:1143
+[     131ms] [LOG] Worker scope: http://127.0.0.1:6007/ @ http://127.0.0.1:6007/assets/iframe-CRNG9NLQ.js:1143
+[     131ms] [LOG] Client ID: %s (%s) e1a759f4-d173-4d7b-89bd-024c06fbb6da top-level @ http://127.0.0.1:6007/assets/iframe-CRNG9NLQ.js:1143

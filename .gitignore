@@ -24,4 +24,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 
+# Storybook static build output
+/storybook-static/
 .slim/deepwork/
+.superpowers/

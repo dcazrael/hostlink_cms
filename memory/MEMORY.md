@@ -1,0 +1,1 @@
+- [reference] reference：Centralized HostLink metadata now produces normalized canonical/OG URLs, raster social images, deduplicated branded titles, Japanese defaults, and locale-aware HTML lang. → reference.md

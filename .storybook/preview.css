@@ -1,0 +1,50 @@
+@import "../src/app/(frontend)/globals.css";
+
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/Zen_Kaku_Gothic_New/ZenKakuGothicNew-Light.ttf")
+    format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/Zen_Kaku_Gothic_New/ZenKakuGothicNew-Regular.ttf")
+    format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/Zen_Kaku_Gothic_New/ZenKakuGothicNew-Medium.ttf")
+    format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/Zen_Kaku_Gothic_New/ZenKakuGothicNew-Bold.ttf")
+    format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Zen Kaku Gothic New";
+  src: url("/fonts/Zen_Kaku_Gothic_New/ZenKakuGothicNew-Black.ttf")
+    format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 900;
+}
+
+:root {
+  --font-zen-kaku: "Zen Kaku Gothic New";
+}

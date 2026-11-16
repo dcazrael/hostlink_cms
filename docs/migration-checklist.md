@@ -1,6 +1,6 @@
 # Migration Checklist
 
-Use this checklist for every schema/content migration.
+Use this checklist for every schema/content migration. This checklist is for the developer making the change — the operator deploy steps live in `docs/deployment-vps.md`.
 
 ## 1) Create restore point
 
@@ -8,7 +8,7 @@ Use this checklist for every schema/content migration.
 pnpm db:restore-point
 ```
 
-On the VPS, the deploy script does this automatically before migrations. See `docs/db-restore-points.md` and `docs/deployment-vps.md`.
+On the VPS, the deploy script does this automatically before migrations. See `docs/deployment-vps.md`.
 
 ## 2) Run migration locally (development)
 
@@ -32,38 +32,12 @@ Confirm each migration shows **Yes / Batch N**.
 pnpm tsc --noEmit
 ```
 
-## 5) Commit and push
+## 5) Push
 
-Always commit the migration file and the updated `src/migrations/index.ts` together.
+Push the schema change and migration file together.
 
-## 6) Deploy to production
+## 6) Verify production after deploy
 
-If schema-sensitive files changed, the CI guard blocks auto-deploy. Deploy manually:
-
-```bash
-ssh <vps-host>
-cd /srv/hostlink/site
-./scripts/deploy-vps.sh --branch main
-```
-
-## 7) Verify content immediately
-
-Check in admin:
-
-- open 2-3 representative docs after migration
-- verify expected fields and values
-
-## 8) Verify runtime
-
-- open `/` in production
-- confirm no unexpected 500 errors
-
-## 9) Rollback reference
-
-Restore the latest dump from `backups/restore-points/` if verification fails:
-
-```bash
-docker compose exec -T postgres \
-  pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --clean --if-exists \
-  < backups/restore-points/hostlink_latest.dump
-```
+- confirm CI deploy passed
+- confirm admin and frontend load
+- verify representative content still renders
