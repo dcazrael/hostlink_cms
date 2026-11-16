@@ -94,27 +94,44 @@ Leave MX/TXT mail records unchanged.
 
 ## Normal Deploy
 
-All production schema changes use committed Payload migrations generated and tested in development, then verified with `tsc && pnpm db:migrate` before merging.
+All production schema changes use committed Payload migrations generated and tested in development, then verified with `tsc && pnpm db:migrate` before merging. There is no generic schema push in this flow: a schema change that is not covered by a committed migration must not be deployed.
 
 ```bash
 cd /srv/hostlink/site
 ./scripts/deploy-vps.sh --branch main
 ```
 
-This creates a restore point automatically before running committed migrations:
+The script runs these steps in order and stops at the first failure:
 
 1. Starts Postgres and waits for readiness.
-2. Creates a database restore point (`backups/restore-points/hostlink_<timestamp>.dump`).
-3. Runs `pnpm payload migrate` — applies only new, committed migrations.
-4. Returns control to `deploy-vps.sh`, which builds and restarts the website container.
+2. Creates a database restore point (`backups/restore-points/hostlink_<timestamp>.dump`) — always, before any migration or migration-history SQL.
+3. Normalizes the legacy migration baseline when the database still carries a dev-mode marker (see below).
+4. Builds the `migrator` image and applies pending committed migrations noninteractively:
+   `docker compose --project-name hostlink-site --env-file .env.production -f docker-compose.vps.yml run --rm -T migrator pnpm run payload:container migrate </dev/null`
+5. Builds and replaces the website container.
 
-### Deploy with migration but no backup
+If the backup, the baseline fix-up, or the migration run fails, the script exits non-zero **before** the website container is replaced, so the previous website image keeps serving traffic. Migration files that already committed in that run stay applied, so use [Rollback](#rollback) when the new schema has to be undone.
 
-```bash
-./scripts/deploy-vps.sh --branch main --skip-db-backup
-```
+Note that the previous website container keeps serving while the migration runs, so the old code briefly runs against the migrated schema until step 5 replaces it.
 
-Only use this for rapid iteration on a dev VPS, never for production.
+### Legacy migration baseline
+
+Legacy VPS databases can carry a dev-mode `payload_migrations` row with `batch = -1`. Payload's `migrate` command treats that marker as "dev mode was used" and asks for an interactive confirmation, which cannot be answered during a noninteractive deploy.
+
+Before running migrations, the script inspects the `payload_migrations` table. If a `batch = -1` row is present it runs one transaction that:
+
+- inserts the known baseline migration `20260614_210456` with `batch = 1` when it is not recorded yet, and
+- deletes the `batch = -1` marker rows.
+
+This preserves the previous VPS cutover's assumption that the legacy schema already represents `20260614_210456`. Replaying that initial migration would fail on existing tables. This is specific to the known legacy VPS database, not a general schema-reconciliation mechanism.
+
+Databases without a `payload_migrations` table, and databases whose history has no `batch = -1` marker, are left untouched — for those only pending committed migrations are applied.
+
+### Backups are mandatory
+
+A restore point is created before every migration run. The former `--skip-db-backup` flag was removed: passing it now fails the script instead of deploying without a backup.
+
+Restore points are Postgres dumps of the database only, written to `backups/restore-points/hostlink_<timestamp>.dump` next to a `.sha256` checksum. They do not contain uploaded media files — those live in the website container filesystem, not in Postgres — so a restore point cannot bring media back.
 
 ## Deploy Without DB Migration
 
@@ -123,7 +140,74 @@ cd /srv/hostlink/site
 ./scripts/deploy-vps.sh --branch main --skip-db-migrate
 ```
 
-Use when the deploy has no schema changes.
+Use when the deploy has no schema changes. This is an explicit app-only bypass: no restore point is created, no migration history is touched, and no migration runs. Only the website container is rebuilt and replaced.
+
+## Rollback
+
+Rollback is manual and has two independent parts: the database and the application. Restoring the database is not a rollback on its own — the restored schema only matches the code that is known to work with it, so the known-good code has to be deployed again afterwards. Nothing in `deploy-vps.sh` performs these steps automatically.
+
+1. Choose the restore point. Restore points live in `backups/restore-points/hostlink_<timestamp>.dump`; use the one created by the deploy you are rolling back (the deploy log prints its path).
+
+2. Stop the website so no request writes to the database while it is being replaced:
+
+```bash
+cd /srv/hostlink/site
+
+docker compose \
+  --project-name hostlink-site \
+  --env-file .env.production \
+  -f docker-compose.vps.yml \
+  stop website
+```
+
+3. Make sure Postgres is up:
+
+```bash
+docker compose \
+  --project-name hostlink-site \
+  --env-file .env.production \
+  -f docker-compose.vps.yml \
+  up -d postgres
+```
+
+4. Replace `POSTGRES_DB` with the dump. **This deletes the current database, including writes made after the restore point.** Keep the website stopped and stop any other database writers first. Verify the dump exists and its checksum before proceeding:
+
+```bash
+RESTORE_POINT="backups/restore-points/hostlink_<TIMESTAMP>.dump"
+test -s "$RESTORE_POINT" &&
+sha256sum -c "${RESTORE_POINT}.sha256" &&
+docker compose \
+  --project-name hostlink-site \
+  --env-file .env.production \
+  -f docker-compose.vps.yml \
+  exec -T postgres \
+  sh -lc 'dropdb -U "$POSTGRES_USER" --force "$POSTGRES_DB" &&
+    createdb -U "$POSTGRES_USER" -O "$POSTGRES_USER" "$POSTGRES_DB" &&
+    pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --exit-on-error --no-owner --no-privileges' \
+  < "$RESTORE_POINT"
+```
+
+Recreating the database also removes objects introduced by the failed release that are absent from the backup. If any command fails, keep the website stopped and resolve the restore failure before redeploying.
+
+5. Redeploy the previously known-good code. `deploy-vps.sh` always fetches, checks out, and pulls the branch it is given, so the known-good code has to be reachable from a branch: either revert the bad commit on `main` and push the revert, or point the script at a branch that still contains the known-good commit.
+
+```bash
+./scripts/deploy-vps.sh --branch main --skip-db-migrate
+```
+
+Use `--skip-db-migrate` here: the restored database already carries the migration history of the known-good release, and running migrations again would move the schema forward instead of holding it at the restored state. The deploy rebuilds the website image from the checked-out code and starts the website container again.
+
+6. Verify the site and the admin load, and check the container status:
+
+```bash
+docker compose \
+  --project-name hostlink-site \
+  --env-file .env.production \
+  -f docker-compose.vps.yml \
+  ps
+```
+
+A rollback restores database rows only. Media files uploaded after the restore point are not in the dump and are not recovered by it.
 
 ## Local DB to VPS cutover
 
@@ -188,7 +272,7 @@ docker compose \
 ./scripts/deploy-vps.sh --branch main --skip-db-migrate
 ```
 
-If the restored local DB is wrong, restore the VPS backup created in step 2 with the same `pg_restore --clean --if-exists` command.
+If the restored local DB is wrong, follow [Rollback](#rollback) using the VPS backup created in step 2. That procedure stops the website, replaces the database completely, and redeploys the known-good code.
 
 ## CI guard
 
