@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 import { draftMode } from 'next/headers'
 import { cn } from '@/utilities/ui'
+import { getActiveLocale } from '@/i18n/getActiveLocale'
 
 import { ZenKakuGothicNew } from '@/lib/fonts'
 import { AdminBar } from '@/components/AdminBar'
@@ -16,12 +17,13 @@ import './globals.css'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+  const lang = await getActiveLocale()
 
   return (
     <html
       className={cn(ZenKakuGothicNew.variable)}
       data-theme={defaultTheme}
-      lang="en"
+      lang={lang}
       suppressHydrationWarning
     >
       <head>
@@ -57,6 +59,5 @@ export const metadata: Metadata = {
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
-    creator: '@payloadcms',
   },
 }

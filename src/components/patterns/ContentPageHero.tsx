@@ -24,7 +24,7 @@ export const ContentPageHero: React.FC<{
   <section className={className}>
     <div className="relative">
       <ImageFrame variant="hero-stripe" media={media} className="w-full" />
-      <div className="absolute flex flex-col gap-3 p-6 md:p-8 xl:p-10 bottom-8">
+      <div className="absolute flex flex-col gap-3 p-6 md:p-8 2xl:p-10 bottom-0">
         <h1
           className="whitespace-pre-line text-4xl font-bold text-white drop-shadow-lg md:text-5xl
         max-w-[20ch]"

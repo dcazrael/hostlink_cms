@@ -80,8 +80,8 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
     },
   },
   meta: {
-    description: 'An open-source website built with Payload and Next.js.',
-    title: 'HostLink',
+    description: 'HostLinkは、人とのつながりを大切にしたい人のために。あなたの暮らしを、もっと自由に、もっと快適に。',
+    title: '民泊・Airbnbホスト様向けのゲスト対応代行サービス。24時間のメッセージ返信',
   },
   title: 'Home',
   layout: [],

@@ -1,0 +1,4 @@
+## 2026-09-01T08:57:30.973Z · SEO metadata · Centralized HostLink metadata now produces normalized canonical/OG URLs, raster social images, deduplicated branded titles, Japanese defaults, and locale-aware HTML lang.
+
+SEO behavior is centralized in src/utilities/generateMeta.ts: home/null slug resolves to '/', non-home slugs are slash-normalized, alternates.canonical equals openGraph.url, trailing HostLink title suffixes are removed before a single suffix is appended, and imageURL only accepts raster PNG/JPEG/WebP while SVG metadata images are excluded. The frontend layout retains metadataBase, uses getActiveLocale() for html lang, and keeps Twitter summary_large_image without Payload creator. The generic Open Graph description and home seeds use HostLink Japanese copy; seed homepage metadata title is page-specific.
+

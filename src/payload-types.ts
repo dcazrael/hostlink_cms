@@ -375,7 +375,7 @@ export interface Page {
      */
     image?: (number | null) | Media;
     /**
-     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
+     * Optional override for SEO image. Use a PNG, JPEG, or WebP image via an absolute URL (https://...) or a public path (for example /logo.png). SVG and any other formats are not supported as OG images.
      */
     imageURL?: string | null;
     description?: string | null;
@@ -436,7 +436,7 @@ export interface Post {
      */
     image?: (number | null) | Media;
     /**
-     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
+     * Optional override for SEO image. Use a PNG, JPEG, or WebP image via an absolute URL (https://...) or a public path (for example /logo.png). SVG and any other formats are not supported as OG images.
      */
     imageURL?: string | null;
     description?: string | null;
@@ -838,7 +838,7 @@ export interface LandingPage {
      */
     image?: (number | null) | Media;
     /**
-     * Optional override for SEO image. Use an absolute URL (https://...) or a public path (for example /logo.svg).
+     * Optional override for SEO image. Use a PNG, JPEG, or WebP image via an absolute URL (https://...) or a public path (for example /logo.png). SVG and any other formats are not supported as OG images.
      */
     imageURL?: string | null;
     description?: string | null;
