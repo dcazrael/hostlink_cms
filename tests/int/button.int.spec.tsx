@@ -21,7 +21,7 @@ describe('Button component contract', () => {
     expect(style).toContain('--cf-fill')
     expect(style).toContain('--cf-stroke')
     expect(style).toContain('--cf-inset')
-    expect(style).toContain('background: transparent')
+    expect(button.style.backgroundColor).toBe('transparent')
   })
 
   it('omits data-chamfer when chamferDepth is 0', () => {

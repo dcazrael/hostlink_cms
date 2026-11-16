@@ -36,7 +36,7 @@ describe('pattern component contracts', () => {
     expect(style).toContain('polygon')
     expect(style).toContain('--cf-fill')
     expect(style).toContain('--cf-stroke')
-    expect(style).toContain('background: transparent')
+    expect((band as HTMLElement).style.backgroundColor).toBe('transparent')
   })
 
   it('renders primitive BulletList rows with shaped bullets', () => {
@@ -106,7 +106,7 @@ describe('pattern component contracts', () => {
     expect(style).toContain('--cf-fill: var(--card)')
     expect(style).toContain('--cf-stroke: var(--border)')
     expect(style).toContain('--cf-inset: 1px')
-    expect(style).toContain('background: transparent')
+    expect((el as HTMLElement).style.backgroundColor).toBe('transparent')
   })
 
   it('falls back to asymmetric x/y when depth is 0', () => {

@@ -2,7 +2,8 @@ import 'dotenv/config'
 import { createHash } from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
-import ts from 'typescript'
+import * as ts from 'typescript/unstable/ast'
+import { API, type Snapshot } from 'typescript/unstable/async'
 import { getPayload } from 'payload'
 
 import config from '@payload-config'
@@ -153,14 +154,6 @@ const collectFiles = async (dir: string): Promise<string[]> => {
   return files
 }
 
-const detectScriptKind = (filePath: string): ts.ScriptKind => {
-  if (filePath.endsWith('.tsx')) return ts.ScriptKind.TSX
-  if (filePath.endsWith('.jsx')) return ts.ScriptKind.JSX
-  if (filePath.endsWith('.ts')) return ts.ScriptKind.TS
-  if (filePath.endsWith('.js')) return ts.ScriptKind.JS
-  return ts.ScriptKind.TSX
-}
-
 const getLineAndColumn = (sourceFile: ts.SourceFile, position: number) => {
   const { line, character } = sourceFile.getLineAndCharacterOfPosition(position)
   return { column: character + 1, line: line + 1 }
@@ -199,16 +192,13 @@ const textTagSet = new Set([
   'summary',
 ])
 
-const scanFile = async (absolutePath: string): Promise<ReportEntry[]> => {
-  const source = await fs.readFile(absolutePath, 'utf8')
+const scanFile = async (absolutePath: string, snapshot: Snapshot): Promise<ReportEntry[]> => {
   const relativePath = toPosix(path.relative(cwd, absolutePath))
-  const sourceFile = ts.createSourceFile(
-    absolutePath,
-    source,
-    ts.ScriptTarget.Latest,
-    true,
-    detectScriptKind(absolutePath),
-  )
+  const project = await snapshot.getDefaultProjectForFile(absolutePath)
+  const sourceFile = await project?.program.getSourceFile(absolutePath)
+  if (!sourceFile) {
+    throw new Error(`Unable to load scanner source file "${relativePath}".`)
+  }
   const entries: ReportEntry[] = []
   const usedIn = normalizeComponentName(absolutePath)
 
@@ -245,7 +235,7 @@ const scanFile = async (absolutePath: string): Promise<ReportEntry[]> => {
     if (ts.isJsxText(node)) {
       const parentTag = parentTextTagName(node, sourceFile)
       if (!parentTag || !textTagSet.has(parentTag)) {
-        ts.forEachChild(node, visit)
+        node.forEachChild(visit)
         return
       }
 
@@ -287,7 +277,7 @@ const scanFile = async (absolutePath: string): Promise<ReportEntry[]> => {
       }
     }
 
-    ts.forEachChild(node, visit)
+    node.forEachChild(visit)
   }
 
   visit(sourceFile)
@@ -501,7 +491,14 @@ const run = async () => {
     }),
   )
   const files = rootFiles.flat().sort()
-  const allEntries = (await Promise.all(files.map((file) => scanFile(file)))).flat()
+  const api = new API({ cwd })
+  let allEntries: ReportEntry[]
+  try {
+    const snapshot = await api.updateSnapshot({ openFiles: files })
+    allEntries = (await Promise.all(files.map((file) => scanFile(file, snapshot)))).flat()
+  } finally {
+    await api.close()
+  }
   const report = buildReport(allEntries, files.length)
 
   await ensureDir(path.join(cwd, SCANNER_REPORT_PATH))

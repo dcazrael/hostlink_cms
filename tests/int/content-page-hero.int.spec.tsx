@@ -79,7 +79,7 @@ describe('ContentPageHero', () => {
     expect(divider?.className).toContain('bg-white')
   })
 
-  it('positions the text container with a 2rem offset from the bottom (bottom-8)', () => {
+  it('positions the text container at the bottom of the image', () => {
     const { container } = render(
       <ContentPageHero
         title="Test Hero Title"
@@ -95,6 +95,6 @@ describe('ContentPageHero', () => {
     const textContainer = title.parentElement
     expect(textContainer).not.toBeNull()
     expect(textContainer?.className).toContain('absolute')
-    expect(textContainer?.className).toContain('bottom-8')
+    expect(textContainer?.className).toContain('bottom-0')
   })
 })
