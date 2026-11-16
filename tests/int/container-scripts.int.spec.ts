@@ -85,7 +85,7 @@ describe('package scripts', () => {
       'sh ./scripts/ensure-payload-container.sh && docker compose exec -T payload pnpm test:int:container',
     )
     expect(pkg.scripts['test:int:container']).toBe(
-      'NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts',
+      'NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts --project integration',
     )
   })
 

@@ -179,14 +179,13 @@ export const Disabled: Story = {
 }
 
 /**
- * Chamfered variant rendered via SVG overlay.
- * Demonstrates the SVG-based chamfer with top-right cut and depth 3.
- * Prefer the CSS clip-path approach in CssCheck for new work.
+ * Chamfered variant rendered with the shared CSS clip-path system.
+ * Demonstrates a top-right cut with depth 3.
  *
- * @summary SVG chamfer overlay demonstration
+ * @summary CSS chamfer demonstration
  */
 export const Chamfered: Story = {
-  name: 'Chamfered (SVG, top-right, depth 3)',
+  name: 'Chamfered (CSS, top-right, depth 3)',
   args: {
     children: 'Get started',
     variant: 'default',
@@ -195,8 +194,8 @@ export const Chamfered: Story = {
   },
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: /get started/i })
-    const svg = button.querySelector('svg')
-    await expect(svg).not.toBeNull()
+    const shape = getComputedStyle(button, '::before')
+    await expect(shape.clipPath).toMatch(/^polygon\(/)
     await expect(button).toBeVisible()
   },
 }

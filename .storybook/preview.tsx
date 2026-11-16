@@ -4,12 +4,11 @@ import { useLayoutEffect } from 'react'
 import './preview.css'
 
 import MockDate from 'mockdate'
-import { initialize, mswLoader } from 'msw-storybook-addon'
+import { mswLoader } from 'msw-storybook-addon/csf3'
+import { setupWorker } from 'msw/browser'
 import { HeaderThemeProvider } from '../src/providers/HeaderTheme'
 import { ThemeProvider } from '../src/providers/Theme'
 import { mswHandlers } from './msw-handlers'
-
-initialize({ onUnhandledRequest: 'bypass' })
 
 function useFrontendCanvasGlobals(): void {
   useLayoutEffect(() => {
@@ -47,7 +46,13 @@ const withProviders: Decorator = (Story) => {
 const preview: Preview = {
   decorators: [withFrontendCanvas, withProviders],
   tags: ['autodocs'],
-  loaders: [mswLoader],
+  loaders: [
+    mswLoader(async () => {
+      const worker = setupWorker()
+      await worker.start({ onUnhandledRequest: 'bypass' })
+      return worker
+    }),
+  ],
   parameters: {
     msw: {
       handlers: mswHandlers,
